@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>النقابة الوطنية للمدرسين (نور) - المنصة الرقمية</title>
+    <!-- خط تجوال الرسمي -->
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <!-- مكتبة الأيقونات Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- مكتبة Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        :root {
+            --primary: #116835;
+            --primary-dark: #0b4824;
+            --gold: #d4af37;
+            --bg-light: #f4f6f9;
+            --text-dark: #2c3e50;
+            --card-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Tajawal', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* رأس الصفحة */
+        header {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+            color: white;
+            text-align: center;
+            padding: 25px 15px 35px;
+            border-bottom: 4px solid var(--gold);
+        }
+
+        .header-logo {
+            width: 85px;
+            height: 85px;
+            border-radius: 50%;
+            border: 3px solid var(--gold);
+            object-fit: cover;
+            background: #fff;
+            margin-bottom: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        header h1 {
+            font-size: 22px;
+            font-weight: 800;
+            margin-bottom: 6px;
+        }
+
+        header p {
+            font-size: 13px;
+            color: #e0e0e0;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: -20px auto 30px;
+            padding: 0 15px;
+            width: 100%;
+            flex: 1;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: var(--card-shadow);
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 2px solid #edf2f7;
+            padding-bottom: 10px;
+        }
+
+        /* حقول الإدخال والأزرار */
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        input[type="text"], input[type="password"] {
+            flex: 1;
+            padding: 12px;
+            border: 1.5px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 15px;
+            text-align: center;
+            font-weight: bold;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        input[type="text"]:focus, input[type="password"]:focus {
+            border-color: var(--primary);
+        }
+
+        .btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .btn-block {
+            width: 100%;
+        }
+
+        .btn-gold {
+            background-color: var(--gold);
+            color: #1a1a1a;
+        }
+
+        .btn-gold:hover {
+            background-color: #c29d2b;
+        }
+
+        /* النوافذ المنبثقة */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.6);
+            backdrop-filter: blur(3px);
+            overflow-y: auto;
+            padding: 20px 10px;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 14px;
+            max-width: 480px;
+            margin: 30px auto;
+            padding: 20px;
+            position: relative;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .close-btn {
+            position: absolute;
+            left: 15px;
+            top: 15px;
+            font-size: 24px;
+            color: #64748b;
+            cursor: pointer;
+            border: none;
+            background: none;
+        }
+
+        /* بطاقة العضو الرقمية */
+        .badge-card {
+            border: 2px solid var(--gold);
+            border-radius: 12px;
+            padding: 15px;
+            background: #fff;
+            position: relative;
+        }
+
+        .badge-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 10px;
+            margin-bottom: 12px;
+        }
+
+        .badge-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 8px;
+            object-fit: cover;
+            border: 2px solid var(--primary);
+        }
+
+        .badge-info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            border-bottom: 1px dashed #e2e8f0;
+            font-size: 13.5px;
+        }
+
+        .badge-label {
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        .badge-value {
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        /* شبكة أعضاء المكتب الوطني */
+        .office-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 12px;
+            margin-top: 15px;
+        }
+
+        .office-member-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 12px 8px;
+            text-align: center;
+        }
+
+        .office-avatar {
+            width: 65px;
+            height: 65px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--primary);
+            margin: 0 auto 8px;
+        }
+
+        .office-name {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 4px;
+        }
+
+        .office-role {
+            font-size: 11px;
+            color: var(--primary);
+            font-weight: 600;
+            background: #e8f5e9;
+            padding: 2px 6px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+
+        /* قائمة الأخبار */
+        .news-item {
+            padding: 12px;
+            border-right: 3px solid var(--primary);
+            background: #f8fafc;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 10px;
+        }
+
+        .news-tag {
+            font-size: 11px;
+            background: #e2e8f0;
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #475569;
+            font-weight: 600;
+        }
+
+        .news-title {
+            font-size: 14px;
+            font-weight: 700;
+            margin: 6px 0;
+            color: #1e293b;
+        }
+
+        .news-desc {
+            font-size: 12.5px;
+            color: #64748b;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- الترويسة والشعار -->
+    <header>
+        <img src="IM9.jpg" alt="شعار نقابة نور" class="header-logo" onerror="this.style.display='none'">
+        <h1>النقابة الوطنية للمدرسين (نور)</h1>
+        <p>بوابة الخدمات الإلكترونية والتحقق الرقمي</p>
+    </header>
+
+    <div class="container">
+
+        <!-- قسم التحقق من صحة الانتساب -->
+        <div class="card">
+            <div class="card-title">
+                <i class="fas fa-search"></i> التحقق من صحة الانتساب
+            </div>
+            <div class="input-group">
+                <input type="text" id="input-nid" placeholder="أدخل الدليل المالي (مثال: 122877L)">
+                <button class="btn" onclick="checkMember()"><i class="fas fa-check"></i> تحقق</button>
+            </div>
+            <p id="check-msg" style="font-size: 13px; text-align: center; color: #dc2626; display: none;"></p>
+        </div>
+
+        <!-- زر استعراض قيادة النقابة -->
+        <div style="margin-bottom: 20px;">
+            <button class="btn btn-block btn-gold" onclick="openOfficeModal()">
+                <i class="fas fa-users-cog"></i> تشكيلة أعضاء المكتب الوطني
+            </button>
+        </div>
+
+        <!-- قسم الأخبار الرسمية -->
+        <div class="card">
+            <div class="card-title">
+                <i class="fas fa-bullhorn" style="color: #e11d48;"></i> الأخبار الرسمية
+            </div>
+            <div id="news-container">
+                <div class="news-item">
+                    <span class="news-tag">بيان رسمي</span>
+                    <div class="news-title">إطلاق المنصة التجريبية</div>
+                    <div class="news-desc">تم بحمد الله إطلاق المرحلة الأولى من المنصة الرقمية للنقابة الوطنية للمدرسين (نور).</div>
+                </div>
+                <div class="news-item">
+                    <span class="news-tag">نشاط داخلي</span>
+                    <div class="news-title">اجتماع المكتب الوطني</div>
+                    <div class="news-desc">يعقد المكتب الوطني اجتماعه الدوري لمناقشة خطة العمل للفصل القادم.</div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- نافذة إدخال أو تعيين الرمز السري (PIN) -->
+    <div id="pin-modal" class="modal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal('pin-modal')">&times;</button>
+            <div style="text-align: center; margin-bottom: 15px;">
+                <i class="fas fa-lock" style="font-size: 32px; color: var(--primary);"></i>
+                <h3 id="pin-title" style="margin-top: 10px;">الرمز السري</h3>
+                <p id="pin-subtitle" style="font-size: 13px; color: #64748b; margin-top: 5px;"></p>
+            </div>
+            <input type="password" id="input-pin" maxlength="4" placeholder="••••" style="font-size: 24px; letter-spacing: 5px; margin-bottom: 15px;">
+            <button class="btn btn-block" id="btn-submit-pin" onclick="verifyOrSetPin()">متابعة</button>
+            <p id="pin-error" style="color: #dc2626; font-size: 13px; text-align: center; margin-top: 10px; display: none;"></p>
+        </div>
+    </div>
+
+    <!-- نافذة بطاقة العضو الرقمية (للعرض فقط) -->
+    <div id="card-modal" class="modal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal('card-modal')">&times;</button>
+            <div class="badge-card">
+                <div class="badge-header">
+                    <img src="IM9.jpg" style="height: 45px; border-radius: 5px;" onerror="this.src='IM9.jpg'">
+                    <div style="text-align: left;">
+                        <span style="background: #dcfce7; color: #15803d; font-size: 11px; padding: 3px 8px; border-radius: 4px; font-weight: 700;">عضوية نشطة</span>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 15px;">
+                    <img id="m-photo" class="badge-avatar" src="IM9.jpg" alt="صورة العضو" onerror="this.src='IM9.jpg'">
+                    <div>
+                        <h3 id="m-name" style="font-size: 16px; color: var(--primary-dark);"></h3>
+                        <p id="m-role" style="font-size: 12px; font-weight: bold; color: var(--gold); margin-top: 3px;"></p>
+                    </div>
+                </div>
+                <div class="badge-info-row"><span class="badge-label">رقم العضوية:</span><span id="m-num" class="badge-value"></span></div>
+                <div class="badge-info-row"><span class="badge-label">الدليل المالي:</span><span id="m-nid" class="badge-value"></span></div>
+                <div class="badge-info-row"><span class="badge-label">السلك والتخصص:</span><span id="m-spec" class="badge-value"></span></div>
+                <div class="badge-info-row"><span class="badge-label">مكان العمل:</span><span id="m-school" class="badge-value"></span></div>
+                <div class="badge-info-row"><span class="badge-label">الولاية والمقاطعة:</span><span id="m-loc" class="badge-value"></span></div>
+            </div>
+            <p style="font-size: 11px; color: #94a3b8; text-align: center; margin-top: 10px;">
+                <i class="fas fa-shield-alt"></i> هذه البطاقة وثيقة رقمية معتمدة صادرة عن أمانة النقابة (للعرض فقط).
+            </p>
+        </div>
+    </div>
+
+    <!-- نافذة أعضاء المكتب الوطني (محمية الخصوصية) -->
+    <div id="office-modal" class="modal">
+        <div class="modal-content" style="max-width: 520px;">
+            <button class="close-btn" onclick="closeModal('office-modal')">&times;</button>
+            <div style="text-align: center; border-bottom: 2px solid var(--gold); padding-bottom: 12px; margin-bottom: 15px;">
+                <img src="IM9.jpg" style="width: 55px; height: 55px; border-radius: 50%; border: 2px solid var(--primary); margin-bottom: 6px;" onerror="this.src='IM9.jpg'">
+                <h3 style="color: var(--primary);">قيادة المكتب الوطني</h3>
+                <p style="font-size: 12px; color: #64748b;">النقابة الوطنية للمدرسين (نور)</p>
+            </div>
+            <div id="office-list" class="office-grid">
+                <!-- يتم تعبئة القيادات تلقائياً -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // إعداد الاتصال بقاعدة بيانات Supabase باستخدام المفاتيح الحقيقية
+        const SUPABASE_URL = 'https://nkbsmeaefpwygakvuhdg.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_PyakHaqvN7jdmG2v-NdN8w_Yo-5iwtL';
+        
+        const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        let currentMember = null;
+
+        // التحقق من الدليل المالي
+        async function checkMember() {
+            const nid = document.getElementById('input-nid').value.trim();
+            const msg = document.getElementById('check-msg');
+            msg.style.display = 'none';
+
+            if (!nid) {
+                msg.innerText = 'يرجى إدخال الدليل المالي أولاً';
+                msg.style.display = 'block';
+                return;
+            }
+
+            try {
+                const { data, error } = await client
+                    .from('members')
+                    .select('*')
+                    .ilike('national_id', nid)
+                    .single();
+
+                if (error || !data) {
+                    msg.innerText = 'عذراً، هذا الدليل المالي غير مسجل في لوائح الانتساب الرسمية.';
+                    msg.style.display = 'block';
+                    return;
+                }
+
+                currentMember = data;
+                document.getElementById('input-pin').value = '';
+                document.getElementById('pin-error').style.display = 'none';
+
+                if (!data.pin_code) {
+                    document.getElementById('pin-title').innerText = 'تفعيل الحساب لأول مرة';
+                    document.getElementById('pin-subtitle').innerText = 'يرجى إنشاء رمز سري شخصي مكوّن من 4 أرقام:';
+                    document.getElementById('btn-submit-pin').innerText = 'حفظ الرمز وتفعيل';
+                } else {
+                    document.getElementById('pin-title').innerText = 'التحقق الأمني';
+                    document.getElementById('pin-subtitle').innerText = 'أدخل الرمز السري الخاص بك (4 أرقام):';
+                    document.getElementById('btn-submit-pin').innerText = 'دخول';
+                }
+
+                document.getElementById('pin-modal').style.display = 'block';
+
+            } catch (err) {
+                msg.innerText = 'تعذر الاتصال بقاعدة البيانات، يرجى المحاولة لاحقاً.';
+                msg.style.display = 'block';
+            }
+        }
+
+        // معالجة ومطابقة الرمز السري (PIN)
+        async function verifyOrSetPin() {
+            const pin = document.getElementById('input-pin').value.trim();
+            const err = document.getElementById('pin-error');
+            err.style.display = 'none';
+
+            if (pin.length !== 4 || isNaN(pin)) {
+                err.innerText = 'الرمز يجب أن يتكون من 4 أرقام بالضبط.';
+                err.style.display = 'block';
+                return;
+            }
+
+            if (!currentMember.pin_code) {
+                // حفظ الرمز لأول مرة
+                const { error } = await client
+                    .from('members')
+                    .update({ pin_code: pin })
+                    .eq('id', currentMember.id);
+
+                if (error) {
+                    err.innerText = 'تعذر حفظ الرمز، حاول مجدداً.';
+                    err.style.display = 'block';
+                    return;
+                }
+                currentMember.pin_code = pin;
+                closeModal('pin-modal');
+                showCard(currentMember);
+            } else {
+                // مطابقة الرمز
+                if (currentMember.pin_code === pin) {
+                    closeModal('pin-modal');
+                    showCard(currentMember);
+                } else {
+                    err.innerText = 'الرمز السري غير صحيح!';
+                    err.style.display = 'block';
+                }
+            }
+        }
+
+        // إظهار بطاقة العضو
+        function showCard(m) {
+            document.getElementById('m-name').innerText = m.full_name;
+            document.getElementById('m-role').innerText = m.union_role || 'عضو';
+            document.getElementById('m-num').innerText = m.membership_number;
+            document.getElementById('m-nid').innerText = m.national_id;
+            document.getElementById('m-spec').innerText = m.specialty || '-';
+            document.getElementById('m-school').innerText = m.school || '-';
+            document.getElementById('m-loc').innerText = (m.wilaya || '') + ' - ' + (m.moughataa || '');
+            document.getElementById('m-photo').src = m.photo_url || 'IM9.jpg';
+            document.getElementById('card-modal').style.display = 'block';
+        }
+
+        // استعراض أعضاء المكتب الوطني
+        async function openOfficeModal() {
+            const modal = document.getElementById('office-modal');
+            const list = document.getElementById('office-list');
+            modal.style.display = 'block';
+            list.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: #64748b; padding: 20px;">جاري جلب قائمة القيادة...</div>';
+
+            try {
+                // استعلام آمن ومحدد للحقول المسموحة فقط
+                const { data, error } = await client
+                    .from('members')
+                    .select('full_name, union_role, photo_url')
+                    .ilike('union_role', '%المكتب الوطني%');
+
+                if (error || !data || data.length === 0) {
+                    list.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: #64748b; padding: 20px;">لا توجد سجلات متاحة حالياً.</div>';
+                    return;
+                }
+
+                list.innerHTML = data.map(mem => `
+                    <div class="office-member-card">
+                        <img class="office-avatar" src="${mem.photo_url || 'IM9.jpg'}" onerror="this.src='IM9.jpg'">
+                        <div class="office-name">${mem.full_name}</div>
+                        <div class="office-role">${mem.union_role}</div>
+                    </div>
+                `).join('');
+
+            } catch (e) {
+                list.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: red; padding: 20px;">تعذر تحميل القائمة.</div>';
+            }
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).style.display = 'none';
+        }
+
+        window.onclick = function(e) {
+            if (e.target.classList.contains('modal')) {
+                e.target.style.display = 'none';
+            }
+        };
+    </script>
+</body>
+</html>
