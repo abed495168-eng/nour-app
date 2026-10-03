@@ -150,6 +150,16 @@
             background-color: #c29d2b;
         }
 
+        .btn-outline {
+            background-color: white;
+            color: var(--primary);
+            border: 1.5px solid var(--primary);
+        }
+
+        .btn-outline:hover {
+            background-color: #e8f5e9;
+        }
+
         /* النوافذ المنبثقة */
         .modal {
             display: none;
@@ -236,7 +246,7 @@
             color: #0f172a;
         }
 
-        /* شبكة أعضاء المكتب الوطني */
+        /* شبكة الأعضاء */
         .office-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
@@ -333,10 +343,13 @@
             <p id="check-msg" style="font-size: 13px; text-align: center; color: #dc2626; display: none;"></p>
         </div>
 
-        <!-- زر استعراض تشكيلة أعضاء المكتب الوطني -->
-        <div style="margin-bottom: 20px;">
+        <!-- أزرار استعراض الهيئات الإدارية -->
+        <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px;">
             <button class="btn btn-block btn-gold" onclick="openOfficeModal()">
                 <i class="fas fa-users-cog"></i> تشكيلة أعضاء المكتب الوطني
+            </button>
+            <button class="btn btn-block btn-outline" onclick="openCouncilModal()">
+                <i class="fas fa-landmark"></i> أعضاء المجلس الوطني
             </button>
         </div>
 
@@ -406,7 +419,7 @@
         </div>
     </div>
 
-    <!-- نافذة أعضاء المكتب الوطني (محمية الخصوصية) -->
+    <!-- نافذة أعضاء المكتب الوطني -->
     <div id="office-modal" class="modal">
         <div class="modal-content" style="max-width: 520px;">
             <button class="close-btn" onclick="closeModal('office-modal')">&times;</button>
@@ -415,14 +428,24 @@
                 <h3 style="color: var(--primary);">أعضاء المكتب الوطني</h3>
                 <p style="font-size: 12px; color: #64748b;">النقابة الوطنية للمدرسين (نور)</p>
             </div>
-            <div id="office-list" class="office-grid">
-                <!-- يتم تعبئة الأعضاء تلقائياً ومرتبين إدارياً من قاعدة البيانات -->
+            <div id="office-list" class="office-grid"></div>
+        </div>
+    </div>
+
+    <!-- نافذة أعضاء المجلس الوطني -->
+    <div id="council-modal" class="modal">
+        <div class="modal-content" style="max-width: 520px;">
+            <button class="close-btn" onclick="closeModal('council-modal')">&times;</button>
+            <div style="text-align: center; border-bottom: 2px solid var(--gold); padding-bottom: 12px; margin-bottom: 15px;">
+                <img src="IM9.jpg" style="width: 55px; height: 55px; border-radius: 50%; border: 2px solid var(--primary); margin-bottom: 6px;" onerror="this.src='IM9.jpg'">
+                <h3 style="color: var(--primary);">أعضاء المجلس الوطني</h3>
+                <p style="font-size: 12px; color: #64748b;">النقابة الوطنية للمدرسين (نور)</p>
             </div>
+            <div id="council-list" class="office-grid"></div>
         </div>
     </div>
 
     <script>
-        // إعداد الاتصال بقاعدة بيانات Supabase باستخدام المفاتيح الرسمية المعتمدة
         const SUPABASE_URL = 'https://nkbsmeaefpwygakvuhdg.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_PyakHaqvN7jdmG2v-NdN8w_Yo-5iwtL';
         
@@ -443,7 +466,6 @@
             }
 
             try {
-                // البحث المتوازي: يطابق الدليل المالي أو الرقم الوطني تلقائياً
                 const { data, error } = await client
                     .from('members')
                     .select('*')
@@ -491,7 +513,6 @@
             }
 
             if (!currentMember.pin_code) {
-                // حفظ الرمز لأول مرة في قاعدة البيانات
                 const { error } = await client
                     .from('members')
                     .update({ pin_code: pin })
@@ -506,7 +527,6 @@
                 closeModal('pin-modal');
                 showCard(currentMember);
             } else {
-                // مطابقة الرمز المسجل
                 if (currentMember.pin_code === pin) {
                     closeModal('pin-modal');
                     showCard(currentMember);
@@ -517,13 +537,12 @@
             }
         }
 
-        // إظهار بطاقة العضو وتخصيص نوع المعرف
+        // إظهار بطاقة العضو
         function showCard(m) {
             document.getElementById('m-name').innerText = m.full_name;
             document.getElementById('m-role').innerText = m.union_role || 'عضو';
             document.getElementById('m-num').innerText = m.membership_number;
             
-            // تحديد المسمى والقيمة بناءً على نوع العضوية
             if (m.financial_id) {
                 document.getElementById('m-id-label').innerText = 'الدليل المالي:';
                 document.getElementById('m-nid').innerText = m.financial_id;
@@ -539,7 +558,7 @@
             document.getElementById('card-modal').style.display = 'block';
         }
 
-        // استعراض أعضاء المكتب الوطني مرتبين إدارياً
+        // استعراض أعضاء المكتب الوطني (بالمناصب التفصيلية)
         async function openOfficeModal() {
             const modal = document.getElementById('office-modal');
             const list = document.getElementById('office-list');
@@ -547,11 +566,10 @@
             list.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: #64748b; padding: 20px;">جاري جلب قائمة الأعضاء...</div>';
 
             try {
-                // استعلام آمن ومحدد لحقول العرض مع الفرز التلقائي وفق التسلسل الإداري
                 const { data, error } = await client
                     .from('members')
                     .select('full_name, union_role, photo_url, display_order')
-                    .ilike('union_role', '%المكتب الوطني%')
+                    .eq('is_national_office', true)
                     .order('display_order', { ascending: true });
 
                 if (error || !data || data.length === 0) {
@@ -564,6 +582,38 @@
                         <img class="office-avatar" src="${mem.photo_url || 'IM9.jpg'}" onerror="this.src='IM9.jpg'">
                         <div class="office-name">${mem.full_name}</div>
                         <div class="office-role">${mem.union_role}</div>
+                    </div>
+                `).join('');
+
+            } catch (e) {
+                list.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: red; padding: 20px;">تعذر تحميل القائمة.</div>';
+            }
+        }
+
+        // استعراض أعضاء المجلس الوطني (الجميع بصفة: عضو المجلس الوطني)
+        async function openCouncilModal() {
+            const modal = document.getElementById('council-modal');
+            const list = document.getElementById('council-list');
+            modal.style.display = 'block';
+            list.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: #64748b; padding: 20px;">جاري جلب أعضاء المجلس الوطني...</div>';
+
+            try {
+                const { data, error } = await client
+                    .from('members')
+                    .select('full_name, photo_url, display_order')
+                    .eq('is_national_council', true)
+                    .order('display_order', { ascending: true });
+
+                if (error || !data || data.length === 0) {
+                    list.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: #64748b; padding: 20px;">لا توجد سجلات متاحة حالياً.</div>';
+                    return;
+                }
+
+                list.innerHTML = data.map(mem => `
+                    <div class="office-member-card">
+                        <img class="office-avatar" src="${mem.photo_url || 'IM9.jpg'}" onerror="this.src='IM9.jpg'">
+                        <div class="office-name">${mem.full_name}</div>
+                        <div class="office-role">عضو المجلس الوطني</div>
                     </div>
                 `).join('');
 
