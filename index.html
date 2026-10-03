@@ -106,7 +106,7 @@
             padding: 12px;
             border: 1.5px solid #cbd5e1;
             border-radius: 8px;
-            font-size: 15px;
+            font-size: 14px;
             text-align: center;
             font-weight: bold;
             outline: none;
@@ -121,10 +121,10 @@
             background-color: var(--primary);
             color: white;
             border: none;
-            padding: 12px 20px;
+            padding: 12px 18px;
             border-radius: 8px;
             font-weight: 700;
-            font-size: 15px;
+            font-size: 14px;
             cursor: pointer;
             transition: all 0.2s ease;
             display: inline-flex;
@@ -327,13 +327,13 @@
                 <i class="fas fa-search"></i> التحقق من صحة الانتساب
             </div>
             <div class="input-group">
-                <input type="text" id="input-nid" placeholder="أدخل الدليل المالي (مثال: 122877L)">
+                <input type="text" id="input-nid" placeholder="الدليل المالي أو الرقم الوطني">
                 <button class="btn" onclick="checkMember()"><i class="fas fa-check"></i> تحقق</button>
             </div>
             <p id="check-msg" style="font-size: 13px; text-align: center; color: #dc2626; display: none;"></p>
         </div>
 
-        <!-- زر استعراض قيادة النقابة -->
+        <!-- زر استعراض تشكيلة أعضاء المكتب الوطني -->
         <div style="margin-bottom: 20px;">
             <button class="btn btn-block btn-gold" onclick="openOfficeModal()">
                 <i class="fas fa-users-cog"></i> تشكيلة أعضاء المكتب الوطني
@@ -395,7 +395,7 @@
                     </div>
                 </div>
                 <div class="badge-info-row"><span class="badge-label">رقم العضوية:</span><span id="m-num" class="badge-value"></span></div>
-                <div class="badge-info-row"><span class="badge-label">الدليل المالي:</span><span id="m-nid" class="badge-value"></span></div>
+                <div class="badge-info-row"><span class="badge-label" id="m-id-label">المعرّف:</span><span id="m-nid" class="badge-value"></span></div>
                 <div class="badge-info-row"><span class="badge-label">السلك والتخصص:</span><span id="m-spec" class="badge-value"></span></div>
                 <div class="badge-info-row"><span class="badge-label">مكان العمل:</span><span id="m-school" class="badge-value"></span></div>
                 <div class="badge-info-row"><span class="badge-label">الولاية والمقاطعة:</span><span id="m-loc" class="badge-value"></span></div>
@@ -412,17 +412,17 @@
             <button class="close-btn" onclick="closeModal('office-modal')">&times;</button>
             <div style="text-align: center; border-bottom: 2px solid var(--gold); padding-bottom: 12px; margin-bottom: 15px;">
                 <img src="IM9.jpg" style="width: 55px; height: 55px; border-radius: 50%; border: 2px solid var(--primary); margin-bottom: 6px;" onerror="this.src='IM9.jpg'">
-                <h3 style="color: var(--primary);">قيادة المكتب الوطني</h3>
+                <h3 style="color: var(--primary);">أعضاء المكتب الوطني</h3>
                 <p style="font-size: 12px; color: #64748b;">النقابة الوطنية للمدرسين (نور)</p>
             </div>
             <div id="office-list" class="office-grid">
-                <!-- يتم تعبئة القيادات تلقائياً -->
+                <!-- يتم تعبئة الأعضاء تلقائياً ومرتبين إدارياً من قاعدة البيانات -->
             </div>
         </div>
     </div>
 
     <script>
-        // إعداد الاتصال بقاعدة بيانات Supabase باستخدام المفاتيح الحقيقية
+        // إعداد الاتصال بقاعدة بيانات Supabase باستخدام المفاتيح الرسمية المعتمدة
         const SUPABASE_URL = 'https://nkbsmeaefpwygakvuhdg.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_PyakHaqvN7jdmG2v-NdN8w_Yo-5iwtL';
         
@@ -430,27 +430,28 @@
 
         let currentMember = null;
 
-        // التحقق من الدليل المالي
+        // التحقق من الدليل المالي أو الرقم الوطني
         async function checkMember() {
-            const nid = document.getElementById('input-nid').value.trim();
+            const idInput = document.getElementById('input-nid').value.trim();
             const msg = document.getElementById('check-msg');
             msg.style.display = 'none';
 
-            if (!nid) {
-                msg.innerText = 'يرجى إدخال الدليل المالي أولاً';
+            if (!idInput) {
+                msg.innerText = 'يرجى إدخال الدليل المالي أو الرقم الوطني أولاً';
                 msg.style.display = 'block';
                 return;
             }
 
             try {
+                // البحث المتوازي: يطابق الدليل المالي أو الرقم الوطني تلقائياً
                 const { data, error } = await client
                     .from('members')
                     .select('*')
-                    .ilike('national_id', nid)
+                    .or(`national_id.ilike.${idInput},financial_id.ilike.${idInput}`)
                     .single();
 
                 if (error || !data) {
-                    msg.innerText = 'عذراً، هذا الدليل المالي غير مسجل في لوائح الانتساب الرسمية.';
+                    msg.innerText = 'عذراً، هذا الرقم غير مسجل في لوائح الانتساب الرسمية.';
                     msg.style.display = 'block';
                     return;
                 }
@@ -490,7 +491,7 @@
             }
 
             if (!currentMember.pin_code) {
-                // حفظ الرمز لأول مرة
+                // حفظ الرمز لأول مرة في قاعدة البيانات
                 const { error } = await client
                     .from('members')
                     .update({ pin_code: pin })
@@ -505,7 +506,7 @@
                 closeModal('pin-modal');
                 showCard(currentMember);
             } else {
-                // مطابقة الرمز
+                // مطابقة الرمز المسجل
                 if (currentMember.pin_code === pin) {
                     closeModal('pin-modal');
                     showCard(currentMember);
@@ -516,12 +517,21 @@
             }
         }
 
-        // إظهار بطاقة العضو
+        // إظهار بطاقة العضو وتخصيص نوع المعرف
         function showCard(m) {
             document.getElementById('m-name').innerText = m.full_name;
             document.getElementById('m-role').innerText = m.union_role || 'عضو';
             document.getElementById('m-num').innerText = m.membership_number;
-            document.getElementById('m-nid').innerText = m.national_id;
+            
+            // تحديد المسمى والقيمة بناءً على نوع العضوية
+            if (m.financial_id) {
+                document.getElementById('m-id-label').innerText = 'الدليل المالي:';
+                document.getElementById('m-nid').innerText = m.financial_id;
+            } else {
+                document.getElementById('m-id-label').innerText = 'الرقم الوطني:';
+                document.getElementById('m-nid').innerText = m.national_id;
+            }
+
             document.getElementById('m-spec').innerText = m.specialty || '-';
             document.getElementById('m-school').innerText = m.school || '-';
             document.getElementById('m-loc').innerText = (m.wilaya || '') + ' - ' + (m.moughataa || '');
@@ -529,19 +539,20 @@
             document.getElementById('card-modal').style.display = 'block';
         }
 
-        // استعراض أعضاء المكتب الوطني
+        // استعراض أعضاء المكتب الوطني مرتبين إدارياً
         async function openOfficeModal() {
             const modal = document.getElementById('office-modal');
             const list = document.getElementById('office-list');
             modal.style.display = 'block';
-            list.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: #64748b; padding: 20px;">جاري جلب قائمة القيادة...</div>';
+            list.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: #64748b; padding: 20px;">جاري جلب قائمة الأعضاء...</div>';
 
             try {
-                // استعلام آمن ومحدد للحقول المسموحة فقط
+                // استعلام آمن ومحدد لحقول العرض مع الفرز التلقائي وفق التسلسل الإداري
                 const { data, error } = await client
                     .from('members')
-                    .select('full_name, union_role, photo_url')
-                    .ilike('union_role', '%المكتب الوطني%');
+                    .select('full_name, union_role, photo_url, display_order')
+                    .ilike('union_role', '%المكتب الوطني%')
+                    .order('display_order', { ascending: true });
 
                 if (error || !data || data.length === 0) {
                     list.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: #64748b; padding: 20px;">لا توجد سجلات متاحة حالياً.</div>';
