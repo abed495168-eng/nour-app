@@ -159,6 +159,18 @@
         .btn-outline:hover {
             background-color: #e8f5e9;
         }
+        
+        .btn-info {
+            background-color: #f8fafc;
+            color: var(--primary-dark);
+            border: 1.5px solid #cbd5e1;
+            margin-bottom: 20px;
+        }
+        
+        .btn-info:hover {
+            background-color: #f1f5f9;
+            border-color: var(--primary);
+        }
 
         /* النوافذ المنبثقة */
         .modal {
@@ -200,6 +212,7 @@
             cursor: pointer;
             border: none;
             background: none;
+            z-index: 10;
         }
 
         /* بطاقة العضو الرقمية */
@@ -319,56 +332,50 @@
             line-height: 1.5;
         }
 
-        /* تنسيقات قسم من نحن */
-        .about-section {
-            background: white;
-            border-radius: 12px;
-            padding: 25px;
-            margin-bottom: 20px;
-            box-shadow: var(--card-shadow);
+        /* تنسيقات نافذة من نحن */
+        .about-content {
             line-height: 1.8;
             font-size: 14px;
             color: #475569;
+            text-align: right;
+            margin-top: 20px;
         }
         
-        .about-section h3 {
+        .about-content h3 {
             color: var(--primary);
-            font-size: 18px;
+            font-size: 16px;
             border-bottom: 2px solid #edf2f7;
-            padding-bottom: 10px;
-            margin-top: 25px;
-            margin-bottom: 15px;
+            padding-bottom: 8px;
+            margin-top: 20px;
+            margin-bottom: 10px;
             display: flex;
             align-items: center;
             gap: 8px;
         }
 
-        .about-section h3:first-child {
-            margin-top: 0;
-        }
-
-        .about-section p {
-            margin-bottom: 15px;
+        .about-content p {
+            margin-bottom: 12px;
             text-align: justify;
         }
 
-        .about-section ul {
+        .about-content ul {
             list-style-type: none;
             padding-right: 0;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
-        .about-section ul li {
+        .about-content ul li {
             position: relative;
-            padding-right: 20px;
-            margin-bottom: 8px;
+            padding-right: 18px;
+            margin-bottom: 6px;
+            font-size: 13px;
         }
 
-        .about-section ul li::before {
+        .about-content ul li::before {
             content: "•";
             color: var(--gold);
             font-weight: bold;
-            font-size: 18px;
+            font-size: 16px;
             position: absolute;
             right: 0;
             top: -2px;
@@ -376,8 +383,8 @@
 
         .about-logo-text {
             text-align: center;
-            margin-top: 30px;
-            padding: 20px;
+            margin-top: 25px;
+            padding: 15px;
             background-color: #f8fafc;
             border-radius: 8px;
             border: 1px solid #e2e8f0;
@@ -385,13 +392,13 @@
 
         .about-logo-text h4 {
             color: var(--primary-dark);
-            margin-bottom: 8px;
-            font-size: 16px;
+            margin-bottom: 5px;
+            font-size: 15px;
         }
 
         .about-logo-text h5 {
             color: var(--gold);
-            font-size: 18px;
+            font-size: 16px;
             margin: 0;
         }
     </style>
@@ -419,6 +426,11 @@
             <p id="check-msg" style="font-size: 13px; text-align: center; color: #dc2626; display: none;"></p>
         </div>
 
+        <!-- زر التعريف بالنقابة (من نحن) - تم تحويله لزر -->
+        <button class="btn btn-block btn-info" onclick="openAboutModal()">
+            <i class="fas fa-info-circle"></i> من نحن؟ (تعريف بالنقابة)
+        </button>
+
         <!-- أزرار استعراض الهيئات الإدارية -->
         <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px;">
             <button class="btn btn-block btn-gold" onclick="openOfficeModal()">
@@ -427,40 +439,6 @@
             <button class="btn btn-block btn-outline" onclick="openCouncilModal()">
                 <i class="fas fa-landmark"></i> أعضاء المجلس الوطني
             </button>
-        </div>
-
-        <!-- قسم التعريف بالنقابة (من نحن) -->
-        <div class="about-section">
-            <h3><i class="fas fa-info-circle"></i> من نحن؟</h3>
-            <p><strong>النقابة الوطنية للمدرسين (نور)</strong> هي نقابة مهنية مستقلة تمثل المدرسين والعاملين في قطاع التعليم في الجمهورية الإسلامية الموريتانية، وتعمل على الدفاع عن حقوقهم المهنية والاجتماعية، وتحسين ظروفهم المعيشية والمهنية، والمساهمة في تطوير منظومة التعليم والارتقاء بجودتها.</p>
-            <p>تؤمن «نور» بأن المدرس هو حجر الأساس في بناء الإنسان والمجتمع، وأن تحسين التعليم يبدأ من صون كرامة المدرس، وتحسين ظروف عمله، وتمكينه من أداء رسالته في بيئة مهنية واجتماعية ملائمة.</p>
-            <p>وتضم النقابة في إطارها المهني المعلمين، والأساتذة، ووكلاء عقدوي الدولة، ومقدمي خدمات التعليم، والمعلمين الرئيسيين، والمستشارين التربويين، والملحقين الإداريين وغيرهم من العاملين في المجال التربوي.</p>
-            <p>ومنذ تأسيسها سنة 2021، اختارت «نور» أن تجعل من وحدة الصف، والنضال المسؤول، والحوار المؤسسي منهجًا في العمل النقابي، وأن تجعل من المطالبة بالحقوق وسيلة للإصلاح، ومن الحوار وسيلة للوصول إلى حلول عملية ومستدامة.</p>
-            <p>وقد حصلت النقابة على التمثيلية النقابية سنة 2025، لتصبح طرفًا حاضرًا في النقاشات المتعلقة بالمدرس والقطاع، وتعمل على إيصال صوت منتسبيها والدفاع عن مصالحهم عبر الأطر القانونية والمؤسسية.</p>
-
-            <h3><i class="fas fa-bullseye"></i> ماذا نريد؟</h3>
-            <p>تسعى «نور» إلى بناء عمل نقابي مهني ومؤسسي قادر على:</p>
-            <ul>
-                <li>الدفاع عن الحقوق المادية والمعنوية والمهنية للمدرسين.</li>
-                <li>تحسين الأجور والعلاوات وظروف العمل والحماية الاجتماعية.</li>
-                <li>تعزيز مكانة المدرس وصون كرامته وهيبته المهنية.</li>
-                <li>المساهمة في تطوير السياسات والقرارات التربوية.</li>
-                <li>إشراك النقابات في صناعة القرار المتعلق بالمدرس وقطاع التعليم.</li>
-                <li>دعم التعليم في المدن والقرى والمناطق النائية، والدفاع عن توفير البنية التحتية والوسائل التعليمية المناسبة.</li>
-                <li>بناء شراكات مسؤولة مع مختلف الفاعلين لخدمة التعليم والمدرس.</li>
-                <li>ترسيخ الحوار الاجتماعي باعتباره طريقًا للوصول إلى حلول عادلة وقابلة للتنفيذ.</li>
-            </ul>
-
-            <h3><i class="fas fa-eye"></i> رؤيتنا</h3>
-            <p>أن تكون النقابة الوطنية للمدرسين (نور) مؤسسة نقابية مهنية مستقلة، قوية بمؤسساتها، موحدة بمنتسبيها، حاضرة في قضايا التعليم، وقادرة على الدفاع عن حقوق المدرسين والمساهمة بفاعلية في بناء تعليم جيد، عادل، ومستدام.</p>
-
-            <h3><i class="fas fa-envelope-open-text"></i> رسالتنا</h3>
-            <p>الدفاع عن المدرس، تطوير التعليم، وترسيخ الحوار الاجتماعي؛ انطلاقًا من قناعة راسخة بأن الاستثمار في المدرس هو استثمار في مستقبل موريتانيا.</p>
-
-            <div class="about-logo-text">
-                <h4>النقابة الوطنية للمدرسين (نور)</h4>
-                <h5>وحدة – نضال – حوار</h5>
-            </div>
         </div>
 
         <!-- قسم الأخبار الرسمية -->
@@ -526,6 +504,49 @@
             <p style="font-size: 11px; color: #94a3b8; text-align: center; margin-top: 10px;">
                 <i class="fas fa-shield-alt"></i> هذه البطاقة وثيقة رقمية معتمدة صادرة عن أمانة النقابة (للعرض فقط).
             </p>
+        </div>
+    </div>
+
+    <!-- نافذة من نحن (التعريف بالنقابة) -->
+    <div id="about-modal" class="modal">
+        <div class="modal-content" style="max-width: 550px;">
+            <button class="close-btn" onclick="closeModal('about-modal')">&times;</button>
+            
+            <div style="text-align: center; border-bottom: 2px solid var(--gold); padding-bottom: 12px; margin-top: 10px;">
+                <h2 style="color: var(--primary); font-size: 20px;">النقابة الوطنية للمدرسين (نور)</h2>
+            </div>
+            
+            <div class="about-content">
+                <p><strong>النقابة الوطنية للمدرسين (نور)</strong> هي نقابة مهنية مستقلة تمثل المدرسين والعاملين في قطاع التعليم في الجمهورية الإسلامية الموريتانية، وتعمل على الدفاع عن حقوقهم المهنية والاجتماعية، وتحسين ظروفهم المعيشية والمهنية، والمساهمة في تطوير منظومة التعليم والارتقاء بجودتها.</p>
+                <p>تؤمن «نور» بأن المدرس هو حجر الأساس في بناء الإنسان والمجتمع، وأن تحسين التعليم يبدأ من صون كرامة المدرس، وتحسين ظروف عمله، وتمكينه من أداء رسالته في بيئة مهنية واجتماعية ملائمة.</p>
+                <p>وتضم النقابة في إطارها المهني المعلمين، والأساتذة، ووكلاء عقدوي الدولة، ومقدمي خدمات التعليم، والمعلمين الرئيسيين، والمستشارين التربويين، والملحقين الإداريين وغيرهم من العاملين في المجال التربوي.</p>
+                <p>ومنذ تأسيسها سنة 2021، اختارت «نور» أن تجعل من وحدة الصف، والنضال المسؤول، والحوار المؤسسي منهجًا في العمل النقابي، وأن تجعل من المطالبة بالحقوق وسيلة للإصلاح، ومن الحوار وسيلة للوصول إلى حلول عملية ومستدامة.</p>
+                <p>وقد حصلت النقابة على التمثيلية النقابية سنة 2025، لتصبح طرفًا حاضرًا في النقاشات المتعلقة بالمدرس والقطاع، وتعمل على إيصال صوت منتسبيها والدفاع عن مصالحهم عبر الأطر القانونية والمؤسسية.</p>
+
+                <h3><i class="fas fa-bullseye"></i> ماذا نريد؟</h3>
+                <p>تسعى «نور» إلى بناء عمل نقابي مهني ومؤسسي قادر على:</p>
+                <ul>
+                    <li>الدفاع عن الحقوق المادية والمعنوية والمهنية للمدرسين.</li>
+                    <li>تحسين الأجور والعلاوات وظروف العمل والحماية الاجتماعية.</li>
+                    <li>تعزيز مكانة المدرس وصون كرامته وهيبته المهنية.</li>
+                    <li>المساهمة في تطوير السياسات والقرارات التربوية.</li>
+                    <li>إشراك النقابات في صناعة القرار المتعلق بالمدرس وقطاع التعليم.</li>
+                    <li>دعم التعليم في المدن والقرى والمناطق النائية، والدفاع عن توفير البنية التحتية والوسائل التعليمية المناسبة.</li>
+                    <li>بناء شراكات مسؤولة مع مختلف الفاعلين لخدمة التعليم والمدرس.</li>
+                    <li>ترسيخ الحوار الاجتماعي باعتباره طريقًا للوصول إلى حلول عادلة وقابلة للتنفيذ.</li>
+                </ul>
+
+                <h3><i class="fas fa-eye"></i> رؤيتنا</h3>
+                <p>أن تكون النقابة الوطنية للمدرسين (نور) مؤسسة نقابية مهنية مستقلة، قوية بمؤسساتها، موحدة بمنتسبيها، حاضرة في قضايا التعليم، وقادرة على الدفاع عن حقوق المدرسين والمساهمة بفاعلية في بناء تعليم جيد، عادل، ومستدام.</p>
+
+                <h3><i class="fas fa-envelope-open-text"></i> رسالتنا</h3>
+                <p>الدفاع عن المدرس، تطوير التعليم، وترسيخ الحوار الاجتماعي؛ انطلاقًا من قناعة راسخة بأن الاستثمار في المدرس هو استثمار في مستقبل موريتانيا.</p>
+
+                <div class="about-logo-text">
+                    <h4>النقابة الوطنية للمدرسين (نور)</h4>
+                    <h5>وحدة – نضال – حوار</h5>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -666,6 +687,11 @@
             document.getElementById('m-loc').innerText = (m.wilaya || '') + ' - ' + (m.moughataa || '');
             document.getElementById('m-photo').src = m.photo_url || 'IM9.jpg';
             document.getElementById('card-modal').style.display = 'block';
+        }
+        
+        // فتح نافذة من نحن
+        function openAboutModal() {
+            document.getElementById('about-modal').style.display = 'block';
         }
 
         // استعراض أعضاء المكتب الوطني (بالمناصب التفصيلية)
