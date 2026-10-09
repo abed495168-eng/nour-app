@@ -67,7 +67,7 @@
         }
 
         .container {
-            max-width: 500px;
+            max-width: 520px;
             margin: -20px auto 30px;
             padding: 0 15px;
             width: 100%;
@@ -172,20 +172,55 @@
             border-color: var(--primary);
         }
 
-        /* زر المنسقية الجهوية */
-        .btn-region {
+        /* شبكة أزرار المنسقيات الجهوية */
+        .regions-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 9px;
+        }
+
+        @media (max-width: 400px) {
+            .regions-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .region-btn {
             background: linear-gradient(135deg, var(--primary-dark), var(--primary));
             color: white;
             border: 1.5px solid var(--gold);
-            box-shadow: 0 4px 10px rgba(17, 104, 53, 0.2);
+            border-radius: 8px;
+            padding: 10px 12px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 6px;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 6px rgba(17, 104, 53, 0.15);
+            width: 100%;
         }
 
-        .btn-region:hover {
+        .region-btn:hover {
             background: linear-gradient(135deg, #0b4824, #08331a);
             border-color: #ffffff;
+            transform: translateY(-2px);
         }
 
-        /* بطاقات أعضاء المنسقية */
+        .region-code-badge {
+            background: rgba(212, 175, 55, 0.25);
+            color: var(--gold);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 800;
+            direction: ltr;
+            flex-shrink: 0;
+        }
+
+        /* بطاقات أعضاء المنسقية داخل النافذة */
         .region-member-card {
             background: #f8fafc;
             border: 1px solid #e2e8f0;
@@ -330,7 +365,7 @@
             color: #0f172a;
         }
 
-        /* شبكة الأعضاء */
+        /* شبكة أعضاء المجلس والمكتب */
         .office-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
@@ -403,7 +438,7 @@
             line-height: 1.5;
         }
 
-        /* تنسيقات نافذة من نحن */
+        /* نافذة من نحن */
         .about-content {
             line-height: 1.8;
             font-size: 14px;
@@ -502,7 +537,7 @@
             <i class="fas fa-info-circle"></i> من نحن؟ (تعريف بالنقابة)
         </button>
 
-        <!-- أزرار استعراض الهيئات الإدارية والمنسقيات الجهوية -->
+        <!-- أزرار استعراض الهيئات القيادية -->
         <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px;">
             <button class="btn btn-block btn-gold" onclick="openOfficeModal()">
                 <i class="fas fa-users-cog"></i> تشكيلة أعضاء المكتب الوطني
@@ -510,10 +545,75 @@
             <button class="btn btn-block btn-outline" onclick="openCouncilModal()">
                 <i class="fas fa-landmark"></i> أعضاء المجلس الوطني
             </button>
-            <!-- قسم منسقية الحوض الغربي الجديد -->
-            <button class="btn btn-block btn-region" onclick="openHodhGharbiModal()">
-                <i class="fas fa-map-marked-alt" style="color: var(--gold);"></i> منسقية ولاية الحوض الغربي (HG02)
-            </button>
+        </div>
+
+        <!-- بطاقة المنسقيات الجهوية (جميع الولايات الـ 15) -->
+        <div class="card">
+            <div class="card-title">
+                <i class="fas fa-map-marked-alt" style="color: var(--primary);"></i> المنسقيات الجهوية (الولايات)
+            </div>
+            <div class="regions-grid">
+                <button class="region-btn" onclick="openRegionModal('HC01')">
+                    <span><i class="fas fa-map-marker-alt" style="color: var(--gold); margin-left: 4px;"></i>الحوض الشرقي</span>
+                    <span class="region-code-badge">HC01</span>
+                </button>
+                <button class="region-btn" onclick="openRegionModal('HG02')">
+                    <span><i class="fas fa-map-marker-alt" style="color: var(--gold); margin-left: 4px;"></i>الحوض الغربي</span>
+                    <span class="region-code-badge">HG02</span>
+                </button>
+                <button class="region-btn" onclick="openRegionModal('AS03')">
+                    <span><i class="fas fa-map-marker-alt" style="color: var(--gold); margin-left: 4px;"></i>لعصابه</span>
+                    <span class="region-code-badge">AS03</span>
+                </button>
+                <button class="region-btn" onclick="openRegionModal('GO04')">
+                    <span><i class="fas fa-map-marker-alt" style="color: var(--gold); margin-left: 4px;"></i>كوركول</span>
+                    <span class="region-code-badge">GO04</span>
+                </button>
+                <button class="region-btn" onclick="openRegionModal('BR05')">
+                    <span><i class="fas fa-map-marker-alt" style="color: var(--gold); margin-left: 4px;"></i>لبراكنة</span>
+                    <span class="region-code-badge">BR05</span>
+                </button>
+                <button class="region-btn" onclick="openRegionModal('TR06')">
+                    <span><i class="fas fa-map-marker-alt" style="color: var(--gold); margin-left: 4px;"></i>الترارزة</span>
+                    <span class="region-code-badge">TR06</span>
+                </button>
+                <button class="region-btn" onclick="openRegionModal('AD07')">
+                    <span><i class="fas fa-map-marker-alt" style="color: var(--gold); margin-left: 4px;"></i>أدرار</span>
+                    <span class="region-code-badge">AD07</span>
+                </button>
+                <button class="region-btn" onclick="openRegionModal('DN08')">
+                    <span><i class="fas fa-map-marker-alt" style="color: var(--gold); margin-left: 4px;"></i>داخلت نواذيبو</span>
+                    <span class="region-code-badge">DN08</span>
+                </button>
+                <button class="region-btn" onclick="openRegionModal('TG09')">
+                    <span><i class="fas fa-map-marker-alt" style="color: var(--gold); margin-left: 4px;"></i>تكانت</span>
+                    <span class="region-code-badge">TG09</span>
+                </button>
+                <button class="region-btn" onclick="openRegionModal('GM10')">
+                    <span><i class="fas fa-map-marker-alt" style="color: var(--gold); margin-left: 4px;"></i>كيدي ماغا</span>
+                    <span class="region-code-badge">GM10</span>
+                </button>
+                <button class="region-btn" onclick="openRegionModal('TZ11')">
+                    <span><i class="fas fa-map-marker-alt" style="color: var(--gold); margin-left: 4px;"></i>تيرس زمور</span>
+                    <span class="region-code-badge">TZ11</span>
+                </button>
+                <button class="region-btn" onclick="openRegionModal('IN12')">
+                    <span><i class="fas fa-map-marker-alt" style="color: var(--gold); margin-left: 4px;"></i>إينشيري</span>
+                    <span class="region-code-badge">IN12</span>
+                </button>
+                <button class="region-btn" onclick="openRegionModal('NO13')">
+                    <span><i class="fas fa-map-marker-alt" style="color: var(--gold); margin-left: 4px;"></i>نواكشوط الغربية</span>
+                    <span class="region-code-badge">NO13</span>
+                </button>
+                <button class="region-btn" onclick="openRegionModal('NN14')">
+                    <span><i class="fas fa-map-marker-alt" style="color: var(--gold); margin-left: 4px;"></i>نواكشوط الشمالية</span>
+                    <span class="region-code-badge">NN14</span>
+                </button>
+                <button class="region-btn" onclick="openRegionModal('NS15')">
+                    <span><i class="fas fa-map-marker-alt" style="color: var(--gold); margin-left: 4px;"></i>نواكشوط الجنوبية</span>
+                    <span class="region-code-badge">NS15</span>
+                </button>
+            </div>
         </div>
 
         <!-- قسم الأخبار الرسمية -->
@@ -586,11 +686,9 @@
     <div id="about-modal" class="modal">
         <div class="modal-content" style="max-width: 550px;">
             <button class="close-btn" onclick="closeModal('about-modal')">&times;</button>
-            
             <div style="text-align: center; border-bottom: 2px solid var(--gold); padding-bottom: 12px; margin-top: 10px;">
                 <h2 style="color: var(--primary); font-size: 20px;">النقابة الوطنية للمدرسين (نور)</h2>
             </div>
-            
             <div class="about-content">
                 <p><strong>النقابة الوطنية للمدرسين (نور)</strong> هي نقابة مهنية مستقلة تمثل المدرسين والعاملين في قطاع التعليم في الجمهورية الإسلامية الموريتانية، وتعمل على الدفاع عن حقوقهم المهنية والاجتماعية، وتحسين ظروفهم المعيشية والمهنية، والمساهمة في تطوير منظومة التعليم والارتقاء بجودتها.</p>
                 <p>تؤمن «نور» بأن المدرس هو حجر الأساس في بناء الإنسان والمجتمع، وأن تحسين التعليم يبدأ من صون كرامة المدرس، وتحسين ظروف عمله، وتمكينه من أداء رسالته في بيئة مهنية واجتماعية ملائمة.</p>
@@ -651,16 +749,16 @@
         </div>
     </div>
 
-    <!-- نافذة منسقية ولاية الحوض الغربي (HG02) -->
-    <div id="hodh-gharbi-modal" class="modal">
+    <!-- نافذة استعراض المنسقية الجهوية (نافذة ديناميكية موحدة لكل الولايات) -->
+    <div id="region-modal" class="modal">
         <div class="modal-content" style="max-width: 520px;">
-            <button class="close-btn" onclick="closeModal('hodh-gharbi-modal')">&times;</button>
+            <button class="close-btn" onclick="closeModal('region-modal')">&times;</button>
             <div style="text-align: center; border-bottom: 2px solid var(--gold); padding-bottom: 12px; margin-bottom: 15px;">
                 <i class="fas fa-map-marked-alt" style="font-size: 32px; color: var(--primary); margin-bottom: 6px;"></i>
-                <h3 style="color: var(--primary);">منسقية ولاية الحوض الغربي (HG02)</h3>
-                <p style="font-size: 12px; color: #64748b;">قائمة المنتسبين الرسميين المعتمدين بالولاية</p>
+                <h3 id="region-modal-title" style="color: var(--primary);">منسقية الولاية</h3>
+                <p id="region-modal-subtitle" style="font-size: 12px; color: #64748b;">قائمة المنتسبين الرسميين المعتمدين بالولاية</p>
             </div>
-            <div id="hodh-gharbi-list" style="margin-top: 10px;"></div>
+            <div id="region-members-list" style="margin-top: 10px;"></div>
         </div>
     </div>
 
@@ -671,7 +769,26 @@
         const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         let currentMember = null;
-        let hodhMembersData = [];
+        let regionMembersData = [];
+
+        // إعدادات وبيانات المنسقيات الجهوية للولايات الـ 15
+        const WILAYAS_CONFIG = {
+            'HC01': { name: 'ولاية الحوض الشرقي', filter: 'wilaya_code.eq.HC01,membership_number.ilike.HC01%,membership_number.ilike.HS01%,wilaya.eq.الحوض الشرقي' },
+            'HG02': { name: 'ولاية الحوض الغربي', filter: 'wilaya_code.eq.HG02,membership_number.ilike.HG02%,wilaya.eq.الحوض الغربي' },
+            'AS03': { name: 'ولاية لعصابه', filter: 'wilaya_code.eq.AS03,membership_number.ilike.AS03%,wilaya.eq.لعصابه,wilaya.eq.لعصابة' },
+            'GO04': { name: 'ولاية كوركول', filter: 'wilaya_code.eq.GO04,membership_number.ilike.GO04%,membership_number.ilike.GG04%,wilaya.eq.كوركول,wilaya.eq.غورغول' },
+            'BR05': { name: 'ولاية لبراكنة', filter: 'wilaya_code.eq.BR05,membership_number.ilike.BR05%,wilaya.eq.لبراكنة,wilaya.eq.لبراكنه' },
+            'TR06': { name: 'ولاية الترارزة', filter: 'wilaya_code.eq.TR06,membership_number.ilike.TR06%,wilaya.eq.الترارزة,wilaya.eq.الترارزه' },
+            'AD07': { name: 'ولاية أدرار', filter: 'wilaya_code.eq.AD07,membership_number.ilike.AD07%,wilaya.eq.أدرار,wilaya.eq.ادرار' },
+            'DN08': { name: 'ولاية داخلت نواذيبو', filter: 'wilaya_code.eq.DN08,membership_number.ilike.DN08%,membership_number.ilike.ND08%,wilaya.eq.داخلت نواذيبو,wilaya.eq.نواذيبو' },
+            'TG09': { name: 'ولاية تكانت', filter: 'wilaya_code.eq.TG09,membership_number.ilike.TG09%,wilaya.eq.تكانت' },
+            'GM10': { name: 'ولاية كيدي ماغا', filter: 'wilaya_code.eq.GM10,membership_number.ilike.GM10%,membership_number.ilike.KM10%,wilaya.eq.كيدي ماغا,wilaya.eq.كيديماغا' },
+            'TZ11': { name: 'ولاية تيرس زمور', filter: 'wilaya_code.eq.TZ11,membership_number.ilike.TZ11%,wilaya.eq.تيرس زمور' },
+            'IN12': { name: 'ولاية إينشيري', filter: 'wilaya_code.eq.IN12,membership_number.ilike.IN12%,wilaya.eq.إينشيري,wilaya.eq.اينشيري' },
+            'NO13': { name: 'ولاية نواكشوط الغربية', filter: 'wilaya_code.eq.NO13,membership_number.ilike.NO13%,membership_number.ilike.NW13%,wilaya.eq.نواكشوط الغربية' },
+            'NN14': { name: 'ولاية نواكشوط الشمالية', filter: 'wilaya_code.eq.NN14,membership_number.ilike.NN14%,wilaya.eq.نواكشوط الشمالية' },
+            'NS15': { name: 'ولاية نواكشوط الجنوبية', filter: 'wilaya_code.eq.NS15,membership_number.ilike.NS15%,wilaya.eq.نواكشوط الجنوبية' }
+        };
 
         // التحقق من الدليل المالي أو الرقم الوطني
         async function checkMember() {
@@ -847,35 +964,38 @@
             }
         }
 
-        // استعراض منتسبي منسقية الحوض الغربي (HG02)
-        async function openHodhGharbiModal() {
-            const modal = document.getElementById('hodh-gharbi-modal');
-            const list = document.getElementById('hodh-gharbi-list');
+        // استعراض منتسبي أي منسقية جهوية ديناميكياً
+        async function openRegionModal(code) {
+            const conf = WILAYAS_CONFIG[code] || { name: 'المنسقية الجهوية', filter: `wilaya_code.eq.${code}` };
+            const modal = document.getElementById('region-modal');
+            const list = document.getElementById('region-members-list');
+            
+            document.getElementById('region-modal-title').innerText = `منسقية ${conf.name} (${code})`;
             modal.style.display = 'block';
-            list.innerHTML = '<div style="text-align: center; color: #64748b; padding: 25px;"><i class="fas fa-spinner fa-spin"></i> جاري جلب لوائح الحوض الغربي...</div>';
+            list.innerHTML = `<div style="text-align: center; color: #64748b; padding: 25px;"><i class="fas fa-spinner fa-spin"></i> جاري جلب لوائح ${conf.name}...</div>`;
 
             try {
                 const { data, error } = await client
                     .from('members')
                     .select('*')
-                    .or('wilaya.eq.الحوض الغربي,membership_number.ilike.HG02%')
+                    .or(conf.filter)
                     .order('display_order', { ascending: true });
 
                 if (error || !data || data.length === 0) {
-                    list.innerHTML = '<div style="text-align: center; color: #64748b; padding: 20px;">لا توجد سجلات معتمدة للحوض الغربي حالياً.</div>';
+                    list.innerHTML = `<div style="text-align: center; color: #64748b; padding: 25px;">لا توجد سجلات معتمدة لـ ${conf.name} حالياً.</div>`;
                     return;
                 }
 
-                hodhMembersData = data;
+                regionMembersData = data;
 
                 list.innerHTML = data.map((mem, idx) => `
-                    <div class="region-member-card" onclick="viewHodhMemberCard(${idx})">
+                    <div class="region-member-card" onclick="viewRegionMemberCard(${idx})">
                         <img class="region-avatar" src="${mem.photo_url || 'IM9.jpg'}" onerror="this.src='IM9.jpg'">
                         <div class="region-member-info">
                             <div class="region-member-name">${mem.full_name}</div>
-                            <div class="region-member-details">${mem.school || 'المدرسة غير محددة'} • ${mem.moughataa || 'الحوض الغربي'}</div>
+                            <div class="region-member-details">${mem.school || 'المؤسسة غير محددة'} • ${mem.moughataa || conf.name}</div>
                         </div>
-                        <div class="region-badge-num">${mem.membership_number || 'HG02'}</div>
+                        <div class="region-badge-num">${mem.membership_number || code}</div>
                     </div>
                 `).join('');
 
@@ -884,12 +1004,17 @@
             }
         }
 
-        // عرض بطاقة عضو الحوض الغربي عند الضغط عليه
-        function viewHodhMemberCard(index) {
-            const member = hodhMembersData[index];
+        // عرض بطاقة عضو من أعضاء المنسقية
+        function viewRegionMemberCard(index) {
+            const member = regionMembersData[index];
             if (member) {
                 showCard(member);
             }
+        }
+
+        // دالة بديلة لضمان التوافق مع أي استدعاء قديم للحوض الغربي
+        function openHodhGharbiModal() {
+            openRegionModal('HG02');
         }
 
         function closeModal(id) {
