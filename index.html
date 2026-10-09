@@ -172,6 +172,77 @@
             border-color: var(--primary);
         }
 
+        /* زر المنسقية الجهوية */
+        .btn-region {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+            color: white;
+            border: 1.5px solid var(--gold);
+            box-shadow: 0 4px 10px rgba(17, 104, 53, 0.2);
+        }
+
+        .btn-region:hover {
+            background: linear-gradient(135deg, #0b4824, #08331a);
+            border-color: #ffffff;
+        }
+
+        /* بطاقات أعضاء المنسقية */
+        .region-member-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 10px 14px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .region-member-card:hover {
+            border-color: var(--primary);
+            background: #f0fdf4;
+            transform: translateX(-3px);
+        }
+
+        .region-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--gold);
+            flex-shrink: 0;
+        }
+
+        .region-member-info {
+            flex: 1;
+            text-align: right;
+        }
+
+        .region-member-name {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .region-member-details {
+            font-size: 11.5px;
+            color: #64748b;
+            margin-top: 3px;
+        }
+
+        .region-badge-num {
+            font-size: 12px;
+            font-weight: 800;
+            color: var(--primary);
+            background: #e8f5e9;
+            border: 1px solid #c8e6c9;
+            padding: 4px 8px;
+            border-radius: 6px;
+            white-space: nowrap;
+            letter-spacing: 0.5px;
+        }
+
         /* النوافذ المنبثقة */
         .modal {
             display: none;
@@ -426,18 +497,22 @@
             <p id="check-msg" style="font-size: 13px; text-align: center; color: #dc2626; display: none;"></p>
         </div>
 
-        <!-- زر التعريف بالنقابة (من نحن) - تم تحويله لزر -->
+        <!-- زر التعريف بالنقابة (من نحن) -->
         <button class="btn btn-block btn-info" onclick="openAboutModal()">
             <i class="fas fa-info-circle"></i> من نحن؟ (تعريف بالنقابة)
         </button>
 
-        <!-- أزرار استعراض الهيئات الإدارية -->
+        <!-- أزرار استعراض الهيئات الإدارية والمنسقيات الجهوية -->
         <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px;">
             <button class="btn btn-block btn-gold" onclick="openOfficeModal()">
                 <i class="fas fa-users-cog"></i> تشكيلة أعضاء المكتب الوطني
             </button>
             <button class="btn btn-block btn-outline" onclick="openCouncilModal()">
                 <i class="fas fa-landmark"></i> أعضاء المجلس الوطني
+            </button>
+            <!-- قسم منسقية الحوض الغربي الجديد -->
+            <button class="btn btn-block btn-region" onclick="openHodhGharbiModal()">
+                <i class="fas fa-map-marked-alt" style="color: var(--gold);"></i> منسقية ولاية الحوض الغربي (HG02)
             </button>
         </div>
 
@@ -576,6 +651,19 @@
         </div>
     </div>
 
+    <!-- نافذة منسقية ولاية الحوض الغربي (HG02) -->
+    <div id="hodh-gharbi-modal" class="modal">
+        <div class="modal-content" style="max-width: 520px;">
+            <button class="close-btn" onclick="closeModal('hodh-gharbi-modal')">&times;</button>
+            <div style="text-align: center; border-bottom: 2px solid var(--gold); padding-bottom: 12px; margin-bottom: 15px;">
+                <i class="fas fa-map-marked-alt" style="font-size: 32px; color: var(--primary); margin-bottom: 6px;"></i>
+                <h3 style="color: var(--primary);">منسقية ولاية الحوض الغربي (HG02)</h3>
+                <p style="font-size: 12px; color: #64748b;">قائمة المنتسبين الرسميين المعتمدين بالولاية</p>
+            </div>
+            <div id="hodh-gharbi-list" style="margin-top: 10px;"></div>
+        </div>
+    </div>
+
     <script>
         const SUPABASE_URL = 'https://nkbsmeaefpwygakvuhdg.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_PyakHaqvN7jdmG2v-NdN8w_Yo-5iwtL';
@@ -583,6 +671,7 @@
         const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         let currentMember = null;
+        let hodhMembersData = [];
 
         // التحقق من الدليل المالي أو الرقم الوطني
         async function checkMember() {
@@ -694,7 +783,7 @@
             document.getElementById('about-modal').style.display = 'block';
         }
 
-        // استعراض أعضاء المكتب الوطني (بالمناصب التفصيلية)
+        // استعراض أعضاء المكتب الوطني
         async function openOfficeModal() {
             const modal = document.getElementById('office-modal');
             const list = document.getElementById('office-list');
@@ -726,7 +815,7 @@
             }
         }
 
-        // استعراض أعضاء المجلس الوطني (الجميع بصفة: عضو المجلس الوطني)
+        // استعراض أعضاء المجلس الوطني
         async function openCouncilModal() {
             const modal = document.getElementById('council-modal');
             const list = document.getElementById('council-list');
@@ -755,6 +844,51 @@
 
             } catch (e) {
                 list.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: red; padding: 20px;">تعذر تحميل القائمة.</div>';
+            }
+        }
+
+        // استعراض منتسبي منسقية الحوض الغربي (HG02)
+        async function openHodhGharbiModal() {
+            const modal = document.getElementById('hodh-gharbi-modal');
+            const list = document.getElementById('hodh-gharbi-list');
+            modal.style.display = 'block';
+            list.innerHTML = '<div style="text-align: center; color: #64748b; padding: 25px;"><i class="fas fa-spinner fa-spin"></i> جاري جلب لوائح الحوض الغربي...</div>';
+
+            try {
+                const { data, error } = await client
+                    .from('members')
+                    .select('*')
+                    .or('wilaya.eq.الحوض الغربي,membership_number.ilike.HG02%')
+                    .order('display_order', { ascending: true });
+
+                if (error || !data || data.length === 0) {
+                    list.innerHTML = '<div style="text-align: center; color: #64748b; padding: 20px;">لا توجد سجلات معتمدة للحوض الغربي حالياً.</div>';
+                    return;
+                }
+
+                hodhMembersData = data;
+
+                list.innerHTML = data.map((mem, idx) => `
+                    <div class="region-member-card" onclick="viewHodhMemberCard(${idx})">
+                        <img class="region-avatar" src="${mem.photo_url || 'IM9.jpg'}" onerror="this.src='IM9.jpg'">
+                        <div class="region-member-info">
+                            <div class="region-member-name">${mem.full_name}</div>
+                            <div class="region-member-details">${mem.school || 'المدرسة غير محددة'} • ${mem.moughataa || 'الحوض الغربي'}</div>
+                        </div>
+                        <div class="region-badge-num">${mem.membership_number || 'HG02'}</div>
+                    </div>
+                `).join('');
+
+            } catch (e) {
+                list.innerHTML = '<div style="text-align: center; color: red; padding: 20px;">تعذر تحميل القائمة، يرجى المحاولة لاحقاً.</div>';
+            }
+        }
+
+        // عرض بطاقة عضو الحوض الغربي عند الضغط عليه
+        function viewHodhMemberCard(index) {
+            const member = hodhMembersData[index];
+            if (member) {
+                showCard(member);
             }
         }
 
