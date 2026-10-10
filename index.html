@@ -878,7 +878,6 @@
         function showCard(m) {
             document.getElementById('m-name').innerText = m.full_name;
             document.getElementById('m-role').innerText = m.union_role || 'عضو';
-            // يعرض الرقم الوطني للبطاقة أولاً وفي حال عدم توفره يعود للرقم السابق
             document.getElementById('m-num').innerText = m.national_id_card || m.membership_number;
             
             if (m.financial_id) {
@@ -980,7 +979,7 @@
                     .from('members')
                     .select('*')
                     .or(conf.filter)
-                    .order('display_order', { ascending: true });
+                    .order('national_id_card', { ascending: true });
 
                 if (error || !data || data.length === 0) {
                     list.innerHTML = `<div style="text-align: center; color: #64748b; padding: 25px;">لا توجد سجلات معتمدة لـ ${conf.name} حالياً.</div>`;
