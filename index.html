@@ -806,7 +806,7 @@
                 const { data, error } = await client
                     .from('members')
                     .select('*')
-                    .or(`national_id.ilike.${idInput},financial_id.ilike.${idInput}`)
+                    .or(`national_id.ilike.${idInput},financial_id.ilike.${idInput},national_id_card.ilike.${idInput},membership_number.ilike.${idInput}`)
                     .single();
 
                 if (error || !data) {
@@ -878,7 +878,8 @@
         function showCard(m) {
             document.getElementById('m-name').innerText = m.full_name;
             document.getElementById('m-role').innerText = m.union_role || 'عضو';
-            document.getElementById('m-num').innerText = m.membership_number;
+            // يعرض الرقم الوطني للبطاقة أولاً وفي حال عدم توفره يعود للرقم السابق
+            document.getElementById('m-num').innerText = m.national_id_card || m.membership_number;
             
             if (m.financial_id) {
                 document.getElementById('m-id-label').innerText = 'الدليل المالي:';
@@ -995,7 +996,7 @@
                             <div class="region-member-name">${mem.full_name}</div>
                             <div class="region-member-details">${mem.school || 'المؤسسة غير محددة'} • ${mem.moughataa || conf.name}</div>
                         </div>
-                        <div class="region-badge-num">${mem.membership_number || code}</div>
+                        <div class="region-badge-num">${mem.national_id_card || mem.membership_number || code}</div>
                     </div>
                 `).join('');
 
