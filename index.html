@@ -315,8 +315,7 @@
             top: 15px;
             font-size: 24px;
             color: #64748b;
-            cursor: pointer;
-            border: none;
+            cursor: border;
             background: none;
             z-index: 10;
         }
@@ -644,7 +643,7 @@
             <div style="text-align: center; margin-bottom: 15px;">
                 <i class="fas fa-lock" style="font-size: 32px; color: var(--primary);"></i>
                 <h3 id="pin-title" style="margin-top: 10px;">الرمز السري</h3>
-                <p id="pin-subtitle" style="font-size: 13px; color: #64748b; margin-top: 5px;"></p>
+                <p id="pin-subtitle" style="font-size: 13px; color: #64748b; margin-top: 5px;">أدخل الرمز السري الخاص بك أو أنشئ رمزاً جديداً (4 أرقام):</p>
             </div>
             <input type="password" id="input-pin" maxlength="4" placeholder="••••" style="font-size: 24px; letter-spacing: 5px; margin-bottom: 15px;">
             <button class="btn btn-block" id="btn-submit-pin" onclick="verifyOrSetPin()">متابعة</button>
@@ -768,7 +767,7 @@
         
         const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        let currentMember = null;
+        let enteredIdentifier = '';
         let regionMembersData = [];
 
         // إعدادات وبيانات المنسقيات الجهوية للولايات الـ 15
@@ -802,42 +801,13 @@
                 return;
             }
 
-            try {
-                const { data, error } = await client
-                    .from('members')
-                    .select('*')
-                    .or(`national_id.ilike.${idInput},financial_id.ilike.${idInput},national_id_card.ilike.${idInput},membership_number.ilike.${idInput}`)
-                    .single();
-
-                if (error || !data) {
-                    msg.innerText = 'عذراً، هذا الرقم غير مسجل في لوائح الانتساب الرسمية.';
-                    msg.style.display = 'block';
-                    return;
-                }
-
-                currentMember = data;
-                document.getElementById('input-pin').value = '';
-                document.getElementById('pin-error').style.display = 'none';
-
-                if (!data.pin_code) {
-                    document.getElementById('pin-title').innerText = 'تفعيل الحساب لأول مرة';
-                    document.getElementById('pin-subtitle').innerText = 'يرجى إنشاء رمز سري شخصي مكوّن من 4 أرقام:';
-                    document.getElementById('btn-submit-pin').innerText = 'حفظ الرمز وتفعيل';
-                } else {
-                    document.getElementById('pin-title').innerText = 'التحقق الأمني';
-                    document.getElementById('pin-subtitle').innerText = 'أدخل الرمز السري الخاص بك (4 أرقام):';
-                    document.getElementById('btn-submit-pin').innerText = 'دخول';
-                }
-
-                document.getElementById('pin-modal').style.display = 'block';
-
-            } catch (err) {
-                msg.innerText = 'تعذر الاتصال بقاعدة البيانات، يرجى المحاولة لاحقاً.';
-                msg.style.display = 'block';
-            }
+            enteredIdentifier = idInput;
+            document.getElementById('input-pin').value = '';
+            document.getElementById('pin-error').style.display = 'none';
+            document.getElementById('pin-modal').style.display = 'block';
         }
 
-        // معالجة ومطابقة الرمز السري (PIN)
+        // معالجة ومطابقة الرمز السري (PIN) باستخدام الدالة الآمنة في Supabase
         async function verifyOrSetPin() {
             const pin = document.getElementById('input-pin').value.trim();
             const err = document.getElementById('pin-error');
@@ -849,43 +819,43 @@
                 return;
             }
 
-            if (!currentMember.pin_code) {
-                const { error } = await client
-                    .from('members')
-                    .update({ pin_code: pin })
-                    .eq('id', currentMember.id);
+            try {
+                const { data, error } = await client.rpc('verify_or_setup_member', {
+                    p_identifier: enteredIdentifier,
+                    p_pin: pin
+                });
 
                 if (error) {
-                    err.innerText = 'تعذر حفظ الرمز، حاول مجدداً.';
+                    err.innerText = 'حدث خطأ في الاتصال، حاول مجدداً.';
                     err.style.display = 'block';
                     return;
                 }
-                currentMember.pin_code = pin;
-                closeModal('pin-modal');
-                showCard(currentMember);
-            } else {
-                if (currentMember.pin_code === pin) {
+
+                if (data && data.success) {
                     closeModal('pin-modal');
-                    showCard(currentMember);
+                    showCard(data.data);
                 } else {
-                    err.innerText = 'الرمز السري غير صحيح!';
+                    err.innerText = data.message || 'بيانات غير صحيحة، تأكد من الرمز والمُعرّف.';
                     err.style.display = 'block';
                 }
+            } catch (e) {
+                err.innerText = 'تعذر التحقق، يرجى المحاولة لاحقاً.';
+                err.style.display = 'block';
             }
         }
 
         // إظهار بطاقة العضو
         function showCard(m) {
-            document.getElementById('m-name').innerText = m.full_name;
+            document.getElementById('m-name').innerText = m.full_name || '-';
             document.getElementById('m-role').innerText = m.union_role || 'عضو';
-            document.getElementById('m-num').innerText = m.national_id_card || m.membership_number;
+            document.getElementById('m-num').innerText = m.national_id_card || m.membership_number || '-';
             
             if (m.financial_id) {
                 document.getElementById('m-id-label').innerText = 'الدليل المالي:';
                 document.getElementById('m-nid').innerText = m.financial_id;
             } else {
                 document.getElementById('m-id-label').innerText = 'الرقم الوطني:';
-                document.getElementById('m-nid').innerText = m.national_id;
+                document.getElementById('m-nid').innerText = m.national_id || '-';
             }
 
             document.getElementById('m-spec').innerText = m.specialty || '-';
