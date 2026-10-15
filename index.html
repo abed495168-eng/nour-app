@@ -315,7 +315,8 @@
             top: 15px;
             font-size: 24px;
             color: #64748b;
-            cursor: border;
+            cursor: pointer;
+            border: none;
             background: none;
             z-index: 10;
         }
@@ -636,7 +637,7 @@
 
     </div>
 
-    <!-- نافذة إدخال أو تعيين الرمز السري (PIN) -->
+    <!-- نافذة إدخال أو تعيين الرمز السري (PIN) مع خيار التواصل مع مسؤول المنصة -->
     <div id="pin-modal" class="modal">
         <div class="modal-content">
             <button class="close-btn" onclick="closeModal('pin-modal')">&times;</button>
@@ -648,6 +649,14 @@
             <input type="password" id="input-pin" maxlength="4" placeholder="••••" style="font-size: 24px; letter-spacing: 5px; margin-bottom: 15px;">
             <button class="btn btn-block" id="btn-submit-pin" onclick="verifyOrSetPin()">متابعة</button>
             <p id="pin-error" style="color: #dc2626; font-size: 13px; text-align: center; margin-top: 10px; display: none;"></p>
+
+            <!-- زر التواصل مع مسؤول المنصة عبر واتساب -->
+            <div style="margin-top: 20px; text-align: center; border-top: 1px dashed #cbd5e1; padding-top: 15px;">
+                <p style="font-size: 12.5px; color: #64748b; margin-bottom: 8px;">نسيت الرمز السري؟</p>
+                <button type="button" onclick="contactSupportWhatsApp()" style="background-color: #25D366; color: white; border: none; border-radius: 8px; padding: 9px 14px; font-size: 13px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 7px; width: 100%;">
+                    <i class="fab fa-whatsapp" style="font-size: 17px;"></i> تواصل مع مسؤول المنصة لإعادة ضبط الرمز
+                </button>
+            </div>
         </div>
     </div>
 
@@ -842,6 +851,16 @@
                 err.innerText = 'تعذر التحقق، يرجى المحاولة لاحقاً.';
                 err.style.display = 'block';
             }
+        }
+
+        // فتح محادثة واتساب للتواصل المباشر مع مسؤول المنصة لطلب إعادة ضبط الرمز
+        function contactSupportWhatsApp() {
+            const whatsappNumber = '22249516812';
+            const memberId = enteredIdentifier || document.getElementById('input-nid').value.trim() || 'غير محدد';
+            const message = `السلام عليكم ورحمة الله،\nأنا عضو بنقابة المدرسين (نور)، وأرغب في التواصل مع مسؤول المنصة لإعادة ضبط الرمز السري الخاص بي.\nالمعرّف (الدليل المالي / الرقم الوطني): ${memberId}`;
+            
+            const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+            window.open(whatsappUrl, '_blank');
         }
 
         // إظهار بطاقة العضو
