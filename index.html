@@ -172,6 +172,18 @@
             border-color: var(--primary);
         }
 
+        .btn-whatsapp {
+            background-color: #25D366;
+            color: white;
+            margin-top: 15px;
+            text-decoration: none;
+        }
+
+        .btn-whatsapp:hover {
+            background-color: #1eb857;
+            color: white;
+        }
+
         /* شبكة أزرار المنسقيات الجهوية */
         .regions-grid {
             display: grid;
@@ -363,6 +375,51 @@
         .badge-value {
             font-weight: 700;
             color: #0f172a;
+        }
+
+        /* شارات الحالة المالية والترجمة */
+        .badge-actions-top {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .lang-btn {
+            background: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--primary);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .lang-btn:hover {
+            background: #e2e8f0;
+        }
+
+        .status-badge {
+            font-size: 11px;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .status-paid {
+            background: #dcfce7;
+            color: #15803d;
+            border: 1px solid #86efac;
+        }
+
+        .status-unpaid {
+            background: #fee2e2;
+            color: #b91c1c;
+            border: 1px solid #fca5a5;
         }
 
         /* شبكة أعضاء المجلس والمكتب */
@@ -662,8 +719,13 @@
             <div class="badge-card">
                 <div class="badge-header">
                     <img src="IM9.jpg" style="height: 45px; border-radius: 5px;" onerror="this.src='IM9.jpg'">
-                    <div style="text-align: left;">
-                        <span style="background: #dcfce7; color: #15803d; font-size: 11px; padding: 3px 8px; border-radius: 4px; font-weight: 700;">عضوية نشطة</span>
+                    <div class="badge-actions-top">
+                        <!-- زر التبديل بين العربية والفرنسية -->
+                        <button class="lang-btn" onclick="toggleCardLang()"><i class="fas fa-globe"></i> <span id="btn-lang-txt">Français</span></button>
+                        <!-- شارة الحالة المالية (أخضر أو أحمر) -->
+                        <span id="m-status-badge" class="status-badge status-unpaid">
+                            <i id="m-status-icon" class="fas fa-times-circle"></i> <span id="m-status-txt">غير مسدد</span>
+                        </span>
                     </div>
                 </div>
                 <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 15px;">
@@ -673,13 +735,18 @@
                         <p id="m-role" style="font-size: 12px; font-weight: bold; color: var(--gold); margin-top: 3px;"></p>
                     </div>
                 </div>
-                <div class="badge-info-row"><span class="badge-label">رقم العضوية:</span><span id="m-num" class="badge-value"></span></div>
+                <div class="badge-info-row"><span class="badge-label" id="lbl-num">رقم العضوية:</span><span id="m-num" class="badge-value"></span></div>
                 <div class="badge-info-row"><span class="badge-label" id="m-id-label">المعرّف:</span><span id="m-nid" class="badge-value"></span></div>
-                <div class="badge-info-row"><span class="badge-label">السلك والتخصص:</span><span id="m-spec" class="badge-value"></span></div>
-                <div class="badge-info-row"><span class="badge-label">مكان العمل:</span><span id="m-school" class="badge-value"></span></div>
-                <div class="badge-info-row"><span class="badge-label">الولاية والمقاطعة:</span><span id="m-loc" class="badge-value"></span></div>
+                <div class="badge-info-row"><span class="badge-label" id="lbl-spec">السلك والتخصص:</span><span id="m-spec" class="badge-value"></span></div>
+                <div class="badge-info-row"><span class="badge-label" id="lbl-school">مكان العمل:</span><span id="m-school" class="badge-value"></span></div>
+                <div class="badge-info-row"><span class="badge-label" id="lbl-loc">الولاية والمقاطعة:</span><span id="m-loc" class="badge-value"></span></div>
+
+                <!-- زر التواصل المباشر مع المنسق عبر واتساب -->
+                <a id="btn-whatsapp-coordinator" href="#" target="_blank" class="btn btn-block btn-whatsapp">
+                    <i class="fab fa-whatsapp" style="font-size: 16px;"></i> <span id="lbl-wa-btn">تواصل مع القيادة / تقديم طلب أو تظلم</span>
+                </a>
             </div>
-            <p style="font-size: 11px; color: #94a3b8; text-align: center; margin-top: 10px;">
+            <p id="lbl-footer-card" style="font-size: 11px; color: #94a3b8; text-align: center; margin-top: 10px;">
                 <i class="fas fa-shield-alt"></i> هذه البطاقة وثيقة رقمية معتمدة صادرة عن أمانة النقابة (للعرض فقط).
             </p>
         </div>
@@ -773,6 +840,8 @@
 
         let enteredIdentifier = '';
         let regionMembersData = [];
+        let activeMember = null;
+        let isCardFrench = false;
 
         // إعدادات وبيانات المنسقيات الجهوية للولايات الـ 15
         const WILAYAS_CONFIG = {
@@ -848,25 +917,71 @@
             }
         }
 
-        // إظهار بطاقة العضو
+        // إظهار بطاقة العضو وضبط الشارة المالية ورابط الواتساب
         function showCard(m) {
-            document.getElementById('m-name').innerText = m.full_name || '-';
-            document.getElementById('m-role').innerText = m.union_role || 'عضو';
-            document.getElementById('m-num').innerText = m.national_id_card || m.membership_number || '-';
-            
+            activeMember = m;
+            isCardFrench = false; // العودة للعربية كافتراضي عند فتح البطاقة
+            renderCardData();
+            document.getElementById('card-modal').style.display = 'block';
+        }
+
+        // تحديث محتوى ولغة البطاقة
+        function renderCardData() {
+            if (!activeMember) return;
+            const m = activeMember;
+
+            // ضبط شارة الحالة المالية (أخضر إذا fees_paid تساوي true، وإلا فأحمر)
+            const isPaid = (m.fees_paid === true);
+            const badge = document.getElementById('m-status-badge');
+            const icon = document.getElementById('m-status-icon');
+            const txt = document.getElementById('m-status-txt');
+
+            if (isPaid) {
+                badge.className = 'status-badge status-paid';
+                icon.className = 'fas fa-check-circle';
+                txt.innerText = isCardFrench ? 'Cotisation Réglée' : 'الاشتراك مسدد';
+            } else {
+                badge.className = 'status-badge status-unpaid';
+                icon.className = 'fas fa-times-circle';
+                txt.innerText = isCardFrench ? 'Non Réglée' : 'غير مسدد';
+            }
+
+            // ضبط النصوص حسب اللغة
+            document.getElementById('btn-lang-txt').innerText = isCardFrench ? 'العربية' : 'Français';
+            document.getElementById('lbl-num').innerText = isCardFrench ? 'N° Adhérent :' : 'رقم العضوية:';
+            document.getElementById('lbl-spec').innerText = isCardFrench ? 'Corps & Spécialité :' : 'السلك والتخصص:';
+            document.getElementById('lbl-school').innerText = isCardFrench ? 'Établissement :' : 'مكان العمل:';
+            document.getElementById('lbl-loc').innerText = isCardFrench ? 'Wilaya & Moughataa :' : 'الولاية والمقاطعة:';
+            document.getElementById('lbl-wa-btn').innerText = isCardFrench ? 'Contacter la Direction (WhatsApp)' : 'تواصل مع القيادة / تقديم طلب أو تظلم';
+            document.getElementById('lbl-footer-card').innerHTML = `<i class="fas fa-shield-alt"></i> ${isCardFrench ? 'Cette carte est un document numérique officiel délivré par le syndicat (Consultation uniquement).' : 'هذه البطاقة وثيقة رقمية معتمدة صادرة عن أمانة النقابة (للعرض فقط).'}`;
+
             if (m.financial_id) {
-                document.getElementById('m-id-label').innerText = 'الدليل المالي:';
+                document.getElementById('m-id-label').innerText = isCardFrench ? 'Matricule :' : 'الدليل المالي:';
                 document.getElementById('m-nid').innerText = m.financial_id;
             } else {
-                document.getElementById('m-id-label').innerText = 'الرقم الوطني:';
+                document.getElementById('m-id-label').innerText = isCardFrench ? 'NNI :' : 'الرقم الوطني:';
                 document.getElementById('m-nid').innerText = m.national_id || '-';
             }
 
+            document.getElementById('m-name').innerText = m.full_name || '-';
+            document.getElementById('m-role').innerText = m.union_role || (isCardFrench ? 'Membre' : 'عضو');
+            document.getElementById('m-num').innerText = m.national_id_card || m.membership_number || '-';
             document.getElementById('m-spec').innerText = m.specialty || '-';
             document.getElementById('m-school').innerText = m.school || '-';
             document.getElementById('m-loc').innerText = (m.wilaya || '') + ' - ' + (m.moughataa || '');
             document.getElementById('m-photo').src = m.photo_url || 'IM9.jpg';
-            document.getElementById('card-modal').style.display = 'block';
+
+            // تجهيز رابط الواتساب المباشر لرقم المنسق مع رسالة تلقائية تتضمن معلومات العضو
+            const coordinatorPhone = '22249496272';
+            const memberId = m.financial_id || m.national_id || m.membership_number || '-';
+            const defaultMsg = encodeURIComponent(`السلام عليكم ورحمة الله وبركاته،\nأنا المنتسب: ${m.full_name || ''}\nالمعرّف/الدليل المالي: ${memberId}\nأود الاستفسار بخصوص: `);
+            document.getElementById('btn-whatsapp-coordinator').href = `https://wa.me/${coordinatorPhone}?text=${defaultMsg}`;
+        }
+
+        // التبديل بين العربية والفرنسية
+        function toggleCardLang() {
+            isCardFrench = !isCardFrench;
+            renderCardData();
         }
         
         // فتح نافذة من نحن
