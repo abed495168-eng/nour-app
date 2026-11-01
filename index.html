@@ -94,6 +94,65 @@
             padding-bottom: 10px;
         }
 
+        /* تنسيقات لوحة الإحصائيات التلقائية */
+        .stat-total-banner {
+            background: linear-gradient(135deg, #116835, #08331a);
+            border: 2px solid var(--gold);
+            border-radius: 10px;
+            padding: 14px 10px;
+            text-align: center;
+            color: white;
+            margin-bottom: 14px;
+            box-shadow: 0 3px 10px rgba(17, 104, 53, 0.2);
+        }
+
+        .stat-total-title {
+            font-size: 12.5px;
+            color: #f1f5f9;
+            margin-bottom: 4px;
+            font-weight: 600;
+        }
+
+        .stat-total-num {
+            font-size: 26px;
+            font-weight: 800;
+            color: var(--gold);
+            letter-spacing: 1px;
+        }
+
+        .stats-subgrid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+
+        .stat-pill {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 10px 4px;
+            text-align: center;
+            transition: all 0.2s;
+        }
+
+        .stat-pill:hover {
+            border-color: var(--gold);
+            background: #fff;
+        }
+
+        .stat-pill-label {
+            font-size: 11px;
+            color: #64748b;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .stat-pill-num {
+            font-size: 16px;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
         /* حقول الإدخال والأزرار */
         .input-group {
             display: flex;
@@ -202,14 +261,14 @@
             color: white;
             border: 1.5px solid var(--gold);
             border-radius: 8px;
-            padding: 10px 12px;
-            font-size: 13px;
+            padding: 10px 10px;
+            font-size: 12.5px;
             font-weight: 700;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 6px;
+            gap: 4px;
             transition: all 0.2s ease;
             box-shadow: 0 2px 6px rgba(17, 104, 53, 0.15);
             width: 100%;
@@ -221,15 +280,30 @@
             transform: translateY(-2px);
         }
 
+        .region-meta-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            flex-shrink: 0;
+        }
+
+        .region-count-badge {
+            background: rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            padding: 1px 5px;
+            border-radius: 4px;
+            font-size: 10.5px;
+            font-weight: 700;
+        }
+
         .region-code-badge {
             background: rgba(212, 175, 55, 0.25);
             color: var(--gold);
-            padding: 2px 6px;
+            padding: 2px 5px;
             border-radius: 4px;
             font-size: 11px;
             font-weight: 800;
             direction: ltr;
-            flex-shrink: 0;
         }
 
         /* بطاقات أعضاء المنسقية داخل النافذة */
@@ -589,6 +663,38 @@
             <p id="check-msg" style="font-size: 13px; text-align: center; color: #dc2626; display: none;"></p>
         </div>
 
+        <!-- بطاقة الإحصائيات العامة المباشرة التلقائية -->
+        <div class="card">
+            <div class="card-title">
+                <i class="fas fa-chart-pie" style="color: var(--primary);"></i> الإحصائيات العامة للمنتسبين
+                <span style="font-size: 11px; margin-right: auto; color: var(--primary); background: #e8f5e9; padding: 2px 6px; border-radius: 4px;">
+                    <i class="fas fa-sync-alt fa-spin" id="stat-refresh-icon"></i> تحديث تلقائي
+                </span>
+            </div>
+
+            <!-- إجمالي عدد المنتسبين -->
+            <div class="stat-total-banner">
+                <div class="stat-total-title"><i class="fas fa-users"></i> إجمالي المنتسبين المسجلين بالمنصة</div>
+                <div class="stat-total-num" id="stat-total-num">...</div>
+            </div>
+
+            <!-- إحصاء الأسلاك والوظائف -->
+            <div class="stats-subgrid">
+                <div class="stat-pill">
+                    <div class="stat-pill-label"><i class="fas fa-chalkboard-teacher"></i> المعلمون</div>
+                    <div class="stat-pill-num" id="stat-teachers-num">...</div>
+                </div>
+                <div class="stat-pill">
+                    <div class="stat-pill-label"><i class="fas fa-user-graduate"></i> الأساتذة</div>
+                    <div class="stat-pill-num" id="stat-profs-num">...</div>
+                </div>
+                <div class="stat-pill">
+                    <div class="stat-pill-label"><i class="fas fa-handshake"></i> مقدمو الخدمة</div>
+                    <div class="stat-pill-num" id="stat-service-num">...</div>
+                </div>
+            </div>
+        </div>
+
         <!-- زر التعريف بالنقابة (من نحن) -->
         <button class="btn btn-block btn-info" onclick="openAboutModal()">
             <i class="fas fa-info-circle"></i> من نحن؟ (تعريف بالنقابة)
@@ -615,63 +721,108 @@
             <div class="regions-grid">
                 <button class="region-btn" onclick="openRegionModal('HC01')">
                     <span><i class="fas fa-map-marker-alt" style="color: var(--gold); margin-left: 4px;"></i>الحوض الشرقي</span>
-                    <span class="region-code-badge">HC01</span>
+                    <div class="region-meta-badge">
+                        <span class="region-count-badge" id="badge-count-HC01">..</span>
+                        <span class="region-code-badge">HC01</span>
+                    </div>
                 </button>
                 <button class="region-btn" onclick="openRegionModal('HG02')">
                     <span><i class="fas fa-map-marker-alt" style="color: var(--gold); margin-left: 4px;"></i>الحوض الغربي</span>
-                    <span class="region-code-badge">HG02</span>
+                    <div class="region-meta-badge">
+                        <span class="region-count-badge" id="badge-count-HG02">..</span>
+                        <span class="region-code-badge">HG02</span>
+                    </div>
                 </button>
                 <button class="region-btn" onclick="openRegionModal('AS03')">
                     <span><i class="fas fa-map-marker-alt" style="color: var(--gold); margin-left: 4px;"></i>لعصابه</span>
-                    <span class="region-code-badge">AS03</span>
+                    <div class="region-meta-badge">
+                        <span class="region-count-badge" id="badge-count-AS03">..</span>
+                        <span class="region-code-badge">AS03</span>
+                    </div>
                 </button>
                 <button class="region-btn" onclick="openRegionModal('GO04')">
                     <span><i class="fas fa-map-marker-alt" style="color: var(--gold); margin-left: 4px;"></i>كوركول</span>
-                    <span class="region-code-badge">GO04</span>
+                    <div class="region-meta-badge">
+                        <span class="region-count-badge" id="badge-count-GO04">..</span>
+                        <span class="region-code-badge">GO04</span>
+                    </div>
                 </button>
                 <button class="region-btn" onclick="openRegionModal('BR05')">
                     <span><i class="fas fa-map-marker-alt" style="color: var(--gold); margin-left: 4px;"></i>لبراكنة</span>
-                    <span class="region-code-badge">BR05</span>
+                    <div class="region-meta-badge">
+                        <span class="region-count-badge" id="badge-count-BR05">..</span>
+                        <span class="region-code-badge">BR05</span>
+                    </div>
                 </button>
                 <button class="region-btn" onclick="openRegionModal('TR06')">
                     <span><i class="fas fa-map-marker-alt" style="color: var(--gold); margin-left: 4px;"></i>الترارزة</span>
-                    <span class="region-code-badge">TR06</span>
+                    <div class="region-meta-badge">
+                        <span class="region-count-badge" id="badge-count-TR06">..</span>
+                        <span class="region-code-badge">TR06</span>
+                    </div>
                 </button>
                 <button class="region-btn" onclick="openRegionModal('AD07')">
                     <span><i class="fas fa-map-marker-alt" style="color: var(--gold); margin-left: 4px;"></i>أدرار</span>
-                    <span class="region-code-badge">AD07</span>
+                    <div class="region-meta-badge">
+                        <span class="region-count-badge" id="badge-count-AD07">..</span>
+                        <span class="region-code-badge">AD07</span>
+                    </div>
                 </button>
                 <button class="region-btn" onclick="openRegionModal('DN08')">
                     <span><i class="fas fa-map-marker-alt" style="color: var(--gold); margin-left: 4px;"></i>داخلت نواذيبو</span>
-                    <span class="region-code-badge">DN08</span>
+                    <div class="region-meta-badge">
+                        <span class="region-count-badge" id="badge-count-DN08">..</span>
+                        <span class="region-code-badge">DN08</span>
+                    </div>
                 </button>
                 <button class="region-btn" onclick="openRegionModal('TG09')">
                     <span><i class="fas fa-map-marker-alt" style="color: var(--gold); margin-left: 4px;"></i>تكانت</span>
-                    <span class="region-code-badge">TG09</span>
+                    <div class="region-meta-badge">
+                        <span class="region-count-badge" id="badge-count-TG09">..</span>
+                        <span class="region-code-badge">TG09</span>
+                    </div>
                 </button>
                 <button class="region-btn" onclick="openRegionModal('GM10')">
                     <span><i class="fas fa-map-marker-alt" style="color: var(--gold); margin-left: 4px;"></i>كيدي ماغا</span>
-                    <span class="region-code-badge">GM10</span>
+                    <div class="region-meta-badge">
+                        <span class="region-count-badge" id="badge-count-GM10">..</span>
+                        <span class="region-code-badge">GM10</span>
+                    </div>
                 </button>
                 <button class="region-btn" onclick="openRegionModal('TZ11')">
                     <span><i class="fas fa-map-marker-alt" style="color: var(--gold); margin-left: 4px;"></i>تيرس زمور</span>
-                    <span class="region-code-badge">TZ11</span>
+                    <div class="region-meta-badge">
+                        <span class="region-count-badge" id="badge-count-TZ11">..</span>
+                        <span class="region-code-badge">TZ11</span>
+                    </div>
                 </button>
                 <button class="region-btn" onclick="openRegionModal('IN12')">
                     <span><i class="fas fa-map-marker-alt" style="color: var(--gold); margin-left: 4px;"></i>إينشيري</span>
-                    <span class="region-code-badge">IN12</span>
+                    <div class="region-meta-badge">
+                        <span class="region-count-badge" id="badge-count-IN12">..</span>
+                        <span class="region-code-badge">IN12</span>
+                    </div>
                 </button>
                 <button class="region-btn" onclick="openRegionModal('NO13')">
                     <span><i class="fas fa-map-marker-alt" style="color: var(--gold); margin-left: 4px;"></i>نواكشوط الغربية</span>
-                    <span class="region-code-badge">NO13</span>
+                    <div class="region-meta-badge">
+                        <span class="region-count-badge" id="badge-count-NO13">..</span>
+                        <span class="region-code-badge">NO13</span>
+                    </div>
                 </button>
                 <button class="region-btn" onclick="openRegionModal('NN14')">
                     <span><i class="fas fa-map-marker-alt" style="color: var(--gold); margin-left: 4px;"></i>نواكشوط الشمالية</span>
-                    <span class="region-code-badge">NN14</span>
+                    <div class="region-meta-badge">
+                        <span class="region-count-badge" id="badge-count-NN14">..</span>
+                        <span class="region-code-badge">NN14</span>
+                    </div>
                 </button>
                 <button class="region-btn" onclick="openRegionModal('NS15')">
                     <span><i class="fas fa-map-marker-alt" style="color: var(--gold); margin-left: 4px;"></i>نواكشوط الجنوبية</span>
-                    <span class="region-code-badge">NS15</span>
+                    <div class="region-meta-badge">
+                        <span class="region-count-badge" id="badge-count-NS15">..</span>
+                        <span class="region-code-badge">NS15</span>
+                    </div>
                 </button>
             </div>
         </div>
@@ -862,6 +1013,43 @@
             'NS15': { name: 'ولاية نواكشوط الجنوبية', filter: 'wilaya_code.eq.NS15,membership_number.ilike.NS15%,wilaya.eq.نواكشوط الجنوبية' }
         };
 
+        // تحميل الإحصائيات التلقائية الحية من Supabase
+        async function loadPlatformStats() {
+            try {
+                const { data, error } = await client.rpc('get_platform_stats');
+                const spinIcon = document.getElementById('stat-refresh-icon');
+
+                if (error || !data) {
+                    console.error('خطأ في جلب الإحصائيات:', error);
+                    if (spinIcon) spinIcon.className = 'fas fa-chart-line';
+                    return;
+                }
+
+                // عرض الإجمالي والأسلاك
+                document.getElementById('stat-total-num').innerText = (data.total_members || 0).toLocaleString();
+                document.getElementById('stat-teachers-num').innerText = (data.teachers_count || 0).toLocaleString();
+                document.getElementById('stat-profs-num').innerText = (data.professors_count || 0).toLocaleString();
+                document.getElementById('stat-service-num').innerText = (data.service_providers_count || 0).toLocaleString();
+
+                // تحديث عدادات كل ولاية على أزرارها
+                if (data.regions_count) {
+                    Object.keys(WILAYAS_CONFIG).forEach(code => {
+                        const countEl = document.getElementById(`badge-count-${code}`);
+                        if (countEl) {
+                            countEl.innerText = data.regions_count[code] || 0;
+                        }
+                    });
+                }
+
+                if (spinIcon) spinIcon.className = 'fas fa-check-circle';
+            } catch (err) {
+                console.error('تعذر جلب الإحصائيات:', err);
+            }
+        }
+
+        // تشغيل جلب الإحصائيات فور تحميل الصفحة
+        document.addEventListener('DOMContentLoaded', loadPlatformStats);
+
         // التحقق من الدليل المالي أو الرقم الوطني
         async function checkMember() {
             const idInput = document.getElementById('input-nid').value.trim();
@@ -971,7 +1159,7 @@
             document.getElementById('m-loc').innerText = (m.wilaya || '') + ' - ' + (m.moughataa || '');
             document.getElementById('m-photo').src = m.photo_url || 'IM9.jpg';
 
-            // تجهيز رابط الواتساب المباشر لرقم المنسق مع رسالة تلقائية تتضمن معلومات العضو
+            // رابط الواتساب المباشر لرقم المنسق مع رسالة تلقائية تتضمن معلومات العضو
             const coordinatorPhone = '22249496272';
             const memberId = m.financial_id || m.national_id || m.membership_number || '-';
             const defaultMsg = encodeURIComponent(`السلام عليكم ورحمة الله وبركاته،\nأنا المنتسب: ${m.full_name || ''}\nالمعرّف/الدليل المالي: ${memberId}\nأود الاستفسار بخصوص: `);
