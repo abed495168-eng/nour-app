@@ -708,6 +708,10 @@
             <button class="btn btn-block btn-outline" onclick="openCouncilModal()">
                 <i class="fas fa-landmark"></i> أعضاء المجلس الوطني
             </button>
+            <!-- زر النصوص القانونية والمقررات -->
+            <button class="btn btn-block" style="background: linear-gradient(135deg, #116835, #08331a); color: white; border: 1.5px solid var(--gold);" onclick="openLegalModal()">
+                <i class="fas fa-balance-scale" style="color: var(--gold);"></i> النصوص القانونية والمقررات
+            </button>
         </div>
 
         <!-- بطاقة المنسقيات الجهوية (جميع الولايات الـ 15) -->
@@ -880,6 +884,19 @@
         </div>
     </div>
 
+    <!-- نافذة النصوص القانونية والمقررات -->
+    <div id="legal-modal" class="modal">
+        <div class="modal-content" style="max-width: 520px;">
+            <button class="close-btn" onclick="closeModal('legal-modal')">&times;</button>
+            <div style="text-align: center; border-bottom: 2px solid var(--gold); padding-bottom: 12px; margin-bottom: 15px;">
+                <i class="fas fa-balance-scale" style="font-size: 32px; color: var(--primary); margin-bottom: 6px;"></i>
+                <h3 style="color: var(--primary);">النصوص القانونية والمقررات</h3>
+                <p style="font-size: 12px; color: #64748b;">المرجع والتشريعات المنظمة لقطاع التعليم والوظيفة العمومية</p>
+            </div>
+            <div id="legal-docs-container" style="display: flex; flex-direction: column; gap: 8px; max-height: 420px; overflow-y: auto; padding-left: 4px;"></div>
+        </div>
+    </div>
+
     <!-- نافذة بطاقة العضو الرقمية (للعرض فقط) -->
     <div id="card-modal" class="modal">
         <div class="modal-content">
@@ -1031,6 +1048,20 @@
             'NS15':  { name: 'ولاية نواكشوط الجنوبية', filter: 'wilaya_code.eq.NS15,membership_number.ilike.NS15%,wilaya.eq.نواكشوط الجنوبية' }
         };
 
+        // الألوان والأيقونات الخاصة بالتصنيفات القانونية
+        const LEGAL_CATEGORY_STYLES = {
+            'القوانين': { icon: 'fas fa-gavel', border: 'var(--primary)', color: 'var(--primary)' },
+            'المراسيم': { icon: 'fas fa-stamp', border: 'var(--gold)', color: 'var(--gold)' },
+            'القرارات': { icon: 'fas fa-file-contract', border: 'var(--primary)', color: 'var(--primary)' },
+            'المقررات': { icon: 'fas fa-file-signature', border: 'var(--primary-dark)', color: 'var(--primary-dark)' },
+            'التعاميم': { icon: 'fas fa-bullhorn', border: '#0284c7', color: '#0284c7' },
+            'الأنظمة الأساسية': { icon: 'fas fa-sitemap', border: 'var(--gold)', color: 'var(--gold)' },
+            'النظام الداخلي': { icon: 'fas fa-book-open', border: 'var(--primary)', color: 'var(--primary)' },
+            'النصوص المتعلقة بالتعليم': { icon: 'fas fa-chalkboard-teacher', border: '#10b981', color: '#10b981' },
+            'النصوص المتعلقة بالوظيفة العمومية': { icon: 'fas fa-building', border: '#6366f1', color: '#6366f1' },
+            'الاتفاقيات': { icon: 'fas fa-handshake', border: 'var(--gold)', color: 'var(--gold)' }
+        };
+
         // تحميل الإحصائيات التلقائية الحية من Supabase
         async function loadPlatformStats() {
             try {
@@ -1124,6 +1155,48 @@
             } catch (e) {
                 err.innerText = 'تعذر التحقق، يرجى المحاولة لاحقاً.';
                 err.style.display = 'block';
+            }
+        }
+
+        // فتح نافذة النصوص القانونية وجلبها من Supabase
+        async function openLegalModal() {
+            const modal = document.getElementById('legal-modal');
+            const container = document.getElementById('legal-docs-container');
+            modal.style.display = 'block';
+            container.innerHTML = '<div style="text-align: center; color: #64748b; padding: 25px;"><i class="fas fa-spinner fa-spin"></i> جاري جلب النصوص القانونية...</div>';
+
+            try {
+                const { data, error } = await client
+                    .from('legal_documents')
+                    .select('*')
+                    .order('display_order', { ascending: true });
+
+                if (error || !data || data.length === 0) {
+                    container.innerHTML = '<div style="text-align: center; color: #64748b; padding: 20px;">لا توجد نصوص أو وثائق متاحة حالياً.</div>';
+                    return;
+                }
+
+                container.innerHTML = data.map(item => {
+                    const style = LEGAL_CATEGORY_STYLES[item.category] || { icon: 'fas fa-file-alt', border: 'var(--primary)', color: 'var(--primary)' };
+                    return `
+                        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-right: 4px solid ${style.border}; border-radius: 8px; padding: 12px; display: flex; align-items: center; justify-content: space-between; gap: 10px;">
+                            <div style="display: flex; align-items: center; gap: 10px; flex: 1;">
+                                <i class="${style.icon}" style="color: ${style.color}; font-size: 18px; flex-shrink: 0;"></i>
+                                <div style="text-align: right;">
+                                    <div style="font-size: 13.5px; font-weight: 700; color: var(--text-dark);">${item.category}</div>
+                                    <div style="font-size: 11.5px; color: #64748b; margin-top: 2px;">${item.title || ''}</div>
+                                </div>
+                            </div>
+                            ${item.file_url 
+                                ? `<a href="${item.file_url}" target="_blank" class="btn" style="padding: 6px 12px; font-size: 11.5px; white-space: nowrap; flex-shrink: 0; background: var(--primary);"><i class="fas fa-file-pdf"></i> تحميل</a>`
+                                : `<span style="font-size: 10.5px; background: #e8f5e9; color: var(--primary-dark); font-weight: 700; padding: 3px 8px; border-radius: 6px; white-space: nowrap; flex-shrink: 0;">متاح قريباً</span>`
+                            }
+                        </div>
+                    `;
+                }).join('');
+
+            } catch (e) {
+                container.innerHTML = '<div style="text-align: center; color: red; padding: 20px;">تعذر تحميل النصوص القانونية، حاول لاحقاً.</div>';
             }
         }
 
