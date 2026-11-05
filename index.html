@@ -1097,7 +1097,7 @@
                     <i class="fas fa-shapes"></i> التعليم الأساسي (الابتدائي)
                 </button>
                 <button class="bag-tab-btn" id="tab-btn-secondary" onclick="switchBagTab('secondary')">
-                    <i class="fas fa-graduation-cap"></i> التعليم الثانوي والإعدادي
+                    <i class="fas fa-graduation-cap"></i> التعليم الإعدادي والثانوي
                 </button>
             </div>
 
@@ -1282,10 +1282,10 @@
             'الاتفاقيات': { icon: 'fas fa-handshake', border: 'var(--gold)', color: 'var(--gold)' }
         };
 
-        // بنك وثائق حقيبة المدرس (الأساسي والثانوي)
+        // بنك وثائق حقيبة المدرس (الأساسي والإعدادي/الثانوي)
         const TEACHER_BAG_DOCS = {
             primary: [
-                { id: 'p_bulletin', title: 'كشف الامتحان الأول / الفصلي (كشف فردي معتمد)', desc: 'نموذج كشف النقاط الرسمي للتلميذ للمراحل الابتدائية (3AP وغيرها)', icon: 'fas fa-file-invoice' },
+                { id: 'p_bulletin', title: 'كشف الامتحان الفصلي (كشف فردي معتمد)', desc: 'نموذج كشف النقاط الرسمي للتلميذ للمراحل الابتدائية (3AP وغيرها)', icon: 'fas fa-file-invoice' },
                 { id: 'p1', title: 'لائحة تلاميذ القسم الرسمي', desc: 'استمارة تفريغ أسماء التلاميذ وتواريخ الميلاد والأرقام الوطنية', icon: 'fas fa-user-friends' },
                 { id: 'p2', title: 'سجل النداء والغياب الشهري', desc: 'دفتر المتابعة اليومية لغياب وحضور التلاميذ', icon: 'fas fa-calendar-check' },
                 { id: 'p3', title: 'جدول النظافة وتنظيم القسم', desc: 'توزيع المهام اليومية للمجموعات داخل الحجرة الصفية', icon: 'fas fa-broom' },
@@ -1293,7 +1293,9 @@
                 { id: 'p5', title: 'كشف تفريغ درجات التقويم والاختبارات', desc: 'جدول احتساب المعدلات الفصلية ومتابعة المستوى', icon: 'fas fa-poll' }
             ],
             secondary: [
-                { id: 's_bulletin', title: 'كشف درجات إعدادي وثانوي (Bulletin de Notes)', desc: 'النموذج الرسمي الشامل للفروض والامتحان والمعاملات والقرار السنوي', icon: 'fas fa-file-signature' },
+                { id: 's_bulletin_prep', title: 'كشف درجات التعليم الإعدادي (1AS - 4AS)', desc: 'النموذج الرسمي الشامل للسنوات الأربع الإعدادية (مجموع الضوارب: 28)', icon: 'fas fa-file-signature' },
+                { id: 's_bulletin_5d', title: 'كشف درجات الخامس علمي (5D)', desc: 'النموذج الرسمي المعتمد لشعبة العلوم (مجموع الضوارب: 29)', icon: 'fas fa-microscope' },
+                { id: 's_bulletin_7d', title: 'كشف درجات البكالوريا / السابع علمي (7D)', desc: 'النموذج الرسمي المعتمد للسابعة علمية (مجموع الضوارب: 31)', icon: 'fas fa-graduation-cap' },
                 { id: 's1', title: 'سجل رصد درجات الطلاب والتقييمات', desc: 'كشف احتساب الفروض الشفهية والكتابية والاختبارات', icon: 'fas fa-award' },
                 { id: 's2', title: 'دفتر النصوص وتوزيع المقررات', desc: 'تخطيط الدروس الأسبوعية ومتابعة المحاور التربوية', icon: 'fas fa-book' },
                 { id: 's3', title: 'دفتر متابعة غياب الطلاب الثانوي', desc: 'سجل الانضباط الصفي والمواظبة اليومية', icon: 'fas fa-clipboard-list' },
@@ -1488,7 +1490,7 @@
             let customFooterHtml = '';
 
             if (docId === 'p_bulletin') {
-                // كشف الامتحان الفصلي للتعليم الابتدائي
+                // كشف الامتحان الفصلي للتعليم الابتدائي (نموذج 3AP)
                 customHeaderHtml = `
                     <div style="border: 2px solid #111; padding: 15px; margin-bottom: 12px; border-radius: 6px;">
                         <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid #111; padding-bottom: 8px;">
@@ -1596,93 +1598,151 @@
                     </div>
                 `;
 
-            } else if (docId === 's_bulletin') {
-                // كشف درجات إعدادي وثانوي (Bulletin de Notes)
+            } else if (docId === 's_bulletin_prep' || docId === 's_bulletin_5d' || docId === 's_bulletin_7d') {
+                // الكشوف الرسمية للتعليم الثانوي والإعدادي
+                let sectionTitle = '';
+                let defaultClass = '';
+                let defaultStudent = '';
+                let defaultNatId = '';
+                let subjectsList = [];
+                let totalCoeff = 28;
+                let defaultTotal = '468.83';
+                let defaultMoy = '16.74';
+
+                if (docId === 's_bulletin_prep') {
+                    sectionTitle = 'كشف درجات التعليم الإعدادي ★ Bulletin de Notes (1AS, 2AS, 3AS, 4AS)';
+                    defaultClass = '1AS';
+                    defaultStudent = 'صدام ولد يوسف';
+                    defaultNatId = '468632';
+                    totalCoeff = 28;
+                    defaultTotal = '468.83';
+                    defaultMoy = '16.74';
+                    subjectsList = [
+                        { name: '(Ed. Islamique) التربية الإسلامية', c1: '19.00', c2: '17.00', c3: '18.00', mEx: '17.00', moy: '17.83', coef: '3', tot: '53.50' },
+                        { name: '(Arabe) العربية', c1: '15.00', c2: '14.00', c3: '12.00', mEx: '13.67', moy: '13.17', coef: '5', tot: '65.83' },
+                        { name: '(Histoire-Géo) التاريخ والجغرافيا', c1: '16.00', c2: '16.00', c3: '17.00', mEx: '17.00', moy: '16.50', coef: '1', tot: '16.50' },
+                        { name: '(Instruction Civique) التربية المدنية', c1: '18.00', c2: '18.00', c3: '18.00', mEx: '18.33', moy: '18.00', coef: '1', tot: '18.00' },
+                        { name: '(Français) الفرنسية', c1: '18.00', c2: '18.00', c3: '17.00', mEx: '18.33', moy: '17.50', coef: '4', tot: '70.00' },
+                        { name: '(Anglais) الإنجليزية', c1: '15.00', c2: '17.00', c3: '18.00', mEx: '17.00', moy: '17.17', coef: '2', tot: '34.33' },
+                        { name: '(Maths) الرياضيات', c1: '18.00', c2: '19.00', c3: '17.00', mEx: '18.53', moy: '17.83', coef: '6', tot: '107.00' },
+                        { name: '(Sciences Nat.) العلوم الطبيعية', c1: '19.00', c2: '18.00', c3: '18.00', mEx: '18.00', moy: '18.00', coef: '2', tot: '36.00' },
+                        { name: '(Physiques) الفيزياء والكيمياء', c1: '18.00', c2: '18.00', c3: '18.00', mEx: '18.33', moy: '18.00', coef: '1', tot: '18.00' },
+                        { name: '(Informatique et Technologie) المعلوماتية والتكنولوجيا', c1: '15.00', c2: '16.00', c3: '17.00', mEx: '11.00', moy: '16.33', coef: '2', tot: '32.67' },
+                        { name: '(E.P.S) التربية البدنية', c1: '13.00', c2: '16.00', c3: '17.00', mEx: '11.00', moy: '16.00', coef: '1', tot: '16.00' }
+                    ];
+                } else if (docId === 's_bulletin_5d') {
+                    sectionTitle = 'كشف درجات ★ BULLETIN DE NOTES (5D) ★';
+                    defaultClass = '5D (الخامس علمي D)';
+                    defaultStudent = 'زينب منت محمد عالي';
+                    defaultNatId = '348754';
+                    totalCoeff = 29;
+                    defaultTotal = '354.23';
+                    defaultMoy = '11.81';
+                    subjectsList = [
+                        { name: '(Ed. Islamique) التربية الإسلامية', c1: '15.00', c2: '14.00', c3: '14.00', mEx: '11.00', moy: '11.00', coef: '3', tot: '33.00' },
+                        { name: '(Arabe) العربية', c1: '11.00', c2: '12.00', c3: '14.00', mEx: '11.00', moy: '11.00', coef: '3', tot: '33.00' },
+                        { name: '(Hist-Géo) التاريخ والجغرافيا', c1: '14.00', c2: '14.00', c3: '16.00', mEx: '14.33', moy: '14.33', coef: '2', tot: '28.66' },
+                        { name: '(Ed. Civique) التربية المدنية', c1: '11.00', c2: '11.00', c3: '10.00', mEx: '11.33', moy: '11.33', coef: '1', tot: '11.33' },
+                        { name: '(Français) الفرنسية', c1: '12.00', c2: '16.00', c3: '12.00', mEx: '13.00', moy: '13.00', coef: '3', tot: '39.00' },
+                        { name: '(Anglais) الإنجليزية', c1: '10.00', c2: '14.00', c3: '12.00', mEx: '12.67', moy: '12.67', coef: '2', tot: '25.34' },
+                        { name: '(Mathématiques) الرياضيات', c1: '13.00', c2: '15.00', c3: '15.00', mEx: '12.67', moy: '12.67', coef: '4', tot: '50.68' },
+                        { name: '(Sciences Nat.) العلوم الطبيعية', c1: '11.00', c2: '13.00', c3: '12.00', mEx: '11.33', moy: '11.33', coef: '6', tot: '67.98' },
+                        { name: '(Physique-Chimie) الفيزياء والكيمياء', c1: '12.00', c2: '12.00', c3: '12.00', mEx: '11.67', moy: '11.67', coef: '4', tot: '46.68' },
+                        { name: '(E.P.S) التربية البدنية', c1: '10.00', c2: '12.00', c3: '10.00', mEx: '13.33', moy: '13.33', coef: '1', tot: '13.33' }
+                    ];
+                } else if (docId === 's_bulletin_7d') {
+                    sectionTitle = 'كشف درجات (سابعة علمية 7D) ★ Bulletin de Notes (7D) ★';
+                    defaultClass = '7D (سابع علمي D)';
+                    defaultStudent = 'موسى ولد عابدين';
+                    defaultNatId = '25863';
+                    totalCoeff = 31;
+                    defaultTotal = '507.67';
+                    defaultMoy = '16.38';
+                    subjectsList = [
+                        { name: '(Ed. Islamique) التربية الإسلامية', c1: '17.00', c2: '18.00', c3: '19.00', mEx: '13.33', moy: '18.33', coef: '2', tot: '36.67' },
+                        { name: '(Arabe) العربية', c1: '16.00', c2: '16.00', c3: '19.00', mEx: '17.67', moy: '17.50', coef: '3', tot: '52.50' },
+                        { name: '(Français) الفرنسية', c1: '17.00', c2: '18.00', c3: '19.00', mEx: '12.33', moy: '18.33', coef: '2', tot: '36.67' },
+                        { name: '(Anglais) الإنجليزية', c1: '11.00', c2: '10.00', c3: '18.00', mEx: '12.33', moy: '14.17', coef: '2', tot: '28.33' },
+                        { name: '(Maths) الرياضيات', c1: '18.00', c2: '18.00', c3: '19.00', mEx: '15.00', moy: '18.50', coef: '6', tot: '111.00' },
+                        { name: '(Sciences Nat.) العلوم الطبيعية', c1: '11.00', c2: '16.00', c3: '17.00', mEx: '16.67', moy: '15.67', coef: '8', tot: '125.33' },
+                        { name: '(Physiques) الفيزياء والكيمياء', c1: '17.00', c2: '13.00', c3: '15.00', mEx: '17.67', moy: '14.67', coef: '7', tot: '102.67' },
+                        { name: '(E.P.S) التربية البدنية', c1: '12.00', c2: '15.00', c3: '15.00', mEx: '0.00', moy: '14.50', coef: '1', tot: '14.50' }
+                    ];
+                }
+
                 customHeaderHtml = `
-                    <div style="border-bottom: 2px solid #111; padding-bottom: 10px; margin-bottom: 12px;">
+                    <div style="border-bottom: 2px solid #111; padding-bottom: 10px; margin-bottom: 10px;">
                         <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                            <div style="font-size: 11px; line-height: 1.5; font-weight: bold; text-align: left;" dir="ltr">
+                            <div style="font-size: 11px; line-height: 1.4; font-weight: bold; text-align: right;">
+                                الجمهورية الإسلامية الموريتانية<br>
+                                شرف - إخاء - عدل<br>
+                                وزارة التربية وإصلاح النظام التعليمي<br>
+                                مديرية التعليم الثانوي<br>
+                                مصلحة الشؤون المدرسية
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="width: 48px; height: 48px; border-radius: 50%; border: 2px solid #116835; margin: 0 auto 3px; display: flex; align-items: center; justify-content: center; font-size: 20px; color: #d4af37;">★</div>
+                                <div style="font-size: 11px; font-weight: 800; color: #116835;">★ RIM ★</div>
+                                <h2 style="margin: 3px 0 0; font-size: 15px; font-weight: 800;">${sectionTitle}</h2>
+                            </div>
+                            <div style="font-size: 11px; line-height: 1.4; font-weight: bold; text-align: left;" dir="ltr">
                                 République Islamique de Mauritanie<br>
                                 Honneur - Fraternité - Justice<br>
                                 Ministère de l'Éducation et de la Réforme du Système d'Enseignement<br>
-                                Direction de l'Enseignement Secondaire
-                            </div>
-                            <div style="text-align: center;">
-                                <div style="width: 44px; height: 44px; border-radius: 50%; border: 2px solid #111; margin: 0 auto 4px; display: flex; align-items: center; justify-content: center; font-size: 16px;">★</div>
-                                <h2 style="margin: 0; font-size: 18px; font-weight: 800;">كشف درجات</h2>
-                                <span style="font-size: 13px; font-weight: bold; font-family: sans-serif;">Bulletin de Notes</span>
-                            </div>
-                            <div style="font-size: 11px; line-height: 1.5; font-weight: bold; text-align: right;">
-                                الجمهورية الإسلامية الموريتانية<br>
-                                شرف - إخاء - عدالة<br>
-                                وزارة التربية وإصلاح النظام التعليمي<br>
-                                مديرية التعليم الثانوي
+                                Direction de l'Enseignement Secondaire<br>
+                                Service des Affaires Scolaires
                             </div>
                         </div>
 
-                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 12px; font-size: 12px; font-weight: bold;">
-                            <div>المؤسسة / Établissement: <span contenteditable="true" style="border-bottom: 1px dotted #333; min-width: 120px; display: inline-block;">.........................</span></div>
-                            <div style="text-align: left;">السنة الدراسية / Année Scolaire: <span contenteditable="true" style="border-bottom: 1px dotted #333; min-width: 80px; display: inline-block;">2025 - 2026</span></div>
-                            <div>الاسم الكامل / Nom et Prénom: <span contenteditable="true" style="border-bottom: 1px dotted #333; min-width: 140px; display: inline-block;">..................................</span></div>
-                            <div style="text-align: left;">القسم / Classe: <span contenteditable="true" style="border-bottom: 1px dotted #333; min-width: 80px; display: inline-block;">.................</span></div>
-                            <div>الرقم الوطني / Numéro National: <span contenteditable="true" style="border-bottom: 1px dotted #333; min-width: 120px; display: inline-block;">.........................</span></div>
+                        <div style="text-align: center; margin-top: 8px; font-size: 12.5px; font-weight: bold;">
+                            المؤسسة / Établissement: <span contenteditable="true" style="border-bottom: 1px dotted #333; min-width: 140px; display: inline-block;">ثانوية تيكماطين</span> |
+                            السنة الدراسية / Année Scolaire: <span contenteditable="true" style="border-bottom: 1px dotted #333; min-width: 90px; display: inline-block;">2025 - 2026</span>
+                        </div>
+
+                        <div style="display: flex; justify-content: space-between; margin-top: 8px; font-size: 12.5px; font-weight: bold;">
+                            <div>الاسم الكامل / Nom et Prénom: <span contenteditable="true" style="border-bottom: 1px dotted #333; min-width: 160px; display: inline-block;">${defaultStudent}</span></div>
+                            <div>القسم / Classe: <span contenteditable="true" style="border-bottom: 1px dotted #333; min-width: 50px; display: inline-block;">${defaultClass}</span></div>
+                            <div>رقم التسجيل: <span contenteditable="true" style="border-bottom: 1px dotted #333; min-width: 40px; display: inline-block;">1</span></div>
+                            <div>الرقم الوطني / Numéro National: <span contenteditable="true" style="border-bottom: 1px dotted #333; min-width: 90px; display: inline-block;">${defaultNatId}</span></div>
+                            <div>القسم: <span contenteditable="true" style="border-bottom: 1px dotted #333; min-width: 30px; display: inline-block;">1</span></div>
                         </div>
                     </div>
                 `;
 
-                const secondarySubjects = [
-                    { ar: 'التربية الإسلامية', fr: 'Education Islamique', coef: '2' },
-                    { ar: 'العربية', fr: 'Arabe', coef: '4' },
-                    { ar: 'التاريخ والجغرافيا', fr: 'Histoire Géographie', coef: '2' },
-                    { ar: 'الفلسفة', fr: 'Philosophie', coef: '3' },
-                    { ar: 'التربية المدنية', fr: 'Instruction Civique', coef: '1' },
-                    { ar: 'الفرنسية', fr: 'Français', coef: '4' },
-                    { ar: 'الإنجليزية', fr: 'Anglais', coef: '2' },
-                    { ar: 'الرياضيات', fr: 'Maths', coef: '5' },
-                    { ar: 'العلوم الطبيعية', fr: 'Sciences Naturelles', coef: '4' },
-                    { ar: 'الفيزياء والكيمياء', fr: 'Physiques Chimie', coef: '4' },
-                    { ar: 'المعلوماتية', fr: 'Informatique', coef: '1' },
-                    { ar: 'التكنولوجيا', fr: 'Technologie', coef: '1' },
-                    { ar: 'التربية البدنية', fr: 'E.P.S', coef: '1' }
-                ];
-
                 tableContent = `
                     <table id="printable-table" style="width: 100%; border-collapse: collapse; font-size: 11px;">
                         <thead>
-                            <tr style="background: #f1f5f9; text-align: center;">
-                                <th style="border: 1px solid #111; padding: 5px;" rowspan="2">المواد<br>Matières</th>
-                                <th style="border: 1px solid #111; padding: 4px;" colspan="3">الفروض والامتحانات</th>
-                                <th style="border: 1px solid #111; padding: 4px; width: 50px;" rowspan="2">المعدل<br>Moyenne</th>
-                                <th style="border: 1px solid #111; padding: 4px; width: 45px;" rowspan="2">المعامل<br>Coeff.</th>
-                                <th style="border: 1px solid #111; padding: 4px; width: 55px;" rowspan="2">المجموع<br>Total</th>
-                                <th style="border: 1px solid #111; padding: 5px; width: 140px;" rowspan="2">ملاحظات وتوقيع الأستاذ<br>Observations du prof</th>
-                            </tr>
-                            <tr style="background: #f8fafc; font-size: 10px; text-align: center;">
-                                <th style="border: 1px solid #111; padding: 3px; width: 50px;">فرض 1</th>
-                                <th style="border: 1px solid #111; padding: 3px; width: 50px;">فرض 2</th>
-                                <th style="border: 1px solid #111; padding: 3px; width: 50px;">امتحان</th>
+                            <tr style="background: #0b4824; color: #fff; text-align: center;">
+                                <th style="border: 1px solid #111; padding: 6px;">المواد<br>Matières</th>
+                                <th style="border: 1px solid #111; padding: 5px; width: 65px;">الامتحان 1<br><span style="font-size: 9.5px;">1er Comp.</span></th>
+                                <th style="border: 1px solid #111; padding: 5px; width: 65px;">الامتحان 2<br><span style="font-size: 9.5px;">2ème Comp.</span></th>
+                                <th style="border: 1px solid #111; padding: 5px; width: 65px;">الامتحان 3<br><span style="font-size: 9.5px;">3ème Comp.</span></th>
+                                <th style="border: 1px solid #111; padding: 5px; width: 75px;">معدل الاختبارات<br><span style="font-size: 9.5px;">Moy. Tests</span></th>
+                                <th style="border: 1px solid #111; padding: 5px; width: 65px;">معدل المادة<br><span style="font-size: 9.5px;">Moyenne</span></th>
+                                <th style="border: 1px solid #111; padding: 5px; width: 45px;">الضارب<br><span style="font-size: 9.5px;">Coeff.</span></th>
+                                <th style="border: 1px solid #111; padding: 5px; width: 60px;">المجموع<br><span style="font-size: 9.5px;">Total</span></th>
+                                <th style="border: 1px solid #111; padding: 5px; width: 95px;">ملاحظات<br><span style="font-size: 9.5px;">Observations</span></th>
                             </tr>
                         </thead>
                         <tbody>
-                            ${secondarySubjects.map(sub => `
+                            ${subjectsList.map(sub => `
                                 <tr>
-                                    <td style="border: 1px solid #111; padding: 5px 8px; font-weight: bold;">
-                                        ${sub.ar} <span style="font-size: 9.5px; color: #475569; display: block;">${sub.fr}</span>
-                                    </td>
-                                    <td contenteditable="true" style="border: 1px solid #111; padding: 4px; text-align: center;"></td>
-                                    <td contenteditable="true" style="border: 1px solid #111; padding: 4px; text-align: center;"></td>
-                                    <td contenteditable="true" style="border: 1px solid #111; padding: 4px; text-align: center;"></td>
-                                    <td contenteditable="true" style="border: 1px solid #111; padding: 4px; text-align: center; font-weight: bold;"></td>
-                                    <td contenteditable="true" style="border: 1px solid #111; padding: 4px; text-align: center;">${sub.coef}</td>
-                                    <td contenteditable="true" style="border: 1px solid #111; padding: 4px; text-align: center; font-weight: bold;"></td>
+                                    <td style="border: 1px solid #111; padding: 5px 8px; font-weight: bold;">${sub.name}</td>
+                                    <td contenteditable="true" style="border: 1px solid #111; padding: 4px; text-align: center;">${sub.c1}</td>
+                                    <td contenteditable="true" style="border: 1px solid #111; padding: 4px; text-align: center;">${sub.c2}</td>
+                                    <td contenteditable="true" style="border: 1px solid #111; padding: 4px; text-align: center;">${sub.c3}</td>
+                                    <td contenteditable="true" style="border: 1px solid #111; padding: 4px; text-align: center; font-weight: bold;">${sub.mEx}</td>
+                                    <td contenteditable="true" style="border: 1px solid #111; padding: 4px; text-align: center; font-weight: bold; background: #f8fafc;">${sub.moy}</td>
+                                    <td contenteditable="true" style="border: 1px solid #111; padding: 4px; text-align: center; font-weight: bold;">${sub.coef}</td>
+                                    <td contenteditable="true" style="border: 1px solid #111; padding: 4px; text-align: center; font-weight: bold; background: #f0fdf4;">${sub.tot}</td>
                                     <td contenteditable="true" style="border: 1px solid #111; padding: 4px; font-size: 10px;"></td>
                                 </tr>
                             `).join('')}
                             <tr style="background: #f1f5f9; font-weight: 800; text-align: center;">
-                                <td style="border: 1px solid #111; padding: 6px;">المجموع / Total</td>
-                                <td colspan="4" style="border: 1px solid #111;"></td>
-                                <td contenteditable="true" style="border: 1px solid #111; padding: 5px;">31</td>
-                                <td contenteditable="true" style="border: 1px solid #111; padding: 5px;"></td>
+                                <td style="border: 1px solid #111; padding: 6px;">المجموع العام / Total Général</td>
+                                <td colspan="5" style="border: 1px solid #111;"></td>
+                                <td contenteditable="true" style="border: 1px solid #111; padding: 5px; font-size: 13px;">${totalCoeff}</td>
+                                <td contenteditable="true" style="border: 1px solid #111; padding: 5px; font-size: 13px; color: #0b4824;">${defaultTotal}</td>
                                 <td style="border: 1px solid #111;"></td>
                             </tr>
                         </tbody>
@@ -1692,20 +1752,26 @@
                 customFooterHtml = `
                     <div style="border: 1.5px solid #111; margin-top: 10px; padding: 10px; font-size: 11.5px; font-weight: bold;">
                         <div style="display: flex; justify-content: space-between; border-bottom: 1px dashed #999; padding-bottom: 6px; margin-bottom: 6px;">
-                            <div>المعدل السنوي العام / Moyenne Générale: <span contenteditable="true" style="border-bottom: 1px dotted #333; min-width: 60px; display: inline-block;">..... / 20</span></div>
-                            <div>الرتبة / Rang: <span contenteditable="true" style="border-bottom: 1px dotted #333; min-width: 50px; display: inline-block;">..... / .....</span></div>
+                            <div>المعدل السنوي العام / Moyenne Annuelle: <span contenteditable="true" style="border-bottom: 1px dotted #333; min-width: 60px; display: inline-block; color: #0b4824; font-size: 13.5px;">${defaultMoy}</span> / 20</div>
+                            <div>الرتبة / Rang: <span contenteditable="true" style="border-bottom: 1px dotted #333; min-width: 40px; display: inline-block;">1</span></div>
                             <div>التاريخ / Date: <span contenteditable="true">..... / ..... / 202...</span></div>
                         </div>
                         <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-top: 6px;">
                             <div style="line-height: 1.8;">
                                 القرار / DÉCISION:<br>
-                                <label><input type="checkbox"> يتجاوز إلى القسم الأعلى / Passe en classe supérieure</label><br>
-                                <label><input type="checkbox"> يكرر السنة / Redouble</label><br>
-                                <label><input type="checkbox"> مطرود نهائياً / Exclusion définitive</label>
+                                <label><input type="checkbox" checked> متجاوز إلى القسم الأعلى / Pass</label><br>
+                                <label><input type="checkbox"> مرخص له في الإعادة / Redouble</label><br>
+                                <label><input type="checkbox"> مطرود نهائياً / Exclu</label>
                             </div>
-                            <div style="text-align: center; min-width: 200px;">
+                            <div style="text-align: center; min-width: 220px;">
                                 توقيع وختم مدير المؤسسة<br>
-                                Signature et cachet du Chef d'Établissement<br><br><br>
+                                Signature et cachet du Directeur<br><br><br>
+                                (ختم المؤسسة)
+                            </div>
+                            <div style="width: 250px;">
+                                ملاحظات المدير / Observations du Directeur:<br>
+                                <div contenteditable="true" style="border-bottom: 1px dotted #333; height: 22px;">لوحة الشرف مع تهنئة</div>
+                                <div contenteditable="true" style="border-bottom: 1px dotted #333; height: 22px;"></div>
                             </div>
                         </div>
                     </div>
@@ -1827,7 +1893,7 @@
                     <style>
                         * { box-sizing: border-box; font-family: 'Tajawal', sans-serif; }
                         body { margin: 15px; color: #111; direction: rtl; background-color: #f8fafc; }
-                        .paper-container { max-width: 920px; margin: 0 auto; background: #fff; padding: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-radius: 8px; }
+                        .paper-container { max-width: 950px; margin: 0 auto; background: #fff; padding: 22px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-radius: 8px; }
                         .no-print-bar {
                             position: sticky; top: 0; z-index: 100; background: #0b4824; color: white; padding: 12px 18px;
                             border-radius: 8px; margin-bottom: 20px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.15);
