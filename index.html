@@ -351,6 +351,39 @@
             direction: ltr;
         }
 
+        /* حقل البحث داخل نافذة الولاية */
+        .region-search-wrapper {
+            position: relative;
+            margin-bottom: 12px;
+        }
+
+        .region-search-input {
+            width: 100%;
+            padding: 11px 40px 11px 12px;
+            border: 1.5px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 13.5px;
+            outline: none;
+            text-align: right;
+            transition: all 0.2s ease;
+            background: #fff;
+        }
+
+        .region-search-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(17, 104, 53, 0.12);
+        }
+
+        .region-search-icon {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+            font-size: 15px;
+            pointer-events: none;
+        }
+
         /* بطاقات أعضاء المنسقية داخل النافذة */
         .region-member-card {
             background: #f8fafc;
@@ -446,8 +479,9 @@
             top: 15px;
             font-size: 24px;
             color: #64748b;
-            cursor: border: none;
+            border: none;
             background: none;
+            cursor: pointer;
             z-index: 10;
         }
 
@@ -580,6 +614,91 @@
             padding: 2px 6px;
             border-radius: 4px;
             display: inline-block;
+        }
+
+        /* تنسيقات نافذة حقيبة المدرس */
+        .bag-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 6px;
+        }
+
+        .bag-tab-btn {
+            flex: 1;
+            padding: 9px 8px;
+            border-radius: 8px;
+            border: 1.5px solid #cbd5e1;
+            background: #f8fafc;
+            color: #475569;
+            font-weight: 700;
+            font-size: 12.5px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .bag-tab-btn.active {
+            background: var(--primary);
+            color: #fff;
+            border-color: var(--primary);
+            box-shadow: 0 2px 6px rgba(17, 104, 53, 0.2);
+        }
+
+        .bag-doc-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-right: 4px solid var(--primary);
+            border-radius: 10px;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 10px;
+            transition: all 0.2s ease;
+        }
+
+        .bag-doc-card:hover {
+            border-color: var(--gold);
+            background: #ffffff;
+            transform: translateX(-2px);
+        }
+
+        .bag-doc-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+        }
+
+        .bag-doc-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 8px;
+            background: #e8f5e9;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .bag-doc-title {
+            font-size: 13.5px;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .bag-doc-desc {
+            font-size: 11.5px;
+            color: #64748b;
+            margin-top: 2px;
         }
 
         /* قائمة الأخبار */
@@ -757,8 +876,14 @@
             <i class="fas fa-info-circle"></i> من نحن؟ (تعريف بالنقابة)
         </button>
 
-        <!-- أزرار استعراض الهيئات القيادية والنصوص -->
+        <!-- أزرار استعراض الهيئات القيادية والنصوص وحقيبة المدرس -->
         <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px;">
+            
+            <!-- زر حقيبة المدرس الرقمية المضاف -->
+            <button class="btn btn-block" style="background: linear-gradient(135deg, #0284c7, #0369a1); color: white; border: 1.5px solid #38bdf8; box-shadow: 0 4px 10px rgba(2, 132, 199, 0.25);" onclick="openBagModal()">
+                <i class="fas fa-briefcase" style="color: #fde047;"></i> حقيبة المدرس الرقمية (استمارات ونماذج تربوية)
+            </button>
+
             <button class="btn btn-block btn-gold" onclick="openOfficeModal()">
                 <i class="fas fa-users-cog"></i> تشكيلة أعضاء المكتب الوطني
                 <i class="fas fa-lock" style="font-size: 11px; opacity: 0.8; margin-right: auto;"></i>
@@ -956,6 +1081,32 @@
         </div>
     </div>
 
+    <!-- نافذة حقيبة المدرس الرقمية (الاستمارات والنماذج التربوية) المضافة -->
+    <div id="bag-modal" class="modal">
+        <div class="modal-content" style="max-width: 520px;">
+            <button class="close-btn" onclick="closeModal('bag-modal')">&times;</button>
+            <div style="text-align: center; border-bottom: 2px solid var(--gold); padding-bottom: 12px; margin-bottom: 15px;">
+                <i class="fas fa-briefcase" style="font-size: 32px; color: #0284c7; margin-bottom: 6px;"></i>
+                <h3 style="color: var(--primary-dark);">حقيبة المدرس الرقمية</h3>
+                <p style="font-size: 12px; color: #64748b;">وثائق، نماذج واستمارات تربوية جاهزة للطباعة والتنزيل (A4)</p>
+            </div>
+
+            <!-- تبويبات التعليم الأساسي والثانوي -->
+            <div class="bag-tabs">
+                <button class="bag-tab-btn active" id="tab-btn-primary" onclick="switchBagTab('primary')">
+                    <i class="fas fa-shapes"></i> التعليم الأساسي
+                </button>
+                <button class="bag-tab-btn" id="tab-btn-secondary" onclick="switchBagTab('secondary')">
+                    <i class="fas fa-graduation-cap"></i> التعليم الثانوي
+                </button>
+            </div>
+
+            <div id="bag-docs-list" style="max-height: 400px; overflow-y: auto; padding-left: 4px;">
+                <!-- يتم توليد البطاقات ديناميكياً عبر الجافاسكريبت -->
+            </div>
+        </div>
+    </div>
+
     <!-- نافذة بطاقة العضو الرقمية (للعرض فقط) -->
     <div id="card-modal" class="modal">
         <div class="modal-content">
@@ -1063,7 +1214,7 @@
         </div>
     </div>
 
-    <!-- نافذة استعراض المنسقية الجهوية (نافذة ديناميكية موحدة لكل الولايات) -->
+    <!-- نافذة استعراض المنسقية الجهوية (نافذة ديناميكية موحدة لكل الولايات مع خاصية البحث الفوري) -->
     <div id="region-modal" class="modal">
         <div class="modal-content" style="max-width: 520px;">
             <button class="close-btn" onclick="closeModal('region-modal')">&times;</button>
@@ -1072,7 +1223,19 @@
                 <h3 id="region-modal-title" style="color: var(--primary);">منسقية الولاية</h3>
                 <p id="region-modal-subtitle" style="font-size: 12px; color: #64748b;">قائمة المنتسبين الرسميين المعتمدين بالولاية (للمطالعة فقط)</p>
             </div>
-            <div id="region-members-list" style="margin-top: 10px;"></div>
+
+            <!-- حقل البحث المباشر للمنسقين الجهويين -->
+            <div class="region-search-wrapper">
+                <input type="text" id="input-region-search" class="region-search-input" 
+                       placeholder="ابحث بالاسم، الدليل المالي، أو المؤسسة..." 
+                       oninput="filterRegionMembers()">
+                <i class="fas fa-search region-search-icon"></i>
+            </div>
+
+            <!-- عداد نتائج البحث أو الإجمالي داخل المنسقية -->
+            <div id="region-search-counter" style="font-size: 11.5px; color: #64748b; margin-bottom: 10px; font-weight: 600;"></div>
+
+            <div id="region-members-list" style="margin-top: 5px; max-height: 400px; overflow-y: auto; padding-left: 4px;"></div>
         </div>
     </div>
 
@@ -1119,6 +1282,23 @@
             'النصوص المتعلقة بالتعليم': { icon: 'fas fa-chalkboard-teacher', border: '#10b981', color: '#10b981' },
             'النصوص المتعلقة بالوظيفة العمومية': { icon: 'fas fa-building', border: '#6366f1', color: '#6366f1' },
             'الاتفاقيات': { icon: 'fas fa-handshake', border: 'var(--gold)', color: 'var(--gold)' }
+        };
+
+        // بنك وثائق حقيبة المدرس (الأساسي والثانوي)
+        const TEACHER_BAG_DOCS = {
+            primary: [
+                { id: 'p1', title: 'لائحة تلاميذ القسم الرسمي', desc: 'استمارة تفريغ أسماء التلاميذ وتواريخ الميلاد والأرقام الوطنية', icon: 'fas fa-user-friends' },
+                { id: 'p2', title: 'سجل النداء والغياب الشهري', desc: 'دفتر المتابعة اليومية لغياب وحضور التلاميذ', icon: 'fas fa-calendar-check' },
+                { id: 'p3', title: 'جدول النظافة وتنظيم القسم', desc: 'توزيع المهام اليومية للمجموعات داخل الحجرة الصفية', icon: 'fas fa-broom' },
+                { id: 'p4', title: 'لائحة مجموعات منشدي القسم', desc: 'جدول توزيع الأناشيد الصباحية ولجان الأنشطة المدرسية', icon: 'fas fa-music' },
+                { id: 'p5', title: 'كشف تفريغ درجات التقويم والاختبارات', desc: 'جدول احتساب المعدلات الفصلية ومتابعة المستوى', icon: 'fas fa-poll' }
+            ],
+            secondary: [
+                { id: 's1', title: 'سجل رصد درجات الطلاب والتقييمات', desc: 'كشف احتساب الفروض الشفهية والكتابية والاختبارات', icon: 'fas fa-award' },
+                { id: 's2', title: 'دفتر النصوص وتوزيع المقررات', desc: 'تخطيط الدروس الأسبوعية ومتابعة المحاور التربوية', icon: 'fas fa-book' },
+                { id: 's3', title: 'دفتر متابعة غياب الطلاب الثانوي', desc: 'سجل الانضباط الصفي والمواظبة اليومية', icon: 'fas fa-clipboard-list' },
+                { id: 's4', title: 'استمارة تحليل نتائج الاختبارات الفصلية', desc: 'مؤشرات التحصيل الدراسي ونسب النجاح والتعثر بالقسم', icon: 'fas fa-chart-line' }
+            ]
         };
 
         // تحميل الإحصائيات التلقائية الحية من Supabase
@@ -1257,6 +1437,177 @@
             } catch (e) {
                 container.innerHTML = '<div style="text-align: center; color: red; padding: 20px;">تعذر تحميل النصوص القانونية، حاول لاحقاً.</div>';
             }
+        }
+
+        // دوال حقيبة المدرس الرقمية
+        function openBagModal() {
+            document.getElementById('bag-modal').style.display = 'block';
+            switchBagTab('primary');
+        }
+
+        function switchBagTab(type) {
+            const btnP = document.getElementById('tab-btn-primary');
+            const btnS = document.getElementById('tab-btn-secondary');
+            const list = document.getElementById('bag-docs-list');
+
+            if (type === 'primary') {
+                btnP.classList.add('active');
+                btnS.classList.remove('active');
+            } else {
+                btnS.classList.add('active');
+                btnP.classList.remove('active');
+            }
+
+            const docs = TEACHER_BAG_DOCS[type] || [];
+            list.innerHTML = docs.map(doc => `
+                <div class="bag-doc-card">
+                    <div class="bag-doc-info">
+                        <div class="bag-doc-icon"><i class="${doc.icon}"></i></div>
+                        <div>
+                            <div class="bag-doc-title">${doc.title}</div>
+                            <div class="bag-doc-desc">${doc.desc}</div>
+                        </div>
+                    </div>
+                    <button class="btn" onclick="generateAndPrintDoc('${doc.id}', '${doc.title}')" style="padding: 7px 11px; font-size: 12px; background: #0284c7; flex-shrink: 0;">
+                        <i class="fas fa-print"></i> طباعة / PDF
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        // توليد استمارة تربوية نظيفة وجاهزة للطباعة فوراً
+        function generateAndPrintDoc(docId, docTitle) {
+            const printWindow = window.open('', '_blank');
+            if (!printWindow) {
+                alert('يرجى السماح بفتح النوافذ المنبثقة للطباعة أو تنزيل المستند.');
+                return;
+            }
+
+            let tableContent = '';
+            if (docId === 'p1') {
+                tableContent = `
+                    <table style="width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 12px;">
+                        <thead>
+                            <tr style="background: #f1f5f9;">
+                                <th style="border: 1px solid #333; padding: 6px; width: 40px;">الرقم</th>
+                                <th style="border: 1px solid #333; padding: 6px;">الاسم الكامل للتلميذ</th>
+                                <th style="border: 1px solid #333; padding: 6px; width: 90px;">تاريخ الميلاد</th>
+                                <th style="border: 1px solid #333; padding: 6px; width: 90px;">الرقم الوطني</th>
+                                <th style="border: 1px solid #333; padding: 6px; width: 110px;">اسم ولي الأمر</th>
+                                <th style="border: 1px solid #333; padding: 6px; width: 90px;">الهاتف</th>
+                                <th style="border: 1px solid #333; padding: 6px; width: 80px;">ملاحظات</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${Array.from({length: 32}, (_, i) => `
+                                <tr>
+                                    <td style="border: 1px solid #333; padding: 6px; text-align: center;">${i + 1}</td>
+                                    <td style="border: 1px solid #333; padding: 6px;"></td>
+                                    <td style="border: 1px solid #333; padding: 6px;"></td>
+                                    <td style="border: 1px solid #333; padding: 6px;"></td>
+                                    <td style="border: 1px solid #333; padding: 6px;"></td>
+                                    <td style="border: 1px solid #333; padding: 6px;"></td>
+                                    <td style="border: 1px solid #333; padding: 6px;"></td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+            } else if (docId === 'p3') {
+                tableContent = `
+                    <table style="width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 12px;">
+                        <thead>
+                            <tr style="background: #f1f5f9;">
+                                <th style="border: 1px solid #333; padding: 8px;">اليوم</th>
+                                <th style="border: 1px solid #333; padding: 8px;">المجموعة المسؤولة</th>
+                                <th style="border: 1px solid #333; padding: 8px;">أسماء التلاميذ المكلفين</th>
+                                <th style="border: 1px solid #333; padding: 8px; width: 100px;">ملاحظات المعلم</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${['الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'].map(day => `
+                                <tr>
+                                    <td style="border: 1px solid #333; padding: 14px; text-align: center; font-weight: bold;">${day}</td>
+                                    <td style="border: 1px solid #333; padding: 14px; text-align: center;">المجموعة: ........</td>
+                                    <td style="border: 1px solid #333; padding: 14px;"></td>
+                                    <td style="border: 1px solid #333; padding: 14px;"></td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+            } else {
+                tableContent = `
+                    <table style="width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 12px;">
+                        <thead>
+                            <tr style="background: #f1f5f9;">
+                                <th style="border: 1px solid #333; padding: 6px; width: 40px;">م</th>
+                                <th style="border: 1px solid #333; padding: 6px;">الاسم الكامل</th>
+                                <th style="border: 1px solid #333; padding: 6px; width: 130px;">المهمة / المادة</th>
+                                <th style="border: 1px solid #333; padding: 6px;">التقويم والملاحظات التربوية</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${Array.from({length: 25}, (_, i) => `
+                                <tr>
+                                    <td style="border: 1px solid #333; padding: 7px; text-align: center;">${i + 1}</td>
+                                    <td style="border: 1px solid #333; padding: 7px;"></td>
+                                    <td style="border: 1px solid #333; padding: 7px;"></td>
+                                    <td style="border: 1px solid #333; padding: 7px;"></td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+            }
+
+            printWindow.document.write(`
+                <!DOCTYPE html>
+                <html lang="ar" dir="rtl">
+                <head>
+                    <meta charset="UTF-8">
+                    <title>${docTitle} - النقابة الوطنية للمدرسين (نور)</title>
+                    <style>
+                        body { font-family: 'Tajawal', sans-serif, Tahoma; margin: 25px; color: #111; direction: rtl; }
+                        .header-wrap { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #116835; padding-bottom: 10px; margin-bottom: 15px; }
+                        .meta-info { display: flex; justify-content: space-between; font-size: 13px; font-weight: bold; margin-bottom: 12px; }
+                        @media print { body { margin: 10mm; } }
+                    </style>
+                </head>
+                <body>
+                    <div class="header-wrap">
+                        <div style="font-size: 13px; font-weight: bold; line-height: 1.6;">
+                            الجمهورية الإسلامية الموريتانية<br>
+                            وزارة التربية وإصلاح النظام التعليمي<br>
+                            النقابة الوطنية للمدرسين (نور)
+                        </div>
+                        <div style="text-align: center;">
+                            <h2 style="margin: 0; color: #116835; font-size: 18px;">${docTitle}</h2>
+                            <span style="font-size: 12px; color: #555;">السنة الدراسية: 2025 - 2026</span>
+                        </div>
+                        <div style="text-align: left; font-size: 12px;">
+                            المؤسسة: .........................<br>
+                            القسم / الشعبة: .................<br>
+                            المدرس: ..........................
+                        </div>
+                    </div>
+                    <div class="meta-info">
+                        <div>الولاية: ..............................</div>
+                        <div>المقاطعة: ..............................</div>
+                        <div>التاريخ: ..... / ..... / 202...</div>
+                    </div>
+                    ${tableContent}
+                    <div style="display: flex; justify-content: space-between; margin-top: 30px; font-size: 13px; font-weight: bold;">
+                        <div>توقيع الأستاذ / المعلم:</div>
+                        <div>ملاحظة وتأشيرة الإدارة:</div>
+                    </div>
+                    <script>
+                        window.onload = function() { window.print(); };
+                    <\/script>
+                </body>
+                </html>
+            `);
+            printWindow.document.close();
         }
 
         // فتح نافذة طلب رمز المرور للمكتب الوطني
@@ -1407,13 +1758,16 @@
             }
         }
 
-        // جلب وعرض بيانات المنسقية المحددة (للقراءة والرقابة فقط)
+        // جلب وعرض بيانات المنسقية المحددة
         async function fetchAndDisplayRegion(code) {
             const conf = WILAYAS_CONFIG[code] || { name: 'المنسقية الجهوية', filter: `wilaya_code.eq.${code}` };
             const modal = document.getElementById('region-modal');
             const list = document.getElementById('region-members-list');
+            const searchInput = document.getElementById('input-region-search');
             
+            if (searchInput) searchInput.value = '';
             document.getElementById('region-modal-title').innerText = `منسقية ${conf.name} (${code})`;
+            document.getElementById('region-search-counter').innerText = '';
             modal.style.display = 'block';
             list.innerHTML = `<div style="text-align: center; color: #64748b; padding: 25px;"><i class="fas fa-spinner fa-spin"></i> جاري جلب لوائح ${conf.name}...</div>`;
 
@@ -1430,21 +1784,70 @@
                 }
 
                 regionMembersData = data;
-
-                list.innerHTML = data.map((mem, idx) => `
-                    <div class="region-member-card" onclick="viewRegionMemberCard(${idx})">
-                        <img class="region-avatar" src="${mem.photo_url || 'IM9.jpg'}" onerror="this.src='IM9.jpg'">
-                        <div class="region-member-info">
-                            <div class="region-member-name">${mem.full_name}</div>
-                            <div class="region-member-details">${mem.school || 'المؤسسة غير محددة'} • ${mem.moughataa || conf.name}</div>
-                        </div>
-                        <div class="region-badge-num">${mem.national_id_card || mem.membership_number || code}</div>
-                    </div>
-                `).join('');
+                renderRegionMembersList(regionMembersData);
 
             } catch (e) {
                 list.innerHTML = '<div style="text-align: center; color: red; padding: 20px;">تعذر تحميل القائمة، يرجى المحاولة لاحقاً.</div>';
             }
+        }
+
+        // رسم بطاقات أعضاء المنسقية مع ربط الفهرس الصحيح
+        function renderRegionMembersList(listData) {
+            const list = document.getElementById('region-members-list');
+            const counter = document.getElementById('region-search-counter');
+
+            if (counter) {
+                counter.innerText = `عدد النتائج المعروضة: ${listData.length} منتسب`;
+            }
+
+            if (!listData || listData.length === 0) {
+                list.innerHTML = '<div style="text-align: center; color: #64748b; padding: 25px; font-size: 13.5px;"><i class="fas fa-search" style="font-size: 20px; margin-bottom: 6px; display: block; color: #cbd5e1;"></i>لم يتم العثور على أي مدرس مطابق للبحث.</div>';
+                return;
+            }
+
+            list.innerHTML = listData.map((mem) => {
+                const originalIndex = regionMembersData.indexOf(mem);
+                const displayNum = mem.financial_id || mem.national_id_card || mem.membership_number || mem.national_id || '-';
+                return `
+                    <div class="region-member-card" onclick="viewRegionMemberCard(${originalIndex})">
+                        <img class="region-avatar" src="${mem.photo_url || 'IM9.jpg'}" onerror="this.src='IM9.jpg'">
+                        <div class="region-member-info">
+                            <div class="region-member-name">${mem.full_name || '-'}</div>
+                            <div class="region-member-details">${mem.school || 'المؤسسة غير محددة'} • ${mem.moughataa || ''}</div>
+                        </div>
+                        <div class="region-badge-num">${displayNum}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // فلترة أعضاء المنسقية فورياً أثناء الكتابة في شريط البحث
+        function filterRegionMembers() {
+            const query = (document.getElementById('input-region-search').value || '').trim().toLowerCase();
+            if (!query) {
+                renderRegionMembersList(regionMembersData);
+                return;
+            }
+
+            const filtered = regionMembersData.filter(mem => {
+                const name = (mem.full_name || '').toLowerCase();
+                const fid = (mem.financial_id || '').toLowerCase();
+                const nid = (mem.national_id || '').toLowerCase();
+                const cardNum = (mem.national_id_card || '').toLowerCase();
+                const memNum = (mem.membership_number || '').toLowerCase();
+                const school = (mem.school || '').toLowerCase();
+                const moughataa = (mem.moughataa || '').toLowerCase();
+
+                return name.includes(query) || 
+                       fid.includes(query) || 
+                       nid.includes(query) || 
+                       cardNum.includes(query) || 
+                       memNum.includes(query) || 
+                       school.includes(query) || 
+                       moughataa.includes(query);
+            });
+
+            renderRegionMembersList(filtered);
         }
 
         // عرض بطاقة عضو من أعضاء المنسقية
@@ -1519,7 +1922,7 @@
             renderCardData();
         }
         
-        // فتح نافذة من نحن
+        // فتح وإغلاق النوافذ
         function openAboutModal() {
             document.getElementById('about-modal').style.display = 'block';
         }
