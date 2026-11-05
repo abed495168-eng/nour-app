@@ -1,4 +1,4 @@
-const CACHE_NAME = 'nour-pwa-v2';
+const CACHE_NAME = 'nour-pwa-v3';
 const ASSETS = [
   './',
   './index.html',
@@ -28,17 +28,30 @@ self.addEventListener('activate', (e) => {
   );
 });
 
-// استراتيجية Network-First: جلب أحدث نسخة دائماً، مع استخدام الكاش فقط عند عدم توفر الإنترنت
+// استراتيجية Network-First: جلب أحدث نسخة دائماً مع تجنب كاش الصفحات الرئيسية
 self.addEventListener('fetch', (e) => {
   // عدم تخزين ملفات APK أو اتصالات Supabase الخارجية في الكاش
   if (e.request.url.includes('.apk') || e.request.url.includes('supabase.co')) {
     return;
   }
 
+  // إجبار جلب صفحات HTML من الشبكة مباشرة لتفادي بقاء الواجهة القديمة
+  if (e.request.mode === 'navigate' || e.request.destination === 'document') {
+    e.respondWith(
+      fetch(e.request)
+        .then((response) => {
+          const copy = response.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(e.request, copy));
+          return response;
+        })
+        .catch(() => caches.match(e.request))
+    );
+    return;
+  }
+
   e.respondWith(
     fetch(e.request)
       .then((response) => {
-        // تحديث نسخة الكاش في الخلفية بالنسخة الجديدة
         if (response && response.status === 200 && response.type === 'basic') {
           const responseToCache = response.clone();
           caches.open(CACHE_NAME).then((cache) => {
