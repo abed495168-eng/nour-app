@@ -879,9 +879,10 @@
         <!-- أزرار استعراض الهيئات القيادية والنصوص وحقيبة المدرس -->
         <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px;">
             
-            <!-- زر حقيبة المدرس الرقمية -->
+            <!-- زر حقيبة المدرس الرقمية المقفلة بالعضوية -->
             <button class="btn btn-block" style="background: linear-gradient(135deg, #0284c7, #0369a1); color: white; border: 1.5px solid #38bdf8; box-shadow: 0 4px 10px rgba(2, 132, 199, 0.25);" onclick="openBagModal()">
                 <i class="fas fa-briefcase" style="color: #fde047;"></i> حقيبة المدرس الرقمية (استمارات ونماذج تربوية)
+                <i class="fas fa-lock" style="font-size: 11px; opacity: 0.8; margin-right: auto;"></i>
             </button>
 
             <button class="btn btn-block btn-gold" onclick="openOfficeModal()">
@@ -1036,14 +1037,14 @@
 
     </div>
 
-    <!-- نافذة إدخال أو تعيين الرمز السري (PIN) للبطاقة الفردية -->
+    <!-- نافذة إدخال أو تعيين الرمز السري (PIN) للبطاقة الفردية والتحقق -->
     <div id="pin-modal" class="modal">
         <div class="modal-content">
             <button class="close-btn" onclick="closeModal('pin-modal')">&times;</button>
             <div style="text-align: center; margin-bottom: 15px;">
                 <i class="fas fa-lock" style="font-size: 32px; color: var(--primary);"></i>
                 <h3 id="pin-title" style="margin-top: 10px;">الرمز السري</h3>
-                <p id="pin-subtitle" style="font-size: 13px; color: #64748b; margin-top: 5px;">أدخل الرمز السري الخاص بك أو أنشئ رمزاً جديداً (4 أرقام):</p>
+                <p id="pin-subtitle" style="font-size: 13px; color: #64748b; margin-top: 5px;">أدخل الرمز السري الخاص بك (4 أرقام):</p>
             </div>
             <input type="password" id="input-pin" maxlength="4" placeholder="••••" style="font-size: 24px; letter-spacing: 5px; margin-bottom: 15px;">
             <button class="btn btn-block" id="btn-submit-pin" onclick="verifyOrSetPin()">متابعة</button>
@@ -1248,6 +1249,7 @@
         let activeMember = null;
         let isCardFrench = false;
         let pendingWilayaCode = null;
+        let isMemberVerifiedForBag = false; // تتبع حالة التحقق من العضوية للحقيبة
 
         // إعدادات وبيانات المنسقيات الجهوية للولايات الـ 15 المعتمدة
         const WILAYAS_CONFIG = {
@@ -1362,7 +1364,7 @@
             document.getElementById('pin-modal').style.display = 'block';
         }
 
-        // معالجة ومطابقة الرمز السري (PIN) للبطاقة الفردية
+        // معالجة ومطابقة الرمز السري (PIN) للبطاقة الفردية أو للدخول للحقيبة
         async function verifyOrSetPin() {
             const pin = document.getElementById('input-pin').value.trim();
             const err = document.getElementById('pin-error');
@@ -1388,7 +1390,16 @@
 
                 if (data && data.success) {
                     closeModal('pin-modal');
-                    showCard(data.data);
+                    isMemberVerifiedForBag = true;
+                    activeMember = data.data;
+
+                    // إذا كان الطلب قادماً من زر فتح الحقيبة
+                    if (window.pendingOpenBagAction) {
+                        window.pendingOpenBagAction = false;
+                        showBagModalDirectly();
+                    } else {
+                        showCard(data.data);
+                    }
                 } else {
                     err.innerText = data.message || 'بيانات غير صحيحة، تأكد من الرمز والمُعرّف.';
                     err.style.display = 'block';
@@ -1441,8 +1452,29 @@
             }
         }
 
-        // دوال حقيبة المدرس الرقمية
+        // دوال حقيبة المدرس الرقمية المقفلة بالعضوية
         function openBagModal() {
+            // إذا كان المدرس قد قام بالتحقق من عضويته بالفعل
+            if (isMemberVerifiedForBag && activeMember) {
+                showBagModalDirectly();
+                return;
+            }
+
+            // إذا لم يتحقق المدرس، يتم توجيهه للتحقق أولاً
+            const idInput = document.getElementById('input-nid').value.trim();
+            if (idInput) {
+                enteredIdentifier = idInput;
+                window.pendingOpenBagAction = true;
+                document.getElementById('input-pin').value = '';
+                document.getElementById('pin-error').style.display = 'none';
+                document.getElementById('pin-modal').style.display = 'block';
+            } else {
+                alert('حقيبة المدرس الرقمية مخصصة لمنتسبي النقابة. يرجى إدخال الدليل المالي أو الرقم الوطني في حقل التحقق أولاً للتمكن من فتح الحقيبة.');
+                document.getElementById('input-nid').focus();
+            }
+        }
+
+        function showBagModalDirectly() {
             document.getElementById('bag-modal').style.display = 'block';
             switchBagTab('primary');
         }
@@ -1490,7 +1522,6 @@
             let customFooterHtml = '';
 
             if (docId === 'p_bulletin') {
-                // كشف الامتحان الفصلي للتعليم الابتدائي (نموذج 3AP)
                 customHeaderHtml = `
                     <div style="border: 2px solid #111; padding: 15px; margin-bottom: 12px; border-radius: 6px;">
                         <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid #111; padding-bottom: 8px;">
@@ -1599,7 +1630,6 @@
                 `;
 
             } else if (docId === 's_bulletin_prep' || docId === 's_bulletin_5d' || docId === 's_bulletin_7d') {
-                // الكشوف الرسمية للتعليم الثانوي والإعدادي
                 let sectionTitle = '';
                 let defaultClass = '';
                 let defaultStudent = '';
