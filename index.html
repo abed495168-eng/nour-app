@@ -879,7 +879,7 @@
         <!-- أزرار استعراض الهيئات القيادية والنصوص وحقيبة المدرس -->
         <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px;">
             
-            <!-- زر حقيبة المدرس الرقمية المضاف -->
+            <!-- زر حقيبة المدرس الرقمية -->
             <button class="btn btn-block" style="background: linear-gradient(135deg, #0284c7, #0369a1); color: white; border: 1.5px solid #38bdf8; box-shadow: 0 4px 10px rgba(2, 132, 199, 0.25);" onclick="openBagModal()">
                 <i class="fas fa-briefcase" style="color: #fde047;"></i> حقيبة المدرس الرقمية (استمارات ونماذج تربوية)
             </button>
@@ -1081,14 +1081,14 @@
         </div>
     </div>
 
-    <!-- نافذة حقيبة المدرس الرقمية (الاستمارات والنماذج التربوية) المضافة -->
+    <!-- نافذة حقيبة المدرس الرقمية -->
     <div id="bag-modal" class="modal">
         <div class="modal-content" style="max-width: 520px;">
             <button class="close-btn" onclick="closeModal('bag-modal')">&times;</button>
             <div style="text-align: center; border-bottom: 2px solid var(--gold); padding-bottom: 12px; margin-bottom: 15px;">
                 <i class="fas fa-briefcase" style="font-size: 32px; color: #0284c7; margin-bottom: 6px;"></i>
                 <h3 style="color: var(--primary-dark);">حقيبة المدرس الرقمية</h3>
-                <p style="font-size: 12px; color: #64748b;">وثائق، نماذج واستمارات تربوية جاهزة للطباعة والتنزيل (A4)</p>
+                <p style="font-size: 12px; color: #64748b;">وثائق، نماذج واستمارات تربوية قابلة للتعديل والطباعة (A4)</p>
             </div>
 
             <!-- تبويبات التعليم الأساسي والثانوي -->
@@ -1101,9 +1101,7 @@
                 </button>
             </div>
 
-            <div id="bag-docs-list" style="max-height: 400px; overflow-y: auto; padding-left: 4px;">
-                <!-- يتم توليد البطاقات ديناميكياً عبر الجافاسكريبت -->
-            </div>
+            <div id="bag-docs-list" style="max-height: 400px; overflow-y: auto; padding-left: 4px;"></div>
         </div>
     </div>
 
@@ -1214,7 +1212,7 @@
         </div>
     </div>
 
-    <!-- نافذة استعراض المنسقية الجهوية (نافذة ديناميكية موحدة لكل الولايات مع خاصية البحث الفوري) -->
+    <!-- نافذة استعراض المنسقية الجهوية -->
     <div id="region-modal" class="modal">
         <div class="modal-content" style="max-width: 520px;">
             <button class="close-btn" onclick="closeModal('region-modal')">&times;</button>
@@ -1232,7 +1230,7 @@
                 <i class="fas fa-search region-search-icon"></i>
             </div>
 
-            <!-- عداد نتائج البحث أو الإجمالي داخل المنسقية -->
+            <!-- عداد نتائج البحث -->
             <div id="region-search-counter" style="font-size: 11.5px; color: #64748b; margin-bottom: 10px; font-weight: 600;"></div>
 
             <div id="region-members-list" style="margin-top: 5px; max-height: 400px; overflow-y: auto; padding-left: 4px;"></div>
@@ -1251,7 +1249,7 @@
         let isCardFrench = false;
         let pendingWilayaCode = null;
 
-        // إعدادات وبيانات المنسقيات الجهوية للولايات الـ 15 المعتمدة مع التوافق التام
+        // إعدادات وبيانات المنسقيات الجهوية للولايات الـ 15 المعتمدة
         const WILAYAS_CONFIG = {
             'HCH01': { name: 'ولاية الحوض الشرقي', filter: 'wilaya_code.eq.HCH01,wilaya_code.eq.HC01,membership_number.ilike.HCH01%,membership_number.ilike.HC01%,membership_number.ilike.HS01%,wilaya.eq.الحوض الشرقي' },
             'HGH02': { name: 'ولاية الحوض الغربي', filter: 'wilaya_code.eq.HGH02,wilaya_code.eq.HG02,membership_number.ilike.HGH02%,membership_number.ilike.HG02%,wilaya.eq.الحوض الغربي' },
@@ -1319,7 +1317,7 @@
                 document.getElementById('stat-profs-num').innerText = (data.professors_count || 0).toLocaleString();
                 document.getElementById('stat-service-num').innerText = (data.service_providers_count || 0).toLocaleString();
 
-                // تحديث عدادات كل ولاية على أزرارها
+                // تحديث عدادات كل ولاية
                 if (data.regions_count) {
                     Object.keys(WILAYAS_CONFIG).forEach(code => {
                         const countEl = document.getElementById(`badge-count-${code}`);
@@ -1469,45 +1467,77 @@
                         </div>
                     </div>
                     <button class="btn" onclick="generateAndPrintDoc('${doc.id}', '${doc.title}')" style="padding: 7px 11px; font-size: 12px; background: #0284c7; flex-shrink: 0;">
-                        <i class="fas fa-print"></i> طباعة / PDF
+                        <i class="fas fa-edit"></i> تعديل وطباعة
                     </button>
                 </div>
             `).join('');
         }
 
-        // توليد استمارة تربوية نظيفة وجاهزة للطباعة فوراً
+        // توليد استمارة تربوية تفاعلية تتيح للمدرس الكتابة والتعديل قبل الطباعة
         function generateAndPrintDoc(docId, docTitle) {
-            const printWindow = window.open('', '_blank');
-            if (!printWindow) {
-                alert('يرجى السماح بفتح النوافذ المنبثقة للطباعة أو تنزيل المستند.');
+            const editWindow = window.open('', '_blank');
+            if (!editWindow) {
+                alert('يرجى السماح بفتح النوافذ المنبثقة للتمكن من تعديل وطباعة المستند.');
                 return;
             }
 
             let tableContent = '';
             if (docId === 'p1') {
                 tableContent = `
-                    <table style="width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 12px;">
+                    <table id="printable-table" style="width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 12px;">
                         <thead>
                             <tr style="background: #f1f5f9;">
-                                <th style="border: 1px solid #333; padding: 6px; width: 40px;">الرقم</th>
+                                <th style="border: 1px solid #333; padding: 6px; width: 35px;">الرقم</th>
                                 <th style="border: 1px solid #333; padding: 6px;">الاسم الكامل للتلميذ</th>
-                                <th style="border: 1px solid #333; padding: 6px; width: 90px;">تاريخ الميلاد</th>
-                                <th style="border: 1px solid #333; padding: 6px; width: 90px;">الرقم الوطني</th>
-                                <th style="border: 1px solid #333; padding: 6px; width: 110px;">اسم ولي الأمر</th>
+                                <th style="border: 1px solid #333; padding: 6px; width: 95px;">تاريخ الميلاد</th>
+                                <th style="border: 1px solid #333; padding: 6px; width: 100px;">الرقم الوطني</th>
+                                <th style="border: 1px solid #333; padding: 6px; width: 120px;">اسم ولي الأمر</th>
                                 <th style="border: 1px solid #333; padding: 6px; width: 90px;">الهاتف</th>
-                                <th style="border: 1px solid #333; padding: 6px; width: 80px;">ملاحظات</th>
+                                <th style="border: 1px solid #333; padding: 6px; width: 90px;">ملاحظات</th>
                             </tr>
                         </thead>
                         <tbody>
-                            ${Array.from({length: 32}, (_, i) => `
+                            ${Array.from({length: 30}, (_, i) => `
                                 <tr>
-                                    <td style="border: 1px solid #333; padding: 6px; text-align: center;">${i + 1}</td>
-                                    <td style="border: 1px solid #333; padding: 6px;"></td>
-                                    <td style="border: 1px solid #333; padding: 6px;"></td>
-                                    <td style="border: 1px solid #333; padding: 6px;"></td>
-                                    <td style="border: 1px solid #333; padding: 6px;"></td>
-                                    <td style="border: 1px solid #333; padding: 6px;"></td>
-                                    <td style="border: 1px solid #333; padding: 6px;"></td>
+                                    <td style="border: 1px solid #333; padding: 6px; text-align: center; font-weight: bold;">${i + 1}</td>
+                                    <td contenteditable="true" style="border: 1px solid #333; padding: 6px;"></td>
+                                    <td contenteditable="true" style="border: 1px solid #333; padding: 6px; text-align: center;"></td>
+                                    <td contenteditable="true" style="border: 1px solid #333; padding: 6px; text-align: center;"></td>
+                                    <td contenteditable="true" style="border: 1px solid #333; padding: 6px;"></td>
+                                    <td contenteditable="true" style="border: 1px solid #333; padding: 6px; text-align: center;"></td>
+                                    <td contenteditable="true" style="border: 1px solid #333; padding: 6px;"></td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+            } else if (docId === 'p2' || docId === 's3') {
+                tableContent = `
+                    <table id="printable-table" style="width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 11.5px;">
+                        <thead>
+                            <tr style="background: #f1f5f9;">
+                                <th style="border: 1px solid #333; padding: 6px; width: 35px;" rowspan="2">الرقم</th>
+                                <th style="border: 1px solid #333; padding: 6px; min-width: 140px;" rowspan="2">الاسم الكامل للتلميذ</th>
+                                <th style="border: 1px solid #333; padding: 4px; text-align: center;" colspan="4">الأسبوع 1</th>
+                                <th style="border: 1px solid #333; padding: 4px; text-align: center;" colspan="4">الأسبوع 2</th>
+                                <th style="border: 1px solid #333; padding: 4px; text-align: center;" colspan="4">الأسبوع 3</th>
+                                <th style="border: 1px solid #333; padding: 4px; text-align: center;" colspan="4">الأسبوع 4</th>
+                                <th style="border: 1px solid #333; padding: 6px; width: 60px;" rowspan="2">مجموع الغياب</th>
+                            </tr>
+                            <tr style="background: #f8fafc; font-size: 10px;">
+                                <th style="border: 1px solid #333; padding: 3px;">2</th><th style="border: 1px solid #333; padding: 3px;">3</th><th style="border: 1px solid #333; padding: 3px;">4</th><th style="border: 1px solid #333; padding: 3px;">5</th>
+                                <th style="border: 1px solid #333; padding: 3px;">2</th><th style="border: 1px solid #333; padding: 3px;">3</th><th style="border: 1px solid #333; padding: 3px;">4</th><th style="border: 1px solid #333; padding: 3px;">5</th>
+                                <th style="border: 1px solid #333; padding: 3px;">2</th><th style="border: 1px solid #333; padding: 3px;">3</th><th style="border: 1px solid #333; padding: 3px;">4</th><th style="border: 1px solid #333; padding: 3px;">5</th>
+                                <th style="border: 1px solid #333; padding: 3px;">2</th><th style="border: 1px solid #333; padding: 3px;">3</th><th style="border: 1px solid #333; padding: 3px;">4</th><th style="border: 1px solid #333; padding: 3px;">5</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${Array.from({length: 25}, (_, i) => `
+                                <tr>
+                                    <td style="border: 1px solid #333; padding: 6px; text-align: center; font-weight: bold;">${i + 1}</td>
+                                    <td contenteditable="true" style="border: 1px solid #333; padding: 6px;"></td>
+                                    ${Array.from({length: 16}, () => `<td contenteditable="true" style="border: 1px solid #333; padding: 4px; text-align: center;"></td>`).join('')}
+                                    <td contenteditable="true" style="border: 1px solid #333; padding: 6px; text-align: center; font-weight: bold;"></td>
                                 </tr>
                             `).join('')}
                         </tbody>
@@ -1515,22 +1545,47 @@
                 `;
             } else if (docId === 'p3') {
                 tableContent = `
-                    <table style="width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 12px;">
+                    <table id="printable-table" style="width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 12px;">
                         <thead>
                             <tr style="background: #f1f5f9;">
-                                <th style="border: 1px solid #333; padding: 8px;">اليوم</th>
-                                <th style="border: 1px solid #333; padding: 8px;">المجموعة المسؤولة</th>
+                                <th style="border: 1px solid #333; padding: 8px; width: 100px;">اليوم</th>
+                                <th style="border: 1px solid #333; padding: 8px; width: 140px;">المجموعة المسؤولة</th>
                                 <th style="border: 1px solid #333; padding: 8px;">أسماء التلاميذ المكلفين</th>
-                                <th style="border: 1px solid #333; padding: 8px; width: 100px;">ملاحظات المعلم</th>
+                                <th style="border: 1px solid #333; padding: 8px; width: 120px;">ملاحظات المعلم</th>
                             </tr>
                         </thead>
                         <tbody>
                             ${['الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'].map(day => `
                                 <tr>
-                                    <td style="border: 1px solid #333; padding: 14px; text-align: center; font-weight: bold;">${day}</td>
-                                    <td style="border: 1px solid #333; padding: 14px; text-align: center;">المجموعة: ........</td>
-                                    <td style="border: 1px solid #333; padding: 14px;"></td>
-                                    <td style="border: 1px solid #333; padding: 14px;"></td>
+                                    <td style="border: 1px solid #333; padding: 12px; text-align: center; font-weight: bold;">${day}</td>
+                                    <td contenteditable="true" style="border: 1px solid #333; padding: 12px; text-align: center;">المجموعة: </td>
+                                    <td contenteditable="true" style="border: 1px solid #333; padding: 12px;"></td>
+                                    <td contenteditable="true" style="border: 1px solid #333; padding: 12px;"></td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+            } else if (docId === 'p4') {
+                tableContent = `
+                    <table id="printable-table" style="width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 12px;">
+                        <thead>
+                            <tr style="background: #f1f5f9;">
+                                <th style="border: 1px solid #333; padding: 6px; width: 40px;">الرقم</th>
+                                <th style="border: 1px solid #333; padding: 6px;">اسم المنشد / التلميذ</th>
+                                <th style="border: 1px solid #333; padding: 6px; width: 120px;">المجموعة / الفوج</th>
+                                <th style="border: 1px solid #333; padding: 6px;">النشيد أو النشاط المخصص</th>
+                                <th style="border: 1px solid #333; padding: 6px; width: 100px;">التقييم</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${Array.from({length: 22}, (_, i) => `
+                                <tr>
+                                    <td style="border: 1px solid #333; padding: 8px; text-align: center; font-weight: bold;">${i + 1}</td>
+                                    <td contenteditable="true" style="border: 1px solid #333; padding: 8px;"></td>
+                                    <td contenteditable="true" style="border: 1px solid #333; padding: 8px; text-align: center;"></td>
+                                    <td contenteditable="true" style="border: 1px solid #333; padding: 8px;"></td>
+                                    <td contenteditable="true" style="border: 1px solid #333; padding: 8px; text-align: center;"></td>
                                 </tr>
                             `).join('')}
                         </tbody>
@@ -1538,22 +1593,22 @@
                 `;
             } else {
                 tableContent = `
-                    <table style="width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 12px;">
+                    <table id="printable-table" style="width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 12px;">
                         <thead>
                             <tr style="background: #f1f5f9;">
-                                <th style="border: 1px solid #333; padding: 6px; width: 40px;">م</th>
+                                <th style="border: 1px solid #333; padding: 6px; width: 35px;">م</th>
                                 <th style="border: 1px solid #333; padding: 6px;">الاسم الكامل</th>
-                                <th style="border: 1px solid #333; padding: 6px; width: 130px;">المهمة / المادة</th>
+                                <th style="border: 1px solid #333; padding: 6px; width: 140px;">المهمة / المادة</th>
                                 <th style="border: 1px solid #333; padding: 6px;">التقويم والملاحظات التربوية</th>
                             </tr>
                         </thead>
                         <tbody>
                             ${Array.from({length: 25}, (_, i) => `
                                 <tr>
-                                    <td style="border: 1px solid #333; padding: 7px; text-align: center;">${i + 1}</td>
-                                    <td style="border: 1px solid #333; padding: 7px;"></td>
-                                    <td style="border: 1px solid #333; padding: 7px;"></td>
-                                    <td style="border: 1px solid #333; padding: 7px;"></td>
+                                    <td style="border: 1px solid #333; padding: 7px; text-align: center; font-weight: bold;">${i + 1}</td>
+                                    <td contenteditable="true" style="border: 1px solid #333; padding: 7px;"></td>
+                                    <td contenteditable="true" style="border: 1px solid #333; padding: 7px; text-align: center;"></td>
+                                    <td contenteditable="true" style="border: 1px solid #333; padding: 7px;"></td>
                                 </tr>
                             `).join('')}
                         </tbody>
@@ -1561,53 +1616,98 @@
                 `;
             }
 
-            printWindow.document.write(`
+            editWindow.document.write(`
                 <!DOCTYPE html>
                 <html lang="ar" dir="rtl">
                 <head>
                     <meta charset="UTF-8">
-                    <title>${docTitle} - النقابة الوطنية للمدرسين (نور)</title>
+                    <title>${docTitle} - تعديل وطباعة</title>
+                    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;600;700&display=swap" rel="stylesheet">
                     <style>
-                        body { font-family: 'Tajawal', sans-serif, Tahoma; margin: 25px; color: #111; direction: rtl; }
-                        .header-wrap { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #116835; padding-bottom: 10px; margin-bottom: 15px; }
-                        .meta-info { display: flex; justify-content: space-between; font-size: 13px; font-weight: bold; margin-bottom: 12px; }
-                        @media print { body { margin: 10mm; } }
+                        * { box-sizing: border-box; font-family: 'Tajawal', sans-serif; }
+                        body { margin: 20px; color: #111; direction: rtl; background-color: #f8fafc; }
+                        .paper-container { max-width: 900px; margin: 0 auto; background: #fff; padding: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-radius: 8px; }
+                        .no-print-bar {
+                            position: sticky; top: 0; z-index: 100; background: #0b4824; color: white; padding: 12px 20px;
+                            border-radius: 8px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+                        }
+                        .action-btn { background: #d4af37; color: #111; border: none; padding: 8px 16px; border-radius: 6px; font-weight: bold; font-size: 14px; cursor: pointer; transition: 0.2s; }
+                        .action-btn:hover { background: #c29d2b; }
+                        .btn-add-row { background: #ffffff; color: #0b4824; margin-left: 8px; }
+                        .header-wrap { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #116835; padding-bottom: 10px; margin-bottom: 12px; }
+                        .meta-info { display: flex; justify-content: space-between; font-size: 13px; font-weight: bold; margin-bottom: 10px; }
+                        [contenteditable="true"] { outline: none; }
+                        [contenteditable="true"]:hover { background-color: #f0fdf4; }
+                        [contenteditable="true"]:focus { background-color: #e8f5e9; box-shadow: inset 0 0 0 1px #116835; }
+                        
+                        @media print {
+                            body { background: #fff; margin: 0; padding: 0; }
+                            .paper-container { box-shadow: none; padding: 0; margin: 0; max-width: 100%; }
+                            .no-print-bar { display: none !important; }
+                            [contenteditable="true"]:hover, [contenteditable="true"]:focus { background: transparent !important; box-shadow: none !important; }
+                        }
                     </style>
                 </head>
                 <body>
-                    <div class="header-wrap">
-                        <div style="font-size: 13px; font-weight: bold; line-height: 1.6;">
-                            الجمهورية الإسلامية الموريتانية<br>
-                            وزارة التربية وإصلاح النظام التعليمي<br>
-                            النقابة الوطنية للمدرسين (نور)
+                    <div class="no-print-bar">
+                        <div style="font-size: 13.5px;">
+                            ✍️ <strong>وضع التحرير المباشر:</strong> يمكنك الضغط على أي خانة أو نص لكتابة وتعديل البيانات مباشرة قبل الطباعة.
                         </div>
-                        <div style="text-align: center;">
-                            <h2 style="margin: 0; color: #116835; font-size: 18px;">${docTitle}</h2>
-                            <span style="font-size: 12px; color: #555;">السنة الدراسية: 2025 - 2026</span>
-                        </div>
-                        <div style="text-align: left; font-size: 12px;">
-                            المؤسسة: .........................<br>
-                            القسم / الشعبة: .................<br>
-                            المدرس: ..........................
+                        <div>
+                            <button class="action-btn btn-add-row" onclick="addNewRow()">➕ إضافة صف</button>
+                            <button class="action-btn" onclick="window.print()">🖨️ طباعة / حفظ كـ PDF</button>
                         </div>
                     </div>
-                    <div class="meta-info">
-                        <div>الولاية: ..............................</div>
-                        <div>المقاطعة: ..............................</div>
-                        <div>التاريخ: ..... / ..... / 202...</div>
+
+                    <div class="paper-container">
+                        <div class="header-wrap">
+                            <div style="font-size: 13px; font-weight: bold; line-height: 1.6;">
+                                الجمهورية الإسلامية الموريتانية<br>
+                                وزارة التربية وإصلاح النظام التعليمي<br>
+                                النقابة الوطنية للمدرسين (نور)
+                            </div>
+                            <div style="text-align: center;">
+                                <h2 contenteditable="true" style="margin: 0; color: #116835; font-size: 18px;">${docTitle}</h2>
+                                <span contenteditable="true" style="font-size: 12px; color: #555;">السنة الدراسية: 2025 - 2026</span>
+                            </div>
+                            <div style="text-align: right; font-size: 12px; line-height: 1.6;">
+                                المؤسسة: <span contenteditable="true" style="border-bottom: 1px dotted #999; display: inline-block; min-width: 120px;">.........................</span><br>
+                                القسم / الشعبة: <span contenteditable="true" style="border-bottom: 1px dotted #999; display: inline-block; min-width: 80px;">.................</span><br>
+                                المدرس: <span contenteditable="true" style="border-bottom: 1px dotted #999; display: inline-block; min-width: 120px;">.........................</span>
+                            </div>
+                        </div>
+
+                        <div class="meta-info">
+                            <div>الولاية: <span contenteditable="true" style="border-bottom: 1px dotted #999; min-width: 100px; display: inline-block;">..............................</span></div>
+                            <div>المقاطعة: <span contenteditable="true" style="border-bottom: 1px dotted #999; min-width: 100px; display: inline-block;">..............................</span></div>
+                            <div>التاريخ: <span contenteditable="true" style="border-bottom: 1px dotted #999; min-width: 90px; display: inline-block;">..... / ..... / 202...</span></div>
+                        </div>
+
+                        ${tableContent}
+
+                        <div style="display: flex; justify-content: space-between; margin-top: 30px; font-size: 13px; font-weight: bold;">
+                            <div>توقيع الأستاذ / المعلم:</div>
+                            <div>ملاحظة وتأشيرة الإدارة:</div>
+                        </div>
                     </div>
-                    ${tableContent}
-                    <div style="display: flex; justify-content: space-between; margin-top: 30px; font-size: 13px; font-weight: bold;">
-                        <div>توقيع الأستاذ / المعلم:</div>
-                        <div>ملاحظة وتأشيرة الإدارة:</div>
-                    </div>
+
                     <script>
-                        window.onload = function() { window.print(); };
+                        function addNewRow() {
+                            const tbody = document.querySelector('#printable-table tbody');
+                            const rowCount = tbody.rows.length + 1;
+                            const sampleRow = tbody.rows[0];
+                            const newRow = sampleRow.cloneNode(true);
+                            newRow.cells[0].innerText = rowCount;
+                            for (let i = 1; i < newRow.cells.length; i++) {
+                                newRow.cells[i].innerText = '';
+                            }
+                            tbody.appendChild(newRow);
+                        }
                     <\/script>
                 </body>
                 </html>
             `);
-            printWindow.document.close();
+            editWindow.document.close();
         }
 
         // فتح نافذة طلب رمز المرور للمكتب الوطني
