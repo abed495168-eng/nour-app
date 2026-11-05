@@ -616,7 +616,7 @@
             display: inline-block;
         }
 
-        /* تنسيقات نافذة حقيبة المدرس */
+        /* تنسيقات نوافذ الحقائب */
         .bag-tabs {
             display: flex;
             gap: 8px;
@@ -876,12 +876,18 @@
             <i class="fas fa-info-circle"></i> من نحن؟ (تعريف بالنقابة)
         </button>
 
-        <!-- أزرار استعراض الهيئات القيادية والنصوص وحقيبة المدرس -->
+        <!-- أزرار استعراض الهيئات القيادية والنصوص وحقائب المعلم والمدير -->
         <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px;">
             
-            <!-- زر حقيبة المدرس الرقمية المقفلة بالعضوية -->
+            <!-- زر حقيبة المدرس الرقمية -->
             <button class="btn btn-block" style="background: linear-gradient(135deg, #0284c7, #0369a1); color: white; border: 1.5px solid #38bdf8; box-shadow: 0 4px 10px rgba(2, 132, 199, 0.25);" onclick="openBagModal()">
                 <i class="fas fa-briefcase" style="color: #fde047;"></i> حقيبة المدرس الرقمية (استمارات ونماذج تربوية)
+                <i class="fas fa-lock" style="font-size: 11px; opacity: 0.8; margin-right: auto;"></i>
+            </button>
+
+            <!-- زر حقيبة المدير المضافة -->
+            <button class="btn btn-block" style="background: linear-gradient(135deg, #0f766e, #115e59); color: white; border: 1.5px solid #2dd4bf; box-shadow: 0 4px 10px rgba(15, 118, 110, 0.25);" onclick="openDirectorBagModal()">
+                <i class="fas fa-user-tie" style="color: #fde047;"></i> حقيبة المدير (سجلات ومحاضر إدارة المؤسسة)
                 <i class="fas fa-lock" style="font-size: 11px; opacity: 0.8; margin-right: auto;"></i>
             </button>
 
@@ -1106,6 +1112,20 @@
         </div>
     </div>
 
+    <!-- نافذة حقيبة المدير المضافة -->
+    <div id="director-bag-modal" class="modal">
+        <div class="modal-content" style="max-width: 520px;">
+            <button class="close-btn" onclick="closeModal('director-bag-modal')">&times;</button>
+            <div style="text-align: center; border-bottom: 2px solid var(--gold); padding-bottom: 12px; margin-bottom: 15px;">
+                <i class="fas fa-user-tie" style="font-size: 32px; color: #0f766e; margin-bottom: 6px;"></i>
+                <h3 style="color: var(--primary-dark);">حقيبة المدير الرقمية</h3>
+                <p style="font-size: 12px; color: #64748b;">سجلات، دفاتر ومحاضر تسيير المؤسسات التربوية جاهزة للتعديل والطباعة</p>
+            </div>
+
+            <div id="director-docs-list" style="max-height: 420px; overflow-y: auto; padding-left: 4px;"></div>
+        </div>
+    </div>
+
     <!-- نافذة بطاقة العضو الرقمية (للعرض فقط) -->
     <div id="card-modal" class="modal">
         <div class="modal-content">
@@ -1249,7 +1269,7 @@
         let activeMember = null;
         let isCardFrench = false;
         let pendingWilayaCode = null;
-        let isMemberVerifiedForBag = false; // تتبع حالة التحقق من العضوية للحقيبة
+        let isMemberVerifiedForBag = false;
 
         // إعدادات وبيانات المنسقيات الجهوية للولايات الـ 15 المعتمدة
         const WILAYAS_CONFIG = {
@@ -1304,6 +1324,15 @@
                 { id: 's4', title: 'استمارة تحليل نتائج الاختبارات الفصلية', desc: 'مؤشرات التحصيل الدراسي ونسب النجاح والتعثر بالقسم', icon: 'fas fa-chart-line' }
             ]
         };
+
+        // بنك وثائق حقيبة المدير (سجلات ومحاضر تسيير المؤسسة)
+        const DIRECTOR_BAG_DOCS = [
+            { id: 'dir_surveillance', title: 'دفتر الرقابة اليومية (Cahier de surveillance quotidienne)', desc: 'سجل ضبط الانضباط والملاحظات اليومية وتوقيعات الرقباء والإدارة', icon: 'fas fa-clipboard-check' },
+            { id: 'dir_personnel', title: 'سجل القيد للأشخاص (Cahier matricule du personnel)', desc: 'دفتر قيد طاقم التدريس والعاملين بالمؤسسة وتفاصيل الدليل المالي وNNI', icon: 'fas fa-address-book' },
+            { id: 'dir_passation', title: 'محضر تبادل مهام (P.V de Passation de Service)', desc: 'محضر الاستلام والتسليم الرسمي بين المدير السابق والجديد وجرد الأثاث', icon: 'fas fa-exchange-alt' },
+            { id: 'dir_reunions', title: 'دفتر محاضر جلسات المعلمين (Cahier des Procès-verbaux)', desc: 'سجل مداولات مجلس المعلمين، الحضور، وتدوين القرارات التربوية', icon: 'fas fa-users-class' },
+            { id: 'dir_visites', title: 'دفتر زيارات المدرسة (Cahier des visites de l\'école)', desc: 'سجل توثيق زيارات المفتشين، المؤطرين، والوفود الرسمية للمؤسسة', icon: 'fas fa-door-open' }
+        ];
 
         // تحميل الإحصائيات التلقائية الحية من Supabase
         async function loadPlatformStats() {
@@ -1364,7 +1393,7 @@
             document.getElementById('pin-modal').style.display = 'block';
         }
 
-        // معالجة ومطابقة الرمز السري (PIN) للبطاقة الفردية أو للدخول للحقيبة
+        // معالجة ومطابقة الرمز السري (PIN) للبطاقة الفردية أو للدخول للحقائب
         async function verifyOrSetPin() {
             const pin = document.getElementById('input-pin').value.trim();
             const err = document.getElementById('pin-error');
@@ -1393,10 +1422,12 @@
                     isMemberVerifiedForBag = true;
                     activeMember = data.data;
 
-                    // إذا كان الطلب قادماً من زر فتح الحقيبة
-                    if (window.pendingOpenBagAction) {
-                        window.pendingOpenBagAction = false;
+                    if (window.pendingOpenBagAction === 'TEACHER') {
+                        window.pendingOpenBagAction = null;
                         showBagModalDirectly();
+                    } else if (window.pendingOpenBagAction === 'DIRECTOR') {
+                        window.pendingOpenBagAction = null;
+                        showDirectorBagModalDirectly();
                     } else {
                         showCard(data.data);
                     }
@@ -1454,22 +1485,19 @@
 
         // دوال حقيبة المدرس الرقمية المقفلة بالعضوية
         function openBagModal() {
-            // إذا كان المدرس قد قام بالتحقق من عضويته بالفعل
             if (isMemberVerifiedForBag && activeMember) {
                 showBagModalDirectly();
                 return;
             }
-
-            // إذا لم يتحقق المدرس، يتم توجيهه للتحقق أولاً
             const idInput = document.getElementById('input-nid').value.trim();
             if (idInput) {
                 enteredIdentifier = idInput;
-                window.pendingOpenBagAction = true;
+                window.pendingOpenBagAction = 'TEACHER';
                 document.getElementById('input-pin').value = '';
                 document.getElementById('pin-error').style.display = 'none';
                 document.getElementById('pin-modal').style.display = 'block';
             } else {
-                alert('حقيبة المدرس الرقمية مخصصة لمنتسبي النقابة. يرجى إدخال الدليل المالي أو الرقم الوطني في حقل التحقق أولاً للتمكن من فتح الحقيبة.');
+                alert('حقيبة المدرس مخصصة لمنتسبي النقابة. يرجى إدخال الدليل المالي أو الرقم الوطني في حقل التحقق أولاً.');
                 document.getElementById('input-nid').focus();
             }
         }
@@ -1509,11 +1537,412 @@
             `).join('');
         }
 
-        // توليد استمارة تربوية تفاعلية مع ميزة الحفظ التلقائي في ذاكرة هاتف المدرس
+        // دوال حقيبة المدير الرقمية
+        function openDirectorBagModal() {
+            if (isMemberVerifiedForBag && activeMember) {
+                showDirectorBagModalDirectly();
+                return;
+            }
+            const idInput = document.getElementById('input-nid').value.trim();
+            if (idInput) {
+                enteredIdentifier = idInput;
+                window.pendingOpenBagAction = 'DIRECTOR';
+                document.getElementById('input-pin').value = '';
+                document.getElementById('pin-error').style.display = 'none';
+                document.getElementById('pin-modal').style.display = 'block';
+            } else {
+                alert('حقيبة المدير مخصصة لمنتسبي النقابة والإدارات المدرسية. يرجى إدخال الدليل المالي أو الرقم الوطني للتحقق أولاً.');
+                document.getElementById('input-nid').focus();
+            }
+        }
+
+        function showDirectorBagModalDirectly() {
+            const modal = document.getElementById('director-bag-modal');
+            const list = document.getElementById('director-docs-list');
+            modal.style.display = 'block';
+
+            list.innerHTML = DIRECTOR_BAG_DOCS.map(doc => `
+                <div class="bag-doc-card" style="border-right-color: #0f766e;">
+                    <div class="bag-doc-info">
+                        <div class="bag-doc-icon" style="background: #ccfbf1; color: #0f766e;"><i class="${doc.icon}"></i></div>
+                        <div>
+                            <div class="bag-doc-title">${doc.title}</div>
+                            <div class="bag-doc-desc">${doc.desc}</div>
+                        </div>
+                    </div>
+                    <button class="btn" onclick="generateAndPrintDirectorDoc('${doc.id}', '${doc.title}')" style="padding: 7px 11px; font-size: 12px; background: #0f766e; flex-shrink: 0;">
+                        <i class="fas fa-edit"></i> تحرير وطباعة
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        // توليد استمارات حقيبة المدير التفاعلية
+        function generateAndPrintDirectorDoc(docId, docTitle) {
+            const editWindow = window.open('', '_blank');
+            if (!editWindow) {
+                alert('يرجى السماح بفتح النوافذ المنبثقة.');
+                return;
+            }
+
+            let docHtml = '';
+            const topHeader = `
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #0f766e; padding-bottom: 8px; margin-bottom: 12px; font-size: 11px; line-height: 1.4; font-weight: bold;">
+                    <div>
+                        الجمهورية الإسلامية الموريتانية<br>
+                        وزارة التربية وإصلاح النظام التعليمي<br>
+                        الإدارة الجهوية للتربية بـ: <span contenteditable="true">...................</span><br>
+                        مفتشية التعليم الأساسي بـ: <span contenteditable="true">...................</span><br>
+                        مدرسة: <span contenteditable="true">...................</span>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="width: 44px; height: 44px; border-radius: 50%; border: 2px solid #0f766e; margin: 0 auto 3px; display: flex; align-items: center; justify-content: center; font-size: 18px; color: #d4af37;">★</div>
+                        <div style="font-size: 11px; font-weight: 800; color: #0f766e;">★ RIM ★</div>
+                    </div>
+                    <div style="text-align: left;" dir="ltr">
+                        République Islamique de Mauritanie<br>
+                        Ministère de l'Éducation et de la Réforme du Système d'Enseignement<br>
+                        D.R.E.N: <span contenteditable="true">...................</span><br>
+                        Inspection de: <span contenteditable="true">...................</span><br>
+                        Ecole: <span contenteditable="true">...................</span>
+                    </div>
+                </div>
+            `;
+
+            if (docId === 'dir_surveillance') {
+                docHtml = `
+                    ${topHeader}
+                    <div style="text-align: center; margin-bottom: 15px;">
+                        <h2 style="margin: 0; color: #0f766e; font-size: 18px;">دفتر الرقابة اليومية</h2>
+                        <span style="font-size: 13px; font-weight: bold; color: #475569;">Cahier de surveillance quotidienne</span>
+                    </div>
+                    <table id="printable-table" style="width: 100%; border-collapse: collapse; font-size: 12px;">
+                        <thead>
+                            <tr style="background: #f1f5f9; text-align: center;">
+                                <th style="border: 1px solid #111; padding: 8px; width: 90px;">التاريخ<br>Date</th>
+                                <th style="border: 1px solid #111; padding: 8px; width: 140px;">الاسم<br>Nom</th>
+                                <th style="border: 1px solid #111; padding: 8px;">الملاحظات<br>Remarques</th>
+                                <th style="border: 1px solid #111; padding: 8px; width: 90px;">التوقيع<br>Signature</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${Array.from({length: 12}, () => `
+                                <tr>
+                                    <td contenteditable="true" style="border: 1px solid #111; padding: 12px; text-align: center;"></td>
+                                    <td contenteditable="true" style="border: 1px solid #111; padding: 12px;"></td>
+                                    <td contenteditable="true" style="border: 1px solid #111; padding: 12px; line-height: 1.6;"></td>
+                                    <td contenteditable="true" style="border: 1px solid #111; padding: 12px; text-align: center;"></td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+            } else if (docId === 'dir_personnel') {
+                docHtml = `
+                    ${topHeader}
+                    <div style="text-align: center; margin-bottom: 15px;">
+                        <h2 style="margin: 0; color: #0f766e; font-size: 18px;">سجل القيد للأشخاص</h2>
+                        <span style="font-size: 13px; font-weight: bold; color: #475569;">Cahier matricule du personnel</span>
+                    </div>
+                    <table id="printable-table" style="width: 100%; border-collapse: collapse; font-size: 10.5px;">
+                        <thead>
+                            <tr style="background: #f1f5f9; text-align: center;">
+                                <th style="border: 1px solid #111; padding: 6px; width: 30px;">الرقم<br>N°</th>
+                                <th style="border: 1px solid #111; padding: 6px;">الاسم الكامل<br>Le nom Complet</th>
+                                <th style="border: 1px solid #111; padding: 6px; width: 70px;">الدليل المالي<br>Matricule</th>
+                                <th style="border: 1px solid #111; padding: 6px; width: 70px;">الرقم الوطني<br>NNI</th>
+                                <th style="border: 1px solid #111; padding: 6px; width: 55px;">الإطار<br>Grade</th>
+                                <th style="border: 1px solid #111; padding: 6px; width: 65px;">لغة العمل<br>Langue</th>
+                                <th style="border: 1px solid #111; padding: 6px; width: 75px;">تاريخ الوصول<br>Arrivée</th>
+                                <th style="border: 1px solid #111; padding: 6px; width: 75px;">تاريخ المغادرة<br>Départ</th>
+                                <th style="border: 1px solid #111; padding: 6px; width: 80px;">رقم الهاتف<br>Téléphone</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${Array.from({length: 16}, (_, i) => `
+                                <tr>
+                                    <td style="border: 1px solid #111; padding: 7px; text-align: center; font-weight: bold;">${i + 1}</td>
+                                    <td contenteditable="true" style="border: 1px solid #111; padding: 7px;"></td>
+                                    <td contenteditable="true" style="border: 1px solid #111; padding: 7px; text-align: center;"></td>
+                                    <td contenteditable="true" style="border: 1px solid #111; padding: 7px; text-align: center;"></td>
+                                    <td contenteditable="true" style="border: 1px solid #111; padding: 7px; text-align: center;"></td>
+                                    <td contenteditable="true" style="border: 1px solid #111; padding: 7px; text-align: center;"></td>
+                                    <td contenteditable="true" style="border: 1px solid #111; padding: 7px; text-align: center;"></td>
+                                    <td contenteditable="true" style="border: 1px solid #111; padding: 7px; text-align: center;"></td>
+                                    <td contenteditable="true" style="border: 1px solid #111; padding: 7px; text-align: center;"></td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+            } else if (docId === 'dir_passation') {
+                docHtml = `
+                    <div style="border-bottom: 2px solid #0f766e; padding-bottom: 8px; margin-bottom: 12px; font-size: 11px; line-height: 1.5; font-weight: bold; display: flex; justify-content: space-between;">
+                        <div>
+                            شرف - إخاء - عدالة<br>
+                            السنة الدراسية / Année Scolaire: <span contenteditable="true">2025 - 2026</span><br>
+                            الفصل الدراسي / Trimestre: <span contenteditable="true">...................</span><br>
+                            المدرسة / Ecole: <span contenteditable="true">...................</span><br>
+                            دليل المدرسة / Code école: <span contenteditable="true">...................</span>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="width: 44px; height: 44px; border-radius: 50%; border: 2px solid #0f766e; margin: 0 auto 3px; display: flex; align-items: center; justify-content: center; font-size: 18px; color: #d4af37;">★</div>
+                            <h2 style="margin: 0; color: #0f766e; font-size: 17px;">محضر تبادل مهام</h2>
+                            <span style="font-size: 12px; color: #475569;">P.V de Passation de Service</span>
+                        </div>
+                        <div style="text-align: left;">
+                            الجمهورية الإسلامية الموريتانية<br>
+                            وزارة التربية وإصلاح النظام التعليمي<br>
+                            الإدارة العامة للتربية وإصلاح النظام التعليمي<br>
+                            DREN de: <span contenteditable="true">...................</span><br>
+                            IDEF de: <span contenteditable="true">...................</span>
+                        </div>
+                    </div>
+
+                    <div style="font-size: 12.5px; line-height: 1.8; margin-bottom: 12px; font-weight: bold; background: #f8fafc; padding: 10px; border-radius: 6px; border: 1px solid #e2e8f0;">
+                        أنا الموقع أسفله: <span contenteditable="true" style="border-bottom: 1px dotted #333; min-width: 140px; display: inline-block;">..................................</span> المدير المنصرف للمدرسة.<br>
+                        Je soussigné: Directeur Sortant de l'école de: <span contenteditable="true" style="border-bottom: 1px dotted #333; min-width: 120px; display: inline-block;">...................</span><br>
+                        وقد سلمت اليوم لخليفتي السيد: <span contenteditable="true" style="border-bottom: 1px dotted #333; min-width: 140px; display: inline-block;">..................................</span> الأثاث المدرسي والمستلزمات التالية:
+                    </div>
+
+                    <table id="printable-table" style="width: 100%; border-collapse: collapse; font-size: 11px;">
+                        <thead>
+                            <tr style="background: #f1f5f9; text-align: center;">
+                                <th style="border: 1px solid #111; padding: 6px; width: 35px;" rowspan="2">الرقم<br>N°</th>
+                                <th style="border: 1px solid #111; padding: 6px;" rowspan="2">التعيين<br>Désignation</th>
+                                <th style="border: 1px solid #111; padding: 4px;" colspan="3">الحالة / Etat</th>
+                                <th style="border: 1px solid #111; padding: 6px; width: 55px;" rowspan="2">العدد<br>Nombre</th>
+                                <th style="border: 1px solid #111; padding: 6px; width: 85px;" rowspan="2">تاريخ الاستلام<br>Date</th>
+                                <th style="border: 1px solid #111; padding: 6px; width: 110px;" rowspan="2">الملاحظات<br>Observations</th>
+                            </tr>
+                            <tr style="background: #f8fafc; font-size: 10px; text-align: center;">
+                                <th style="border: 1px solid #111; padding: 4px; width: 45px;">جيدة<br>Bon</th>
+                                <th style="border: 1px solid #111; padding: 4px; width: 45px;">متوسطة<br>Moyen</th>
+                                <th style="border: 1px solid #111; padding: 4px; width: 45px;">رديئة<br>Mauvais</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${['طاولات مقاعد', 'مكاتب معلمين', 'كراسي', 'سبورات خشبية/بيضاء', 'سجلات إدارية', 'كتب مدرسية', 'أدوات نظافة', 'أجهزة ومعدات'].map((item, idx) => `
+                                <tr>
+                                    <td style="border: 1px solid #111; padding: 6px; text-align: center; font-weight: bold;">${idx + 1}</td>
+                                    <td contenteditable="true" style="border: 1px solid #111; padding: 6px; font-weight: bold;">${item}</td>
+                                    <td contenteditable="true" style="border: 1px solid #111; padding: 6px; text-align: center;"></td>
+                                    <td contenteditable="true" style="border: 1px solid #111; padding: 6px; text-align: center;"></td>
+                                    <td contenteditable="true" style="border: 1px solid #111; padding: 6px; text-align: center;"></td>
+                                    <td contenteditable="true" style="border: 1px solid #111; padding: 6px; text-align: center; font-weight: bold;"></td>
+                                    <td contenteditable="true" style="border: 1px solid #111; padding: 6px; text-align: center;"></td>
+                                    <td contenteditable="true" style="border: 1px solid #111; padding: 6px;"></td>
+                                </tr>
+                            `).join('')}
+                            ${Array.from({length: 6}, (_, i) => `
+                                <tr>
+                                    <td style="border: 1px solid #111; padding: 6px; text-align: center; font-weight: bold;">${i + 9}</td>
+                                    <td contenteditable="true" style="border: 1px solid #111; padding: 6px;"></td>
+                                    <td contenteditable="true" style="border: 1px solid #111; padding: 6px; text-align: center;"></td>
+                                    <td contenteditable="true" style="border: 1px solid #111; padding: 6px; text-align: center;"></td>
+                                    <td contenteditable="true" style="border: 1px solid #111; padding: 6px; text-align: center;"></td>
+                                    <td contenteditable="true" style="border: 1px solid #111; padding: 6px; text-align: center;"></td>
+                                    <td contenteditable="true" style="border: 1px solid #111; padding: 6px; text-align: center;"></td>
+                                    <td contenteditable="true" style="border: 1px solid #111; padding: 6px;"></td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+
+                    <div style="display: flex; justify-content: space-between; margin-top: 35px; font-size: 13px; font-weight: bold; text-align: center;">
+                        <div style="width: 40%;">
+                            توقيع المدير السابق<br>
+                            Signature de l'ancien directeur<br><br><br>
+                            ............................................
+                        </div>
+                        <div style="width: 40%;">
+                            توقيع المدير الجديد<br>
+                            Signature du nouveau directeur<br><br><br>
+                            ............................................
+                        </div>
+                    </div>
+                `;
+            } else if (docId === 'dir_reunions') {
+                docHtml = `
+                    ${topHeader}
+                    <div style="text-align: center; margin-bottom: 12px;">
+                        <h2 style="margin: 0; color: #0f766e; font-size: 18px;">دفتر محاضر جلسات المعلمين</h2>
+                        <span style="font-size: 13px; font-weight: bold; color: #475569;">Cahier des Procès-verbaux des réunions des enseignants</span>
+                    </div>
+
+                    <div style="margin-bottom: 12px;">
+                        <div style="font-size: 12px; font-weight: bold; background: #f1f5f9; padding: 5px 10px; border: 1px solid #111; display: inline-block;">الحضور Présences</div>
+                        <table style="width: 100%; border-collapse: collapse; font-size: 11px;">
+                            <thead>
+                                <tr style="background: #f8fafc; text-align: center;">
+                                    <th style="border: 1px solid #111; padding: 5px; width: 35%;">الاسم Nom</th>
+                                    <th style="border: 1px solid #111; padding: 5px; width: 15%;">التوقيع Signature</th>
+                                    <th style="border: 1px solid #111; padding: 5px; width: 35%;">الاسم Nom</th>
+                                    <th style="border: 1px solid #111; padding: 5px; width: 15%;">التوقيع Signature</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${Array.from({length: 4}, () => `
+                                    <tr>
+                                        <td contenteditable="true" style="border: 1px solid #111; padding: 6px;"></td>
+                                        <td contenteditable="true" style="border: 1px solid #111; padding: 6px; text-align: center;"></td>
+                                        <td contenteditable="true" style="border: 1px solid #111; padding: 6px;"></td>
+                                        <td contenteditable="true" style="border: 1px solid #111; padding: 6px; text-align: center;"></td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div style="font-size: 12px; font-weight: bold; margin-bottom: 8px;">
+                        اجتمع مجلس المعلمين بتاريخ: <span contenteditable="true">..... / ..... / 202...</span> وذلك لنقاش جدول الأعمال التالي:<br>
+                        Le conseil des enseignants s'est réuni le: <span contenteditable="true" style="font-family: sans-serif;">.....................</span> Afin de discuter de l'ordre jour suivant:
+                    </div>
+                    <div contenteditable="true" style="border: 1px solid #cbd5e1; border-radius: 4px; min-height: 80px; padding: 8px; font-size: 12.5px; line-height: 1.8; margin-bottom: 12px;">
+                        1. افتتاح السنة الدراسية وتوزيع الأقسام والمهام.<br>
+                        2. مناقشة سبل رفع التحصيل الدراسي والانضباط داخل الحجرة الصفية.
+                    </div>
+
+                    <div style="font-size: 12px; font-weight: bold; margin-bottom: 8px;">
+                        وأبدى الحاضرون الملاحظات التالية / Les membres présents ont formulé les observations suivantes:
+                    </div>
+                    <div contenteditable="true" style="border: 1px solid #cbd5e1; border-radius: 4px; min-height: 90px; padding: 8px; font-size: 12.5px; line-height: 1.8; margin-bottom: 12px;"></div>
+
+                    <div style="font-size: 12px; font-weight: bold; margin-bottom: 8px;">
+                        وختاما اتفق مجلس المعلمين على ما يلي / En conclusion, le conseil a convenu de ce qui suit:
+                    </div>
+                    <div contenteditable="true" style="border: 1px solid #cbd5e1; border-radius: 4px; min-height: 90px; padding: 8px; font-size: 12.5px; line-height: 1.8;"></div>
+
+                    <div style="display: flex; justify-content: space-between; margin-top: 25px; font-size: 12.5px; font-weight: bold;">
+                        <div>المقرر / Rapporteur: ................................</div>
+                        <div>المدير / Directeur: ................................</div>
+                    </div>
+                `;
+            } else if (docId === 'dir_visites') {
+                docHtml = `
+                    ${topHeader}
+                    <div style="text-align: center; margin-bottom: 15px;">
+                        <h2 style="margin: 0; color: #0f766e; font-size: 18px;">دفتر زيارات المدرسة</h2>
+                        <span style="font-size: 13px; font-weight: bold; color: #475569;">Cahier des visites de l'école</span>
+                    </div>
+                    <table id="printable-table" style="width: 100%; border-collapse: collapse; font-size: 11.5px;">
+                        <thead>
+                            <tr style="background: #f1f5f9; text-align: center;">
+                                <th style="border: 1px solid #111; padding: 7px; width: 85px;">التاريخ<br>Date</th>
+                                <th style="border: 1px solid #111; padding: 7px; width: 140px;">اسم الزائر<br>Nom du visiteur</th>
+                                <th style="border: 1px solid #111; padding: 7px; width: 110px;">الوظيفة<br>Fonction</th>
+                                <th style="border: 1px solid #111; padding: 7px; width: 130px;">هدف الزيارة<br>Objet de la visite</th>
+                                <th style="border: 1px solid #111; padding: 7px;">الملاحظات<br>Remarques et observations</th>
+                                <th style="border: 1px solid #111; padding: 7px; width: 80px;">التوقيع<br>Signature</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${Array.from({length: 12}, () => `
+                                <tr>
+                                    <td contenteditable="true" style="border: 1px solid #111; padding: 10px; text-align: center;"></td>
+                                    <td contenteditable="true" style="border: 1px solid #111; padding: 10px; font-weight: bold;"></td>
+                                    <td contenteditable="true" style="border: 1px solid #111; padding: 10px; text-align: center;"></td>
+                                    <td contenteditable="true" style="border: 1px solid #111; padding: 10px;"></td>
+                                    <td contenteditable="true" style="border: 1px solid #111; padding: 10px; line-height: 1.6;"></td>
+                                    <td contenteditable="true" style="border: 1px solid #111; padding: 10px; text-align: center;"></td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+            }
+
+            editWindow.document.write(`
+                <!DOCTYPE html>
+                <html lang="ar" dir="rtl">
+                <head>
+                    <meta charset="UTF-8">
+                    <title>${docTitle}</title>
+                    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;600;700;800&display=swap" rel="stylesheet">
+                    <style>
+                        * { box-sizing: border-box; font-family: 'Tajawal', sans-serif; }
+                        body { margin: 15px; color: #111; direction: rtl; background-color: #f8fafc; }
+                        .paper-container { max-width: 950px; margin: 0 auto; background: #fff; padding: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-radius: 8px; }
+                        .no-print-bar {
+                            position: sticky; top: 0; z-index: 100; background: #0f766e; color: white; padding: 12px 18px;
+                            border-radius: 8px; margin-bottom: 20px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+                        }
+                        .action-btn { border: none; padding: 8px 14px; border-radius: 6px; font-weight: bold; font-size: 13px; cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; gap: 5px; }
+                        .btn-save { background: #10b981; color: #fff; }
+                        .btn-save:hover { background: #059669; }
+                        .btn-print { background: #d4af37; color: #111; }
+                        .btn-print:hover { background: #c29d2b; }
+                        .btn-clear { background: #ef4444; color: #fff; }
+                        .btn-clear:hover { background: #dc2626; }
+                        [contenteditable="true"] { outline: none; }
+                        [contenteditable="true"]:hover { background-color: #f0fdf4; }
+                        [contenteditable="true"]:focus { background-color: #e8f5e9; box-shadow: inset 0 0 0 1px #0f766e; }
+                        @media print {
+                            body { background: #fff; margin: 0; padding: 0; }
+                            .paper-container { box-shadow: none; padding: 0; margin: 0; max-width: 100%; border-radius: 0; }
+                            .no-print-bar { display: none !important; }
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="no-print-bar">
+                        <div style="font-size: 13px;">
+                            ✍️ <strong>حقيبة المدير:</strong> اضغط على أي خانة أو سطر للتحرير المباشر، ثم احفظ في هاتفك أو اطبع المستند.
+                        </div>
+                        <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                            <button class="action-btn btn-save" onclick="saveDirectorData()">💾 حفظ في الهاتف</button>
+                            <button class="action-btn btn-print" onclick="window.print()">🖨️ طباعة / حفظ كـ PDF</button>
+                            <button class="action-btn btn-clear" onclick="clearDirectorData()">🗑️ تفريغ</button>
+                        </div>
+                    </div>
+                    <div class="paper-container" id="printable-content">
+                        ${docHtml}
+                    </div>
+                    <script>
+                        const DIR_STORAGE_KEY = 'nour_dir_doc_' + '${docId}';
+
+                        function saveDirectorData() {
+                            const editables = document.querySelectorAll('[contenteditable="true"]');
+                            const savedVals = [];
+                            editables.forEach(el => savedVals.push(el.innerText));
+                            localStorage.setItem(DIR_STORAGE_KEY, JSON.stringify(savedVals));
+                            alert('تم حفظ بيانات المستند بنجاح في ذاكرة هاتفك!');
+                        }
+
+                        function loadDirectorData() {
+                            const saved = localStorage.getItem(DIR_STORAGE_KEY);
+                            if (!saved) return;
+                            try {
+                                const savedVals = JSON.parse(saved);
+                                const editables = document.querySelectorAll('[contenteditable="true"]');
+                                editables.forEach((el, idx) => {
+                                    if (savedVals[idx] !== undefined) el.innerText = savedVals[idx];
+                                });
+                            } catch(e) {
+                                console.error('خطأ في استرجاع بيانات المستند:', e);
+                            }
+                        }
+
+                        function clearDirectorData() {
+                            if (confirm('هل أنت متأكد من رغبتك في تفريغ المستند ومسح النسخة المحفوظة على هذا الهاتف؟')) {
+                                localStorage.removeItem(DIR_STORAGE_KEY);
+                                location.reload();
+                            }
+                        }
+
+                        window.addEventListener('DOMContentLoaded', loadDirectorData);
+                    <\/script>
+                </body>
+                </html>
+            `);
+            editWindow.document.close();
+        }
+
+        // توليد استمارة حقيبة المدرس
         function generateAndPrintDoc(docId, docTitle) {
             const editWindow = window.open('', '_blank');
             if (!editWindow) {
-                alert('يرجى السماح بفتح النوافذ المنبثقة للتمكن من تعديل وحفظ المستند.');
+                alert('يرجى السماح بفتح النوافذ المنبثقة.');
                 return;
             }
 
@@ -1947,7 +2376,6 @@
                             body { background: #fff; margin: 0; padding: 0; }
                             .paper-container { box-shadow: none; padding: 0; margin: 0; max-width: 100%; border-radius: 0; }
                             .no-print-bar { display: none !important; }
-                            [contenteditable="true"]:hover, [contenteditable="true"]:focus { background: transparent !important; box-shadow: none !important; }
                         }
                     </style>
                 </head>
