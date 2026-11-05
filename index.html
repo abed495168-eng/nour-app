@@ -1094,10 +1094,10 @@
             <!-- تبويبات التعليم الأساسي والثانوي -->
             <div class="bag-tabs">
                 <button class="bag-tab-btn active" id="tab-btn-primary" onclick="switchBagTab('primary')">
-                    <i class="fas fa-shapes"></i> التعليم الأساسي
+                    <i class="fas fa-shapes"></i> التعليم الأساسي (الابتدائي)
                 </button>
                 <button class="bag-tab-btn" id="tab-btn-secondary" onclick="switchBagTab('secondary')">
-                    <i class="fas fa-graduation-cap"></i> التعليم الثانوي
+                    <i class="fas fa-graduation-cap"></i> التعليم الثانوي والإعدادي
                 </button>
             </div>
 
@@ -1285,6 +1285,7 @@
         // بنك وثائق حقيبة المدرس (الأساسي والثانوي)
         const TEACHER_BAG_DOCS = {
             primary: [
+                { id: 'p_bulletin', title: 'كشف الامتحان الأول / الفصلي (كشف فردي معتمد)', desc: 'نموذج كشف النقاط الرسمي للتلميذ للمراحل الابتدائية (3AP وغيرها)', icon: 'fas fa-file-invoice' },
                 { id: 'p1', title: 'لائحة تلاميذ القسم الرسمي', desc: 'استمارة تفريغ أسماء التلاميذ وتواريخ الميلاد والأرقام الوطنية', icon: 'fas fa-user-friends' },
                 { id: 'p2', title: 'سجل النداء والغياب الشهري', desc: 'دفتر المتابعة اليومية لغياب وحضور التلاميذ', icon: 'fas fa-calendar-check' },
                 { id: 'p3', title: 'جدول النظافة وتنظيم القسم', desc: 'توزيع المهام اليومية للمجموعات داخل الحجرة الصفية', icon: 'fas fa-broom' },
@@ -1292,6 +1293,7 @@
                 { id: 'p5', title: 'كشف تفريغ درجات التقويم والاختبارات', desc: 'جدول احتساب المعدلات الفصلية ومتابعة المستوى', icon: 'fas fa-poll' }
             ],
             secondary: [
+                { id: 's_bulletin', title: 'كشف درجات إعدادي وثانوي (Bulletin de Notes)', desc: 'النموذج الرسمي الشامل للفروض والامتحان والمعاملات والقرار السنوي', icon: 'fas fa-file-signature' },
                 { id: 's1', title: 'سجل رصد درجات الطلاب والتقييمات', desc: 'كشف احتساب الفروض الشفهية والكتابية والاختبارات', icon: 'fas fa-award' },
                 { id: 's2', title: 'دفتر النصوص وتوزيع المقررات', desc: 'تخطيط الدروس الأسبوعية ومتابعة المحاور التربوية', icon: 'fas fa-book' },
                 { id: 's3', title: 'دفتر متابعة غياب الطلاب الثانوي', desc: 'سجل الانضباط الصفي والمواظبة اليومية', icon: 'fas fa-clipboard-list' },
@@ -1481,8 +1483,258 @@
                 return;
             }
 
+            let customHeaderHtml = '';
             let tableContent = '';
-            if (docId === 'p1') {
+            let customFooterHtml = '';
+
+            if (docId === 'p_bulletin') {
+                // كشف الامتحان الفصلي للتعليم الابتدائي
+                customHeaderHtml = `
+                    <div style="border: 2px solid #111; padding: 15px; margin-bottom: 12px; border-radius: 6px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid #111; padding-bottom: 8px;">
+                            <div style="font-size: 11.5px; font-weight: bold; line-height: 1.5;">
+                                شرف - إخاء - عدالة<br>
+                                السنة الدراسية: <span contenteditable="true">2025 - 2026</span><br>
+                                القسم: <span contenteditable="true">3AP</span><br>
+                                الفصل: <span contenteditable="true">الأول</span>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="width: 48px; height: 48px; border-radius: 50%; border: 2px solid #116835; margin: 0 auto 4px; display: flex; align-items: center; justify-content: center; font-size: 20px; color: #d4af37;">★</div>
+                                <h2 contenteditable="true" style="margin: 0; font-size: 17px; font-weight: 800;">كشف الامتحان الأول</h2>
+                            </div>
+                            <div style="text-align: left; font-size: 11.5px; font-weight: bold; line-height: 1.5;">
+                                الجمهورية الإسلامية الموريتانية<br>
+                                وزارة التربية وإصلاح النظام التعليمي<br>
+                                الإدارة الجهوية: <span contenteditable="true">كيدي ماغا</span><br>
+                                مفتشية مقاطعة: <span contenteditable="true">سيليبابي</span><br>
+                                مدرسة: <span contenteditable="true">مدرسة 5</span>
+                            </div>
+                        </div>
+
+                        <div style="display: flex; justify-content: space-between; padding-top: 10px; font-size: 13px; font-weight: bold;">
+                            <div>الاسم الكامل: <span contenteditable="true" style="display: inline-block; min-width: 140px; border-bottom: 1px dotted #333;">أحمد</span></div>
+                            <div>رقم النداء: <span contenteditable="true" style="display: inline-block; min-width: 40px; border-bottom: 1px dotted #333; text-align: center;">1</span></div>
+                            <div>الرقم المدرسي: <span contenteditable="true" style="display: inline-block; min-width: 100px; border-bottom: 1px dotted #333;">....................</span></div>
+                        </div>
+                    </div>
+                `;
+
+                const primarySubjects = [
+                    { ar: 'التربية الإسلامية', fr: 'Education Islamique', max: '30', note: '25' },
+                    { ar: 'اللغة العربية', fr: 'Langue arabe', max: '50', note: '22' },
+                    { ar: 'الرياضيات', fr: 'Mathématiques', max: '40', note: '22' },
+                    { ar: 'التربية المدنية', fr: 'Education Civique', max: '10', note: '8' },
+                    { ar: 'التربية الفنية', fr: 'Education Technique', max: '10', note: '8' },
+                    { ar: 'الفرنسية', fr: 'Français', max: '30', note: '22' },
+                    { ar: 'التاريخ والجغرافيا', fr: 'Histoire Géographie', max: '10', note: '8' },
+                    { ar: 'العلوم الطبيعية', fr: 'Sciences Naturelles', max: '10', note: '7' },
+                    { ar: 'الرياضة البدنية', fr: 'Education Sportive', max: '10', note: '8' }
+                ];
+
+                tableContent = `
+                    <div style="display: flex; border: 1.5px solid #111;">
+                        <table id="printable-table" style="width: 75%; border-collapse: collapse; font-size: 12.5px;">
+                            <thead>
+                                <tr style="background: #f1f5f9;">
+                                    <th style="border: 1px solid #111; padding: 7px;">المادة</th>
+                                    <th style="border: 1px solid #111; padding: 7px; width: 120px; text-align: center;">النقاط</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${primarySubjects.map(sub => `
+                                    <tr>
+                                        <td style="border: 1px solid #111; padding: 6px 10px; font-weight: bold;">
+                                            ${sub.ar} - <span style="font-size: 11px; color: #475569;">${sub.fr}</span>
+                                        </td>
+                                        <td contenteditable="true" style="border: 1px solid #111; padding: 6px; text-align: center; font-weight: bold; font-size: 13px;">
+                                            ${sub.max} / ${sub.note}
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                                <tr style="background: #f8fafc; font-weight: 800;">
+                                    <td style="border: 1px solid #111; padding: 7px 10px;">مجموع النقاط</td>
+                                    <td contenteditable="true" style="border: 1px solid #111; padding: 7px; text-align: center;">200 / 130</td>
+                                </tr>
+                                <tr style="background: #f8fafc; font-weight: 800;">
+                                    <td style="border: 1px solid #111; padding: 7px 10px;">معدل الفصل</td>
+                                    <td contenteditable="true" style="border: 1px solid #111; padding: 7px; text-align: center; color: #0b4824; font-size: 14px;">20 / 13</td>
+                                </tr>
+                                <tr>
+                                    <td style="border: 1px solid #111; padding: 6px 10px; font-weight: bold;">النتيجة</td>
+                                    <td contenteditable="true" style="border: 1px solid #111; padding: 6px; text-align: center; font-weight: bold;">ناجح</td>
+                                </tr>
+                                <tr>
+                                    <td style="border: 1px solid #111; padding: 6px 10px; font-weight: bold;">الرتبة في القسم</td>
+                                    <td contenteditable="true" style="border: 1px solid #111; padding: 6px; text-align: center; font-weight: bold;">1 / 1</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        
+                        <div style="width: 25%; border-right: 1.5px solid #111; display: flex; flex-direction: column;">
+                            <div style="background: #f1f5f9; border-bottom: 1px solid #111; padding: 7px; text-align: center; font-weight: bold; font-size: 12px;">الملاحظات والقرار</div>
+                            <div contenteditable="true" style="flex: 1; padding: 15px; font-weight: bold; font-size: 14px; text-align: center; display: flex; align-items: center; justify-content: center;">
+                                جيد
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                customFooterHtml = `
+                    <div style="display: flex; justify-content: space-between; margin-top: 35px; font-size: 13px; font-weight: bold; text-align: center;">
+                        <div style="width: 30%;">
+                            توقيع المعلم<br><br>
+                            <span style="border-bottom: 1px dotted #333; display: inline-block; width: 100%;"></span>
+                        </div>
+                        <div style="width: 30%;">
+                            توقيع الوكيل<br><br>
+                            <span style="border-bottom: 1px dotted #333; display: inline-block; width: 100%;"></span>
+                        </div>
+                        <div style="width: 30%;">
+                            توقيع المدير<br><br>
+                            <span style="border-bottom: 1px dotted #333; display: inline-block; width: 100%;"></span>
+                        </div>
+                    </div>
+                `;
+
+            } else if (docId === 's_bulletin') {
+                // كشف درجات إعدادي وثانوي (Bulletin de Notes)
+                customHeaderHtml = `
+                    <div style="border-bottom: 2px solid #111; padding-bottom: 10px; margin-bottom: 12px;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div style="font-size: 11px; line-height: 1.5; font-weight: bold; text-align: left;" dir="ltr">
+                                République Islamique de Mauritanie<br>
+                                Honneur - Fraternité - Justice<br>
+                                Ministère de l'Éducation et de la Réforme du Système d'Enseignement<br>
+                                Direction de l'Enseignement Secondaire
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="width: 44px; height: 44px; border-radius: 50%; border: 2px solid #111; margin: 0 auto 4px; display: flex; align-items: center; justify-content: center; font-size: 16px;">★</div>
+                                <h2 style="margin: 0; font-size: 18px; font-weight: 800;">كشف درجات</h2>
+                                <span style="font-size: 13px; font-weight: bold; font-family: sans-serif;">Bulletin de Notes</span>
+                            </div>
+                            <div style="font-size: 11px; line-height: 1.5; font-weight: bold; text-align: right;">
+                                الجمهورية الإسلامية الموريتانية<br>
+                                شرف - إخاء - عدالة<br>
+                                وزارة التربية وإصلاح النظام التعليمي<br>
+                                مديرية التعليم الثانوي
+                            </div>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 12px; font-size: 12px; font-weight: bold;">
+                            <div>المؤسسة / Établissement: <span contenteditable="true" style="border-bottom: 1px dotted #333; min-width: 120px; display: inline-block;">.........................</span></div>
+                            <div style="text-align: left;">السنة الدراسية / Année Scolaire: <span contenteditable="true" style="border-bottom: 1px dotted #333; min-width: 80px; display: inline-block;">2025 - 2026</span></div>
+                            <div>الاسم الكامل / Nom et Prénom: <span contenteditable="true" style="border-bottom: 1px dotted #333; min-width: 140px; display: inline-block;">..................................</span></div>
+                            <div style="text-align: left;">القسم / Classe: <span contenteditable="true" style="border-bottom: 1px dotted #333; min-width: 80px; display: inline-block;">.................</span></div>
+                            <div>الرقم الوطني / Numéro National: <span contenteditable="true" style="border-bottom: 1px dotted #333; min-width: 120px; display: inline-block;">.........................</span></div>
+                        </div>
+                    </div>
+                `;
+
+                const secondarySubjects = [
+                    { ar: 'التربية الإسلامية', fr: 'Education Islamique', coef: '2' },
+                    { ar: 'العربية', fr: 'Arabe', coef: '4' },
+                    { ar: 'التاريخ والجغرافيا', fr: 'Histoire Géographie', coef: '2' },
+                    { ar: 'الفلسفة', fr: 'Philosophie', coef: '3' },
+                    { ar: 'التربية المدنية', fr: 'Instruction Civique', coef: '1' },
+                    { ar: 'الفرنسية', fr: 'Français', coef: '4' },
+                    { ar: 'الإنجليزية', fr: 'Anglais', coef: '2' },
+                    { ar: 'الرياضيات', fr: 'Maths', coef: '5' },
+                    { ar: 'العلوم الطبيعية', fr: 'Sciences Naturelles', coef: '4' },
+                    { ar: 'الفيزياء والكيمياء', fr: 'Physiques Chimie', coef: '4' },
+                    { ar: 'المعلوماتية', fr: 'Informatique', coef: '1' },
+                    { ar: 'التكنولوجيا', fr: 'Technologie', coef: '1' },
+                    { ar: 'التربية البدنية', fr: 'E.P.S', coef: '1' }
+                ];
+
+                tableContent = `
+                    <table id="printable-table" style="width: 100%; border-collapse: collapse; font-size: 11px;">
+                        <thead>
+                            <tr style="background: #f1f5f9; text-align: center;">
+                                <th style="border: 1px solid #111; padding: 5px;" rowspan="2">المواد<br>Matières</th>
+                                <th style="border: 1px solid #111; padding: 4px;" colspan="3">الفروض والامتحانات</th>
+                                <th style="border: 1px solid #111; padding: 4px; width: 50px;" rowspan="2">المعدل<br>Moyenne</th>
+                                <th style="border: 1px solid #111; padding: 4px; width: 45px;" rowspan="2">المعامل<br>Coeff.</th>
+                                <th style="border: 1px solid #111; padding: 4px; width: 55px;" rowspan="2">المجموع<br>Total</th>
+                                <th style="border: 1px solid #111; padding: 5px; width: 140px;" rowspan="2">ملاحظات وتوقيع الأستاذ<br>Observations du prof</th>
+                            </tr>
+                            <tr style="background: #f8fafc; font-size: 10px; text-align: center;">
+                                <th style="border: 1px solid #111; padding: 3px; width: 50px;">فرض 1</th>
+                                <th style="border: 1px solid #111; padding: 3px; width: 50px;">فرض 2</th>
+                                <th style="border: 1px solid #111; padding: 3px; width: 50px;">امتحان</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${secondarySubjects.map(sub => `
+                                <tr>
+                                    <td style="border: 1px solid #111; padding: 5px 8px; font-weight: bold;">
+                                        ${sub.ar} <span style="font-size: 9.5px; color: #475569; display: block;">${sub.fr}</span>
+                                    </td>
+                                    <td contenteditable="true" style="border: 1px solid #111; padding: 4px; text-align: center;"></td>
+                                    <td contenteditable="true" style="border: 1px solid #111; padding: 4px; text-align: center;"></td>
+                                    <td contenteditable="true" style="border: 1px solid #111; padding: 4px; text-align: center;"></td>
+                                    <td contenteditable="true" style="border: 1px solid #111; padding: 4px; text-align: center; font-weight: bold;"></td>
+                                    <td contenteditable="true" style="border: 1px solid #111; padding: 4px; text-align: center;">${sub.coef}</td>
+                                    <td contenteditable="true" style="border: 1px solid #111; padding: 4px; text-align: center; font-weight: bold;"></td>
+                                    <td contenteditable="true" style="border: 1px solid #111; padding: 4px; font-size: 10px;"></td>
+                                </tr>
+                            `).join('')}
+                            <tr style="background: #f1f5f9; font-weight: 800; text-align: center;">
+                                <td style="border: 1px solid #111; padding: 6px;">المجموع / Total</td>
+                                <td colspan="4" style="border: 1px solid #111;"></td>
+                                <td contenteditable="true" style="border: 1px solid #111; padding: 5px;">31</td>
+                                <td contenteditable="true" style="border: 1px solid #111; padding: 5px;"></td>
+                                <td style="border: 1px solid #111;"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                `;
+
+                customFooterHtml = `
+                    <div style="border: 1.5px solid #111; margin-top: 10px; padding: 10px; font-size: 11.5px; font-weight: bold;">
+                        <div style="display: flex; justify-content: space-between; border-bottom: 1px dashed #999; padding-bottom: 6px; margin-bottom: 6px;">
+                            <div>المعدل السنوي العام / Moyenne Générale: <span contenteditable="true" style="border-bottom: 1px dotted #333; min-width: 60px; display: inline-block;">..... / 20</span></div>
+                            <div>الرتبة / Rang: <span contenteditable="true" style="border-bottom: 1px dotted #333; min-width: 50px; display: inline-block;">..... / .....</span></div>
+                            <div>التاريخ / Date: <span contenteditable="true">..... / ..... / 202...</span></div>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-top: 6px;">
+                            <div style="line-height: 1.8;">
+                                القرار / DÉCISION:<br>
+                                <label><input type="checkbox"> يتجاوز إلى القسم الأعلى / Passe en classe supérieure</label><br>
+                                <label><input type="checkbox"> يكرر السنة / Redouble</label><br>
+                                <label><input type="checkbox"> مطرود نهائياً / Exclusion définitive</label>
+                            </div>
+                            <div style="text-align: center; min-width: 200px;">
+                                توقيع وختم مدير المؤسسة<br>
+                                Signature et cachet du Chef d'Établissement<br><br><br>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+            } else if (docId === 'p1') {
+                customHeaderHtml = `
+                    <div class="header-wrap">
+                        <div style="font-size: 13px; font-weight: bold; line-height: 1.6;">
+                            الجمهورية الإسلامية الموريتانية<br>
+                            وزارة التربية وإصلاح النظام التعليمي<br>
+                            النقابة الوطنية للمدرسين (نور)
+                        </div>
+                        <div style="text-align: center;">
+                            <h2 contenteditable="true" id="field-title" style="margin: 0; color: #116835; font-size: 18px;">${docTitle}</h2>
+                            <span contenteditable="true" id="field-year" style="font-size: 12px; color: #555;">السنة الدراسية: 2025 - 2026</span>
+                        </div>
+                        <div style="text-align: right; font-size: 12px; line-height: 1.6;">
+                            المؤسسة: <span contenteditable="true" id="field-school" style="border-bottom: 1px dotted #999; display: inline-block; min-width: 120px;">.........................</span><br>
+                            القسم / الشعبة: <span contenteditable="true" id="field-class" style="border-bottom: 1px dotted #999; display: inline-block; min-width: 80px;">.................</span><br>
+                            المدرس: <span contenteditable="true" id="field-teacher" style="border-bottom: 1px dotted #999; display: inline-block; min-width: 120px;">.........................</span>
+                        </div>
+                    </div>
+                    <div class="meta-info">
+                        <div>الولاية: <span contenteditable="true" id="field-wilaya" style="border-bottom: 1px dotted #999; min-width: 100px; display: inline-block;">..............................</span></div>
+                        <div>المقاطعة: <span contenteditable="true" id="field-moughataa" style="border-bottom: 1px dotted #999; min-width: 100px; display: inline-block;">..............................</span></div>
+                        <div>التاريخ: <span contenteditable="true" id="field-date" style="border-bottom: 1px dotted #999; min-width: 90px; display: inline-block;">..... / ..... / 202...</span></div>
+                    </div>
+                `;
                 tableContent = `
                     <table id="printable-table" style="width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 12px;">
                         <thead>
@@ -1511,87 +1763,30 @@
                         </tbody>
                     </table>
                 `;
-            } else if (docId === 'p2' || docId === 's3') {
-                tableContent = `
-                    <table id="printable-table" style="width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 11.5px;">
-                        <thead>
-                            <tr style="background: #f1f5f9;">
-                                <th style="border: 1px solid #333; padding: 6px; width: 35px;" rowspan="2">الرقم</th>
-                                <th style="border: 1px solid #333; padding: 6px; min-width: 140px;" rowspan="2">الاسم الكامل للتلميذ</th>
-                                <th style="border: 1px solid #333; padding: 4px; text-align: center;" colspan="4">الأسبوع 1</th>
-                                <th style="border: 1px solid #333; padding: 4px; text-align: center;" colspan="4">الأسبوع 2</th>
-                                <th style="border: 1px solid #333; padding: 4px; text-align: center;" colspan="4">الأسبوع 3</th>
-                                <th style="border: 1px solid #333; padding: 4px; text-align: center;" colspan="4">الأسبوع 4</th>
-                                <th style="border: 1px solid #333; padding: 6px; width: 60px;" rowspan="2">مجموع الغياب</th>
-                            </tr>
-                            <tr style="background: #f8fafc; font-size: 10px;">
-                                <th style="border: 1px solid #333; padding: 3px;">2</th><th style="border: 1px solid #333; padding: 3px;">3</th><th style="border: 1px solid #333; padding: 3px;">4</th><th style="border: 1px solid #333; padding: 3px;">5</th>
-                                <th style="border: 1px solid #333; padding: 3px;">2</th><th style="border: 1px solid #333; padding: 3px;">3</th><th style="border: 1px solid #333; padding: 3px;">4</th><th style="border: 1px solid #333; padding: 3px;">5</th>
-                                <th style="border: 1px solid #333; padding: 3px;">2</th><th style="border: 1px solid #333; padding: 3px;">3</th><th style="border: 1px solid #333; padding: 3px;">4</th><th style="border: 1px solid #333; padding: 3px;">5</th>
-                                <th style="border: 1px solid #333; padding: 3px;">2</th><th style="border: 1px solid #333; padding: 3px;">3</th><th style="border: 1px solid #333; padding: 3px;">4</th><th style="border: 1px solid #333; padding: 3px;">5</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${Array.from({length: 25}, (_, i) => `
-                                <tr>
-                                    <td style="border: 1px solid #333; padding: 6px; text-align: center; font-weight: bold;">${i + 1}</td>
-                                    <td contenteditable="true" style="border: 1px solid #333; padding: 6px;"></td>
-                                    ${Array.from({length: 16}, () => `<td contenteditable="true" style="border: 1px solid #333; padding: 4px; text-align: center;"></td>`).join('')}
-                                    <td contenteditable="true" style="border: 1px solid #333; padding: 6px; text-align: center; font-weight: bold;"></td>
-                                </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
-                `;
-            } else if (docId === 'p3') {
-                tableContent = `
-                    <table id="printable-table" style="width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 12px;">
-                        <thead>
-                            <tr style="background: #f1f5f9;">
-                                <th style="border: 1px solid #333; padding: 8px; width: 100px;">اليوم</th>
-                                <th style="border: 1px solid #333; padding: 8px; width: 140px;">المجموعة المسؤولة</th>
-                                <th style="border: 1px solid #333; padding: 8px;">أسماء التلاميذ المكلفين</th>
-                                <th style="border: 1px solid #333; padding: 8px; width: 120px;">ملاحظات المعلم</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${['الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'].map(day => `
-                                <tr>
-                                    <td style="border: 1px solid #333; padding: 12px; text-align: center; font-weight: bold;">${day}</td>
-                                    <td contenteditable="true" style="border: 1px solid #333; padding: 12px; text-align: center;">المجموعة: </td>
-                                    <td contenteditable="true" style="border: 1px solid #333; padding: 12px;"></td>
-                                    <td contenteditable="true" style="border: 1px solid #333; padding: 12px;"></td>
-                                </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
-                `;
-            } else if (docId === 'p4') {
-                tableContent = `
-                    <table id="printable-table" style="width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 12px;">
-                        <thead>
-                            <tr style="background: #f1f5f9;">
-                                <th style="border: 1px solid #333; padding: 6px; width: 40px;">الرقم</th>
-                                <th style="border: 1px solid #333; padding: 6px;">اسم المنشد / التلميذ</th>
-                                <th style="border: 1px solid #333; padding: 6px; width: 120px;">المجموعة / الفوج</th>
-                                <th style="border: 1px solid #333; padding: 6px;">النشيد أو النشاط المخصص</th>
-                                <th style="border: 1px solid #333; padding: 6px; width: 100px;">التقييم</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${Array.from({length: 22}, (_, i) => `
-                                <tr>
-                                    <td style="border: 1px solid #333; padding: 8px; text-align: center; font-weight: bold;">${i + 1}</td>
-                                    <td contenteditable="true" style="border: 1px solid #333; padding: 8px;"></td>
-                                    <td contenteditable="true" style="border: 1px solid #333; padding: 8px; text-align: center;"></td>
-                                    <td contenteditable="true" style="border: 1px solid #333; padding: 8px;"></td>
-                                    <td contenteditable="true" style="border: 1px solid #333; padding: 8px; text-align: center;"></td>
-                                </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
+                customFooterHtml = `
+                    <div style="display: flex; justify-content: space-between; margin-top: 30px; font-size: 13px; font-weight: bold;">
+                        <div>توقيع الأستاذ / المعلم:</div>
+                        <div>ملاحظة وتأشيرة الإدارة:</div>
+                    </div>
                 `;
             } else {
+                customHeaderHtml = `
+                    <div class="header-wrap">
+                        <div style="font-size: 13px; font-weight: bold; line-height: 1.6;">
+                            الجمهورية الإسلامية الموريتانية<br>
+                            وزارة التربية وإصلاح النظام التعليمي<br>
+                            النقابة الوطنية للمدرسين (نور)
+                        </div>
+                        <div style="text-align: center;">
+                            <h2 contenteditable="true" id="field-title" style="margin: 0; color: #116835; font-size: 18px;">${docTitle}</h2>
+                            <span contenteditable="true" id="field-year" style="font-size: 12px; color: #555;">السنة الدراسية: 2025 - 2026</span>
+                        </div>
+                        <div style="text-align: right; font-size: 12px; line-height: 1.6;">
+                            المؤسسة: <span contenteditable="true" id="field-school" style="border-bottom: 1px dotted #999; display: inline-block; min-width: 120px;">.........................</span><br>
+                            القسم: <span contenteditable="true" id="field-class" style="border-bottom: 1px dotted #999; display: inline-block; min-width: 80px;">.................</span>
+                        </div>
+                    </div>
+                `;
                 tableContent = `
                     <table id="printable-table" style="width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 12px;">
                         <thead>
@@ -1614,6 +1809,12 @@
                         </tbody>
                     </table>
                 `;
+                customFooterHtml = `
+                    <div style="display: flex; justify-content: space-between; margin-top: 30px; font-size: 13px; font-weight: bold;">
+                        <div>توقيع الأستاذ / المعلم:</div>
+                        <div>ملاحظة وتأشيرة الإدارة:</div>
+                    </div>
+                `;
             }
 
             editWindow.document.write(`
@@ -1622,11 +1823,11 @@
                 <head>
                     <meta charset="UTF-8">
                     <title>${docTitle} - تعديل وحفظ</title>
-                    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;600;700&display=swap" rel="stylesheet">
+                    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;600;700;800&display=swap" rel="stylesheet">
                     <style>
                         * { box-sizing: border-box; font-family: 'Tajawal', sans-serif; }
-                        body { margin: 20px; color: #111; direction: rtl; background-color: #f8fafc; }
-                        .paper-container { max-width: 900px; margin: 0 auto; background: #fff; padding: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-radius: 8px; }
+                        body { margin: 15px; color: #111; direction: rtl; background-color: #f8fafc; }
+                        .paper-container { max-width: 920px; margin: 0 auto; background: #fff; padding: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-radius: 8px; }
                         .no-print-bar {
                             position: sticky; top: 0; z-index: 100; background: #0b4824; color: white; padding: 12px 18px;
                             border-radius: 8px; margin-bottom: 20px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.15);
@@ -1648,7 +1849,7 @@
                         
                         @media print {
                             body { background: #fff; margin: 0; padding: 0; }
-                            .paper-container { box-shadow: none; padding: 0; margin: 0; max-width: 100%; }
+                            .paper-container { box-shadow: none; padding: 0; margin: 0; max-width: 100%; border-radius: 0; }
                             .no-print-bar { display: none !important; }
                             [contenteditable="true"]:hover, [contenteditable="true"]:focus { background: transparent !important; box-shadow: none !important; }
                         }
@@ -1657,46 +1858,20 @@
                 <body>
                     <div class="no-print-bar">
                         <div style="font-size: 13px;">
-                            ✍️ <strong>وضع التحرير والحفظ:</strong> اضغط على أي خانة للكتابة، ثم احفظ نسختك في هاتفك للرجوع إليها متى شئت.
+                            ✍️ <strong>وضع التحرير المباشر:</strong> يمكنك تعديل أي خانة أو كتابة النقاط مباشرة، ثم حفظها في هاتفك أو طباعتها.
                         </div>
                         <div style="display: flex; gap: 6px; flex-wrap: wrap;">
                             <button class="action-btn btn-save" onclick="saveToDevice()">💾 حفظ في الهاتف</button>
-                            <button class="action-btn btn-add" onclick="addNewRow()">➕ إضافة صف</button>
-                            <button class="action-btn btn-print" onclick="window.print()">🖨️ طباعة / PDF</button>
+                            ${docId === 'p1' ? '<button class="action-btn btn-add" onclick="addNewRow()">➕ إضافة صف</button>' : ''}
+                            <button class="action-btn btn-print" onclick="window.print()">🖨️ طباعة / حفظ كـ PDF</button>
                             <button class="action-btn btn-clear" onclick="clearData()">🗑️ تفريغ</button>
                         </div>
                     </div>
 
                     <div class="paper-container" id="printable-content">
-                        <div class="header-wrap">
-                            <div style="font-size: 13px; font-weight: bold; line-height: 1.6;">
-                                الجمهورية الإسلامية الموريتانية<br>
-                                وزارة التربية وإصلاح النظام التعليمي<br>
-                                النقابة الوطنية للمدرسين (نور)
-                            </div>
-                            <div style="text-align: center;">
-                                <h2 contenteditable="true" id="field-title" style="margin: 0; color: #116835; font-size: 18px;">${docTitle}</h2>
-                                <span contenteditable="true" id="field-year" style="font-size: 12px; color: #555;">السنة الدراسية: 2025 - 2026</span>
-                            </div>
-                            <div style="text-align: right; font-size: 12px; line-height: 1.6;">
-                                المؤسسة: <span contenteditable="true" id="field-school" style="border-bottom: 1px dotted #999; display: inline-block; min-width: 120px;">.........................</span><br>
-                                القسم / الشعبة: <span contenteditable="true" id="field-class" style="border-bottom: 1px dotted #999; display: inline-block; min-width: 80px;">.................</span><br>
-                                المدرس: <span contenteditable="true" id="field-teacher" style="border-bottom: 1px dotted #999; display: inline-block; min-width: 120px;">.........................</span>
-                            </div>
-                        </div>
-
-                        <div class="meta-info">
-                            <div>الولاية: <span contenteditable="true" id="field-wilaya" style="border-bottom: 1px dotted #999; min-width: 100px; display: inline-block;">..............................</span></div>
-                            <div>المقاطعة: <span contenteditable="true" id="field-moughataa" style="border-bottom: 1px dotted #999; min-width: 100px; display: inline-block;">..............................</span></div>
-                            <div>التاريخ: <span contenteditable="true" id="field-date" style="border-bottom: 1px dotted #999; min-width: 90px; display: inline-block;">..... / ..... / 202...</span></div>
-                        </div>
-
+                        ${customHeaderHtml}
                         ${tableContent}
-
-                        <div style="display: flex; justify-content: space-between; margin-top: 30px; font-size: 13px; font-weight: bold;">
-                            <div>توقيع الأستاذ / المعلم:</div>
-                            <div>ملاحظة وتأشيرة الإدارة:</div>
-                        </div>
+                        ${customFooterHtml}
                     </div>
 
                     <script>
@@ -1704,6 +1879,7 @@
 
                         function addNewRow() {
                             const tbody = document.querySelector('#printable-table tbody');
+                            if (!tbody) return;
                             const rowCount = tbody.rows.length + 1;
                             const sampleRow = tbody.rows[0];
                             const newRow = sampleRow.cloneNode(true);
@@ -1715,66 +1891,29 @@
                         }
 
                         function saveToDevice() {
-                            const meta = {
-                                school: document.getElementById('field-school').innerText,
-                                class: document.getElementById('field-class').innerText,
-                                teacher: document.getElementById('field-teacher').innerText,
-                                wilaya: document.getElementById('field-wilaya').innerText,
-                                moughataa: document.getElementById('field-moughataa').innerText,
-                                date: document.getElementById('field-date').innerText
-                            };
-
-                            const rows = [];
-                            const tbody = document.querySelector('#printable-table tbody');
-                            for (let r of tbody.rows) {
-                                const rowData = [];
-                                for (let i = 1; i < r.cells.length; i++) {
-                                    rowData.push(r.cells[i].innerText);
-                                }
-                                rows.push(rowData);
-                            }
-
-                            const payload = { meta, rows };
-                            localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
-                            alert('تم حفظ البيانات بنجاح في ذاكرة هاتفك! ستجدها محفوظة دائماً عند فتح هذه الاستمارة.');
+                            const editables = document.querySelectorAll('[contenteditable="true"]');
+                            const savedVals = [];
+                            editables.forEach(el => savedVals.push(el.innerText));
+                            localStorage.setItem(STORAGE_KEY, JSON.stringify(savedVals));
+                            alert('تم حفظ كشف الدرجات بنجاح في ذاكرة هاتفك!');
                         }
 
                         function loadFromDevice() {
                             const saved = localStorage.getItem(STORAGE_KEY);
                             if (!saved) return;
-
                             try {
-                                const data = JSON.parse(saved);
-                                if (data.meta) {
-                                    if (data.meta.school) document.getElementById('field-school').innerText = data.meta.school;
-                                    if (data.meta.class) document.getElementById('field-class').innerText = data.meta.class;
-                                    if (data.meta.teacher) document.getElementById('field-teacher').innerText = data.meta.teacher;
-                                    if (data.meta.wilaya) document.getElementById('field-wilaya').innerText = data.meta.wilaya;
-                                    if (data.meta.moughataa) document.getElementById('field-moughataa').innerText = data.meta.moughataa;
-                                    if (data.meta.date) document.getElementById('field-date').innerText = data.meta.date;
-                                }
-
-                                if (data.rows && data.rows.length > 0) {
-                                    const tbody = document.querySelector('#printable-table tbody');
-                                    while (tbody.rows.length < data.rows.length) {
-                                        addNewRow();
-                                    }
-                                    data.rows.forEach((rowVals, rIdx) => {
-                                        const r = tbody.rows[rIdx];
-                                        if (r) {
-                                            rowVals.forEach((val, cIdx) => {
-                                                if (r.cells[cIdx + 1]) r.cells[cIdx + 1].innerText = val;
-                                            });
-                                        }
-                                    });
-                                }
+                                const savedVals = JSON.parse(saved);
+                                const editables = document.querySelectorAll('[contenteditable="true"]');
+                                editables.forEach((el, idx) => {
+                                    if (savedVals[idx] !== undefined) el.innerText = savedVals[idx];
+                                });
                             } catch(e) {
-                                console.error('خطأ في استرجاع البيانات المحفوظة:', e);
+                                console.error('خطأ في استرجاع كشف الدرجات:', e);
                             }
                         }
 
                         function clearData() {
-                            if (confirm('هل أنت متأكد من تفريغ الاستمارة ومسح النسخة المحفوظة على هذا الهاتف؟')) {
+                            if (confirm('هل أنت متأكد من رغبتك في تفريغ الكشف ومسح النسخة المحفوظة على هذا الهاتف؟')) {
                                 localStorage.removeItem(STORAGE_KEY);
                                 location.reload();
                             }
