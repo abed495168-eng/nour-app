@@ -103,6 +103,42 @@
             padding-bottom: 10px;
         }
 
+        /* بطاقة وزر تحميل تطبيق أندرويد الرسمي */
+        .app-download-card {
+            background: linear-gradient(135deg, #ffffff, #f0fdf4);
+            border: 2px solid #bbf7d0;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 20px;
+            box-shadow: var(--card-shadow);
+            text-align: center;
+            position: relative;
+        }
+
+        .btn-download-app {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: #ffffff;
+            border: 1.5px solid var(--gold);
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-weight: 800;
+            font-size: 14.5px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            box-shadow: 0 4px 12px rgba(17, 104, 53, 0.25);
+            transition: all 0.25s ease;
+        }
+
+        .btn-download-app:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(17, 104, 53, 0.35);
+            color: #ffffff;
+        }
+
         /* تنسيقات لوحة الإحصائيات التلقائية */
         .stat-total-banner {
             background: linear-gradient(135deg, #116835, #08331a);
@@ -410,8 +446,7 @@
             top: 15px;
             font-size: 24px;
             color: #64748b;
-            cursor: pointer;
-            border: none;
+            cursor: border: none;
             background: none;
             z-index: 10;
         }
@@ -659,6 +694,19 @@
     </header>
 
     <div class="container">
+
+        <!-- بطاقة تنزيل التطبيق الرسمي للأندرويد -->
+        <div class="app-download-card">
+            <div style="font-size: 13.5px; font-weight: 700; color: var(--primary-dark); margin-bottom: 8px;">
+                <i class="fab fa-android" style="color: #10b981; font-size: 16px;"></i> التطبيق الرسمي للهواتف الذكية (Android)
+            </div>
+            <a href="نور.apk" download="نور.apk" class="btn-download-app">
+                <i class="fas fa-download"></i> تحميل تطبيق «نور» المباشر (APK)
+            </a>
+            <p style="font-size: 11.5px; color: #64748b; margin-top: 8px;">
+                تثبيت سريع ومباشر | الإصدار الرسمي المعتمد
+            </p>
+        </div>
 
         <!-- قسم التحقق من صحة الانتساب -->
         <div class="card">
