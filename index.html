@@ -1473,11 +1473,11 @@
             `).join('');
         }
 
-        // توليد استمارة تربوية تفاعلية تتيح للمدرس الكتابة والتعديل قبل الطباعة
+        // توليد استمارة تربوية تفاعلية مع ميزة الحفظ التلقائي في ذاكرة هاتف المدرس
         function generateAndPrintDoc(docId, docTitle) {
             const editWindow = window.open('', '_blank');
             if (!editWindow) {
-                alert('يرجى السماح بفتح النوافذ المنبثقة للتمكن من تعديل وطباعة المستند.');
+                alert('يرجى السماح بفتح النوافذ المنبثقة للتمكن من تعديل وحفظ المستند.');
                 return;
             }
 
@@ -1621,19 +1621,25 @@
                 <html lang="ar" dir="rtl">
                 <head>
                     <meta charset="UTF-8">
-                    <title>${docTitle} - تعديل وطباعة</title>
+                    <title>${docTitle} - تعديل وحفظ</title>
                     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;600;700&display=swap" rel="stylesheet">
                     <style>
                         * { box-sizing: border-box; font-family: 'Tajawal', sans-serif; }
                         body { margin: 20px; color: #111; direction: rtl; background-color: #f8fafc; }
                         .paper-container { max-width: 900px; margin: 0 auto; background: #fff; padding: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-radius: 8px; }
                         .no-print-bar {
-                            position: sticky; top: 0; z-index: 100; background: #0b4824; color: white; padding: 12px 20px;
-                            border-radius: 8px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+                            position: sticky; top: 0; z-index: 100; background: #0b4824; color: white; padding: 12px 18px;
+                            border-radius: 8px; margin-bottom: 20px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.15);
                         }
-                        .action-btn { background: #d4af37; color: #111; border: none; padding: 8px 16px; border-radius: 6px; font-weight: bold; font-size: 14px; cursor: pointer; transition: 0.2s; }
-                        .action-btn:hover { background: #c29d2b; }
-                        .btn-add-row { background: #ffffff; color: #0b4824; margin-left: 8px; }
+                        .action-btn { border: none; padding: 8px 14px; border-radius: 6px; font-weight: bold; font-size: 13px; cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; gap: 5px; }
+                        .btn-save { background: #10b981; color: #fff; }
+                        .btn-save:hover { background: #059669; }
+                        .btn-print { background: #d4af37; color: #111; }
+                        .btn-print:hover { background: #c29d2b; }
+                        .btn-add { background: #ffffff; color: #0b4824; }
+                        .btn-add:hover { background: #e2e8f0; }
+                        .btn-clear { background: #ef4444; color: #fff; }
+                        .btn-clear:hover { background: #dc2626; }
                         .header-wrap { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #116835; padding-bottom: 10px; margin-bottom: 12px; }
                         .meta-info { display: flex; justify-content: space-between; font-size: 13px; font-weight: bold; margin-bottom: 10px; }
                         [contenteditable="true"] { outline: none; }
@@ -1650,16 +1656,18 @@
                 </head>
                 <body>
                     <div class="no-print-bar">
-                        <div style="font-size: 13.5px;">
-                            ✍️ <strong>وضع التحرير المباشر:</strong> يمكنك الضغط على أي خانة أو نص لكتابة وتعديل البيانات مباشرة قبل الطباعة.
+                        <div style="font-size: 13px;">
+                            ✍️ <strong>وضع التحرير والحفظ:</strong> اضغط على أي خانة للكتابة، ثم احفظ نسختك في هاتفك للرجوع إليها متى شئت.
                         </div>
-                        <div>
-                            <button class="action-btn btn-add-row" onclick="addNewRow()">➕ إضافة صف</button>
-                            <button class="action-btn" onclick="window.print()">🖨️ طباعة / حفظ كـ PDF</button>
+                        <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                            <button class="action-btn btn-save" onclick="saveToDevice()">💾 حفظ في الهاتف</button>
+                            <button class="action-btn btn-add" onclick="addNewRow()">➕ إضافة صف</button>
+                            <button class="action-btn btn-print" onclick="window.print()">🖨️ طباعة / PDF</button>
+                            <button class="action-btn btn-clear" onclick="clearData()">🗑️ تفريغ</button>
                         </div>
                     </div>
 
-                    <div class="paper-container">
+                    <div class="paper-container" id="printable-content">
                         <div class="header-wrap">
                             <div style="font-size: 13px; font-weight: bold; line-height: 1.6;">
                                 الجمهورية الإسلامية الموريتانية<br>
@@ -1667,20 +1675,20 @@
                                 النقابة الوطنية للمدرسين (نور)
                             </div>
                             <div style="text-align: center;">
-                                <h2 contenteditable="true" style="margin: 0; color: #116835; font-size: 18px;">${docTitle}</h2>
-                                <span contenteditable="true" style="font-size: 12px; color: #555;">السنة الدراسية: 2025 - 2026</span>
+                                <h2 contenteditable="true" id="field-title" style="margin: 0; color: #116835; font-size: 18px;">${docTitle}</h2>
+                                <span contenteditable="true" id="field-year" style="font-size: 12px; color: #555;">السنة الدراسية: 2025 - 2026</span>
                             </div>
                             <div style="text-align: right; font-size: 12px; line-height: 1.6;">
-                                المؤسسة: <span contenteditable="true" style="border-bottom: 1px dotted #999; display: inline-block; min-width: 120px;">.........................</span><br>
-                                القسم / الشعبة: <span contenteditable="true" style="border-bottom: 1px dotted #999; display: inline-block; min-width: 80px;">.................</span><br>
-                                المدرس: <span contenteditable="true" style="border-bottom: 1px dotted #999; display: inline-block; min-width: 120px;">.........................</span>
+                                المؤسسة: <span contenteditable="true" id="field-school" style="border-bottom: 1px dotted #999; display: inline-block; min-width: 120px;">.........................</span><br>
+                                القسم / الشعبة: <span contenteditable="true" id="field-class" style="border-bottom: 1px dotted #999; display: inline-block; min-width: 80px;">.................</span><br>
+                                المدرس: <span contenteditable="true" id="field-teacher" style="border-bottom: 1px dotted #999; display: inline-block; min-width: 120px;">.........................</span>
                             </div>
                         </div>
 
                         <div class="meta-info">
-                            <div>الولاية: <span contenteditable="true" style="border-bottom: 1px dotted #999; min-width: 100px; display: inline-block;">..............................</span></div>
-                            <div>المقاطعة: <span contenteditable="true" style="border-bottom: 1px dotted #999; min-width: 100px; display: inline-block;">..............................</span></div>
-                            <div>التاريخ: <span contenteditable="true" style="border-bottom: 1px dotted #999; min-width: 90px; display: inline-block;">..... / ..... / 202...</span></div>
+                            <div>الولاية: <span contenteditable="true" id="field-wilaya" style="border-bottom: 1px dotted #999; min-width: 100px; display: inline-block;">..............................</span></div>
+                            <div>المقاطعة: <span contenteditable="true" id="field-moughataa" style="border-bottom: 1px dotted #999; min-width: 100px; display: inline-block;">..............................</span></div>
+                            <div>التاريخ: <span contenteditable="true" id="field-date" style="border-bottom: 1px dotted #999; min-width: 90px; display: inline-block;">..... / ..... / 202...</span></div>
                         </div>
 
                         ${tableContent}
@@ -1692,6 +1700,8 @@
                     </div>
 
                     <script>
+                        const STORAGE_KEY = 'nour_doc_' + '${docId}';
+
                         function addNewRow() {
                             const tbody = document.querySelector('#printable-table tbody');
                             const rowCount = tbody.rows.length + 1;
@@ -1703,6 +1713,74 @@
                             }
                             tbody.appendChild(newRow);
                         }
+
+                        function saveToDevice() {
+                            const meta = {
+                                school: document.getElementById('field-school').innerText,
+                                class: document.getElementById('field-class').innerText,
+                                teacher: document.getElementById('field-teacher').innerText,
+                                wilaya: document.getElementById('field-wilaya').innerText,
+                                moughataa: document.getElementById('field-moughataa').innerText,
+                                date: document.getElementById('field-date').innerText
+                            };
+
+                            const rows = [];
+                            const tbody = document.querySelector('#printable-table tbody');
+                            for (let r of tbody.rows) {
+                                const rowData = [];
+                                for (let i = 1; i < r.cells.length; i++) {
+                                    rowData.push(r.cells[i].innerText);
+                                }
+                                rows.push(rowData);
+                            }
+
+                            const payload = { meta, rows };
+                            localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+                            alert('تم حفظ البيانات بنجاح في ذاكرة هاتفك! ستجدها محفوظة دائماً عند فتح هذه الاستمارة.');
+                        }
+
+                        function loadFromDevice() {
+                            const saved = localStorage.getItem(STORAGE_KEY);
+                            if (!saved) return;
+
+                            try {
+                                const data = JSON.parse(saved);
+                                if (data.meta) {
+                                    if (data.meta.school) document.getElementById('field-school').innerText = data.meta.school;
+                                    if (data.meta.class) document.getElementById('field-class').innerText = data.meta.class;
+                                    if (data.meta.teacher) document.getElementById('field-teacher').innerText = data.meta.teacher;
+                                    if (data.meta.wilaya) document.getElementById('field-wilaya').innerText = data.meta.wilaya;
+                                    if (data.meta.moughataa) document.getElementById('field-moughataa').innerText = data.meta.moughataa;
+                                    if (data.meta.date) document.getElementById('field-date').innerText = data.meta.date;
+                                }
+
+                                if (data.rows && data.rows.length > 0) {
+                                    const tbody = document.querySelector('#printable-table tbody');
+                                    while (tbody.rows.length < data.rows.length) {
+                                        addNewRow();
+                                    }
+                                    data.rows.forEach((rowVals, rIdx) => {
+                                        const r = tbody.rows[rIdx];
+                                        if (r) {
+                                            rowVals.forEach((val, cIdx) => {
+                                                if (r.cells[cIdx + 1]) r.cells[cIdx + 1].innerText = val;
+                                            });
+                                        }
+                                    });
+                                }
+                            } catch(e) {
+                                console.error('خطأ في استرجاع البيانات المحفوظة:', e);
+                            }
+                        }
+
+                        function clearData() {
+                            if (confirm('هل أنت متأكد من تفريغ الاستمارة ومسح النسخة المحفوظة على هذا الهاتف؟')) {
+                                localStorage.removeItem(STORAGE_KEY);
+                                location.reload();
+                            }
+                        }
+
+                        window.addEventListener('DOMContentLoaded', loadFromDevice);
                     <\/script>
                 </body>
                 </html>
