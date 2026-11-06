@@ -205,7 +205,7 @@
             margin-bottom: 15px;
         }
 
-        input[type="text"], input[type="password"] {
+        input[type="text"], input[type="password"], input[type="tel"] {
             flex: 1;
             padding: 12px;
             border: 1.5px solid #cbd5e1;
@@ -217,7 +217,7 @@
             transition: border-color 0.2s;
         }
 
-        input[type="text"]:focus, input[type="password"]:focus {
+        input[type="text"]:focus, input[type="password"]:focus, input[type="tel"]:focus {
             border-color: var(--primary);
         }
 
@@ -879,16 +879,14 @@
         <!-- أزرار استعراض الهيئات القيادية والنصوص وحقائب المعلم والمدير -->
         <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px;">
             
-            <!-- زر حقيبة المدرس الرقمية -->
+            <!-- زر حقيبة المدرس الرقمية (تم حذف القفل وفتحها مباشرة) -->
             <button class="btn btn-block" style="background: linear-gradient(135deg, #0284c7, #0369a1); color: white; border: 1.5px solid #38bdf8; box-shadow: 0 4px 10px rgba(2, 132, 199, 0.25);" onclick="openBagModal()">
                 <i class="fas fa-briefcase" style="color: #fde047;"></i> حقيبة المدرس الرقمية (استمارات ونماذج تربوية)
-                <i class="fas fa-lock" style="font-size: 11px; opacity: 0.8; margin-right: auto;"></i>
             </button>
 
-            <!-- زر حقيبة المدير المضافة -->
+            <!-- زر حقيبة المدير (تم حذف القفل وفتحها مباشرة) -->
             <button class="btn btn-block" style="background: linear-gradient(135deg, #0f766e, #115e59); color: white; border: 1.5px solid #2dd4bf; box-shadow: 0 4px 10px rgba(15, 118, 110, 0.25);" onclick="openDirectorBagModal()">
                 <i class="fas fa-user-tie" style="color: #fde047;"></i> حقيبة المدير (سجلات ومحاضر إدارة المؤسسة)
-                <i class="fas fa-lock" style="font-size: 11px; opacity: 0.8; margin-right: auto;"></i>
             </button>
 
             <button class="btn btn-block btn-gold" onclick="openOfficeModal()">
@@ -1043,7 +1041,7 @@
 
     </div>
 
-    <!-- نافذة إدخال أو تعيين الرمز السري (PIN) للبطاقة الفردية والتحقق -->
+    <!-- نافذة إدخال أو تعيين الرمز السري (PIN) مع زر استعادة الرمز -->
     <div id="pin-modal" class="modal">
         <div class="modal-content">
             <button class="close-btn" onclick="closeModal('pin-modal')">&times;</button>
@@ -1054,7 +1052,55 @@
             </div>
             <input type="password" id="input-pin" maxlength="4" placeholder="••••" style="font-size: 24px; letter-spacing: 5px; margin-bottom: 15px;">
             <button class="btn btn-block" id="btn-submit-pin" onclick="verifyOrSetPin()">متابعة</button>
+            
+            <!-- رابط استعادة الرمز السري -->
+            <div style="text-align: center; margin-top: 14px;">
+                <button type="button" onclick="openForgotPinModal()" style="background: none; border: none; color: #0284c7; font-size: 13px; font-weight: 700; cursor: pointer; text-decoration: underline;">
+                    <i class="fas fa-question-circle"></i> نسيت الرمز السري؟ استعادة ذاتية
+                </button>
+            </div>
+
             <p id="pin-error" style="color: #dc2626; font-size: 13px; text-align: center; margin-top: 10px; display: none;"></p>
+        </div>
+    </div>
+
+    <!-- نافذة استعادة الرمز السري الذاتية -->
+    <div id="forgot-pin-modal" class="modal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal('forgot-pin-modal')">&times;</button>
+            <div style="text-align: center; margin-bottom: 15px; border-bottom: 2px solid var(--gold); padding-bottom: 10px;">
+                <i class="fas fa-key" style="font-size: 32px; color: var(--gold);"></i>
+                <h3 style="margin-top: 8px; color: var(--primary);">استعادة وتعيين الرمز السري</h3>
+                <p style="font-size: 12px; color: #64748b; margin-top: 4px;">تحقق ذاتي فوري عبر مطابقة بياناتك بالسجل</p>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px;">
+                <div>
+                    <label style="font-size: 12px; font-weight: bold; color: #475569; display: block; margin-bottom: 4px; text-align: right;">الدليل المالي أو الرقم الوطني:</label>
+                    <input type="text" id="recover-id" placeholder="الدليل المالي أو NNI" style="width: 100%;">
+                </div>
+
+                <div>
+                    <label style="font-size: 12px; font-weight: bold; color: #475569; display: block; margin-bottom: 4px; text-align: right;">رقم الهاتف المسجل بالنقابة:</label>
+                    <input type="tel" id="recover-phone" placeholder="مثال: 49496272" style="width: 100%;">
+                </div>
+
+                <div>
+                    <label style="font-size: 12px; font-weight: bold; color: #475569; display: block; margin-bottom: 4px; text-align: right;">الرمز السري الجديد (4 أرقام):</label>
+                    <input type="password" id="recover-new-pin" maxlength="4" placeholder="••••" style="width: 100%; font-size: 20px; letter-spacing: 4px;">
+                </div>
+
+                <div>
+                    <label style="font-size: 12px; font-weight: bold; color: #475569; display: block; margin-bottom: 4px; text-align: right;">تأكيد الرمز السري الجديد:</label>
+                    <input type="password" id="recover-confirm-pin" maxlength="4" placeholder="••••" style="width: 100%; font-size: 20px; letter-spacing: 4px;">
+                </div>
+            </div>
+
+            <button class="btn btn-block" id="btn-submit-recovery" onclick="submitPasswordRecovery()">
+                <i class="fas fa-save"></i> تعيين الرمز ودخول مباشر
+            </button>
+            <p id="recover-error" style="color: #dc2626; font-size: 13px; text-align: center; margin-top: 10px; display: none;"></p>
+            <p id="recover-success" style="color: #15803d; font-size: 13px; text-align: center; margin-top: 10px; display: none; font-weight: bold;"></p>
         </div>
     </div>
 
@@ -1112,7 +1158,7 @@
         </div>
     </div>
 
-    <!-- نافذة حقيبة المدير المضافة -->
+    <!-- نافذة حقيبة المدير الرقمية -->
     <div id="director-bag-modal" class="modal">
         <div class="modal-content" style="max-width: 520px;">
             <button class="close-btn" onclick="closeModal('director-bag-modal')">&times;</button>
@@ -1134,9 +1180,7 @@
                 <div class="badge-header">
                     <img src="IM9.jpg" style="height: 45px; border-radius: 5px;" onerror="this.src='IM9.jpg'">
                     <div class="badge-actions-top">
-                        <!-- زر التبديل بين العربية والفرنسية -->
                         <button class="lang-btn" onclick="toggleCardLang()"><i class="fas fa-globe"></i> <span id="btn-lang-txt">Français</span></button>
-                        <!-- شارة الحالة المالية (أخضر أو أحمر) -->
                         <span id="m-status-badge" class="status-badge status-unpaid">
                             <i id="m-status-icon" class="fas fa-times-circle"></i> <span id="m-status-txt">غير مسدد</span>
                         </span>
@@ -1155,7 +1199,6 @@
                 <div class="badge-info-row"><span class="badge-label" id="lbl-school">مكان العمل:</span><span id="m-school" class="badge-value"></span></div>
                 <div class="badge-info-row"><span class="badge-label" id="lbl-loc">الولاية والمقاطعة:</span><span id="m-loc" class="badge-value"></span></div>
 
-                <!-- زر التواصل المباشر مع المنسق عبر واتساب -->
                 <a id="btn-whatsapp-coordinator" href="#" target="_blank" class="btn btn-block btn-whatsapp">
                     <i class="fab fa-whatsapp" style="font-size: 16px;"></i> <span id="lbl-wa-btn">تواصل مع القيادة / تقديم طلب أو تظلم</span>
                 </a>
@@ -1251,9 +1294,7 @@
                 <i class="fas fa-search region-search-icon"></i>
             </div>
 
-            <!-- عداد نتائج البحث -->
             <div id="region-search-counter" style="font-size: 11.5px; color: #64748b; margin-bottom: 10px; font-weight: 600;"></div>
-
             <div id="region-members-list" style="margin-top: 5px; max-height: 400px; overflow-y: auto; padding-left: 4px;"></div>
         </div>
     </div>
@@ -1269,7 +1310,6 @@
         let activeMember = null;
         let isCardFrench = false;
         let pendingWilayaCode = null;
-        let isMemberVerifiedForBag = false;
 
         // إعدادات وبيانات المنسقيات الجهوية للولايات الـ 15 المعتمدة
         const WILAYAS_CONFIG = {
@@ -1290,7 +1330,6 @@
             'NS15':  { name: 'ولاية نواكشوط الجنوبية', filter: 'wilaya_code.eq.NS15,membership_number.ilike.NS15%,wilaya.eq.نواكشوط الجنوبية' }
         };
 
-        // الألوان والأيقونات الخاصة بالتصنيفات القانونية
         const LEGAL_CATEGORY_STYLES = {
             'القوانين': { icon: 'fas fa-gavel', border: 'var(--primary)', color: 'var(--primary)' },
             'المراسيم': { icon: 'fas fa-stamp', border: 'var(--gold)', color: 'var(--gold)' },
@@ -1304,7 +1343,6 @@
             'الاتفاقيات': { icon: 'fas fa-handshake', border: 'var(--gold)', color: 'var(--gold)' }
         };
 
-        // بنك وثائق حقيبة المدرس (الأساسي والإعدادي/الثانوي)
         const TEACHER_BAG_DOCS = {
             primary: [
                 { id: 'p_bulletin', title: 'كشف الامتحان الفصلي (كشف فردي معتمد)', desc: 'نموذج كشف النقاط الرسمي للتلميذ للمراحل الابتدائية (3AP وغيرها)', icon: 'fas fa-file-invoice' },
@@ -1325,7 +1363,6 @@
             ]
         };
 
-        // بنك وثائق حقيبة المدير (سجلات ومحاضر تسيير المؤسسة)
         const DIRECTOR_BAG_DOCS = [
             { id: 'dir_surveillance', title: 'دفتر الرقابة اليومية (Cahier de surveillance quotidienne)', desc: 'سجل ضبط الانضباط والملاحظات اليومية وتوقيعات الرقباء والإدارة', icon: 'fas fa-clipboard-check' },
             { id: 'dir_personnel', title: 'سجل القيد للأشخاص (Cahier matricule du personnel)', desc: 'دفتر قيد طاقم التدريس والعاملين بالمؤسسة وتفاصيل الدليل المالي وNNI', icon: 'fas fa-address-book' },
@@ -1346,13 +1383,11 @@
                     return;
                 }
 
-                // عرض الإجمالي والأسلاك
                 document.getElementById('stat-total-num').innerText = (data.total_members || 0).toLocaleString();
                 document.getElementById('stat-teachers-num').innerText = (data.teachers_count || 0).toLocaleString();
                 document.getElementById('stat-profs-num').innerText = (data.professors_count || 0).toLocaleString();
                 document.getElementById('stat-service-num').innerText = (data.service_providers_count || 0).toLocaleString();
 
-                // تحديث عدادات كل ولاية
                 if (data.regions_count) {
                     Object.keys(WILAYAS_CONFIG).forEach(code => {
                         const countEl = document.getElementById(`badge-count-${code}`);
@@ -1372,10 +1407,9 @@
             }
         }
 
-        // تشغيل جلب الإحصائيات فور تحميل الصفحة
         document.addEventListener('DOMContentLoaded', loadPlatformStats);
 
-        // التحقق من الدليل المالي أو الرقم الوطني
+        // التحقق من الدليل المالي أو الرقم الوطني للبطاقة الفردية
         async function checkMember() {
             const idInput = document.getElementById('input-nid').value.trim();
             const msg = document.getElementById('check-msg');
@@ -1391,9 +1425,10 @@
             document.getElementById('input-pin').value = '';
             document.getElementById('pin-error').style.display = 'none';
             document.getElementById('pin-modal').style.display = 'block';
+            document.getElementById('input-pin').focus();
         }
 
-        // معالجة ومطابقة الرمز السري (PIN) للبطاقة الفردية أو للدخول للحقائب
+        // مطابقة الرمز السري الفردي للبطاقة
         async function verifyOrSetPin() {
             const pin = document.getElementById('input-pin').value.trim();
             const err = document.getElementById('pin-error');
@@ -1419,18 +1454,8 @@
 
                 if (data && data.success) {
                     closeModal('pin-modal');
-                    isMemberVerifiedForBag = true;
                     activeMember = data.data;
-
-                    if (window.pendingOpenBagAction === 'TEACHER') {
-                        window.pendingOpenBagAction = null;
-                        showBagModalDirectly();
-                    } else if (window.pendingOpenBagAction === 'DIRECTOR') {
-                        window.pendingOpenBagAction = null;
-                        showDirectorBagModalDirectly();
-                    } else {
-                        showCard(data.data);
-                    }
+                    showCard(data.data);
                 } else {
                     err.innerText = data.message || 'بيانات غير صحيحة، تأكد من الرمز والمُعرّف.';
                     err.style.display = 'block';
@@ -1441,7 +1466,97 @@
             }
         }
 
-        // فتح نافذة النصوص القانونية وجلبها من Supabase
+        // فتح وإغلاق نافذة استعادة الرمز السري
+        function openForgotPinModal() {
+            closeModal('pin-modal');
+            const currentId = document.getElementById('input-nid').value.trim();
+            if (currentId) {
+                document.getElementById('recover-id').value = currentId;
+            }
+            document.getElementById('recover-error').style.display = 'none';
+            document.getElementById('recover-success').style.display = 'none';
+            document.getElementById('forgot-pin-modal').style.display = 'block';
+        }
+
+        // تنفيذ استعادة وتعيين الرمز السري الجديد ذاتياً
+        async function submitPasswordRecovery() {
+            const idVal = document.getElementById('recover-id').value.trim();
+            let phoneVal = document.getElementById('recover-phone').value.trim().replace(/\s+/g, '');
+            const newPin = document.getElementById('recover-new-pin').value.trim();
+            const confirmPin = document.getElementById('recover-confirm-pin').value.trim();
+
+            const err = document.getElementById('recover-error');
+            const success = document.getElementById('recover-success');
+            const submitBtn = document.getElementById('btn-submit-recovery');
+
+            err.style.display = 'none';
+            success.style.display = 'none';
+
+            if (!idVal || !phoneVal || !newPin || !confirmPin) {
+                err.innerText = 'يرجى ملء جميع الحقول المطلوبة.';
+                err.style.display = 'block';
+                return;
+            }
+
+            if (newPin.length !== 4 || isNaN(newPin)) {
+                err.innerText = 'الرمز السري الجديد يجب أن يتكون من 4 أرقام بالضبط.';
+                err.style.display = 'block';
+                return;
+            }
+
+            if (newPin !== confirmPin) {
+                err.innerText = 'الرمز السري وتأكيده غير متطابقين.';
+                err.style.display = 'block';
+                return;
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري التحقق والتحديث...';
+
+            try {
+                // 1. التحقق من تطابق (الدليل المالي أو الوطني) مع رقم الهاتف في جدول members
+                const { data: memberData, error: fetchErr } = await client
+                    .from('members')
+                    .select('*')
+                    .or(`financial_id.eq.${idVal},national_id.eq.${idVal}`)
+                    .ilike('phone', `%${phoneVal.slice(-8)}%`)
+                    .maybeSingle();
+
+                if (fetchErr || !memberData) {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '<i class="fas fa-save"></i> تعيين الرمز ودخول مباشر';
+                    err.innerText = 'البيانات غير متطابقة! تأكد من إدخال الدليل أو الرقم الوطني ورقم الهاتف المسجل بالنقابة.';
+                    err.style.display = 'block';
+                    return;
+                }
+
+                // 2. تحديث الرمز عبر RPC verify_or_setup_member لضمان توافق التشفير
+                const { data: updateRes, error: updateErr } = await client.rpc('verify_or_setup_member', {
+                    p_identifier: idVal,
+                    p_pin: newPin
+                });
+
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-save"></i> تعيين الرمز ودخول مباشر';
+
+                success.innerText = 'تم تغيير الرمز السري بنجاح! جاري تحويلك إلى بطاقتك...';
+                success.style.display = 'block';
+
+                setTimeout(() => {
+                    closeModal('forgot-pin-modal');
+                    activeMember = memberData;
+                    showCard(memberData);
+                }, 1300);
+
+            } catch (ex) {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-save"></i> تعيين الرمز ودخول مباشر';
+                err.innerText = 'حدث خطأ في الاتصال بالخادم، يرجى المحاولة لاحقاً.';
+                err.style.display = 'block';
+            }
+        }
+
+        // فتح النصوص القانونية
         async function openLegalModal() {
             const modal = document.getElementById('legal-modal');
             const container = document.getElementById('legal-docs-container');
@@ -1483,26 +1598,8 @@
             }
         }
 
-        // دوال حقيبة المدرس الرقمية المقفلة بالعضوية
+        // فتح حقيبة المدرس الرقمية مباشرة وبدون كود
         function openBagModal() {
-            if (isMemberVerifiedForBag && activeMember) {
-                showBagModalDirectly();
-                return;
-            }
-            const idInput = document.getElementById('input-nid').value.trim();
-            if (idInput) {
-                enteredIdentifier = idInput;
-                window.pendingOpenBagAction = 'TEACHER';
-                document.getElementById('input-pin').value = '';
-                document.getElementById('pin-error').style.display = 'none';
-                document.getElementById('pin-modal').style.display = 'block';
-            } else {
-                alert('حقيبة المدرس مخصصة لمنتسبي النقابة. يرجى إدخال الدليل المالي أو الرقم الوطني في حقل التحقق أولاً.');
-                document.getElementById('input-nid').focus();
-            }
-        }
-
-        function showBagModalDirectly() {
             document.getElementById('bag-modal').style.display = 'block';
             switchBagTab('primary');
         }
@@ -1537,26 +1634,8 @@
             `).join('');
         }
 
-        // دوال حقيبة المدير الرقمية
+        // فتح حقيبة المدير الرقمية مباشرة وبدون كود
         function openDirectorBagModal() {
-            if (isMemberVerifiedForBag && activeMember) {
-                showDirectorBagModalDirectly();
-                return;
-            }
-            const idInput = document.getElementById('input-nid').value.trim();
-            if (idInput) {
-                enteredIdentifier = idInput;
-                window.pendingOpenBagAction = 'DIRECTOR';
-                document.getElementById('input-pin').value = '';
-                document.getElementById('pin-error').style.display = 'none';
-                document.getElementById('pin-modal').style.display = 'block';
-            } else {
-                alert('حقيبة المدير مخصصة لمنتسبي النقابة والإدارات المدرسية. يرجى إدخال الدليل المالي أو الرقم الوطني للتحقق أولاً.');
-                document.getElementById('input-nid').focus();
-            }
-        }
-
-        function showDirectorBagModalDirectly() {
             const modal = document.getElementById('director-bag-modal');
             const list = document.getElementById('director-docs-list');
             modal.style.display = 'block';
@@ -1577,7 +1656,14 @@
             `).join('');
         }
 
-        // توليد استمارات حقيبة المدير التفاعلية
+        // تذييل حفظ الحقوق الرسمي لنقابة نور المضاف لجميع المستندات
+        const NOUR_COPYRIGHT_FOOTER = `
+            <div style="text-align: center; margin-top: 25px; padding-top: 10px; border-top: 1px solid #94a3b8; font-size: 11.5px; font-weight: bold; color: #475569;">
+                جميع الحقوق محفوظة لنقابة نور &copy; 2026 | النقابة الوطنية للمدرسين
+            </div>
+        `;
+
+        // توليد استمارات حقيبة المدير
         function generateAndPrintDirectorDoc(docId, docTitle) {
             const editWindow = window.open('', '_blank');
             if (!editWindow) {
@@ -1636,6 +1722,7 @@
                             `).join('')}
                         </tbody>
                     </table>
+                    ${NOUR_COPYRIGHT_FOOTER}
                 `;
             } else if (docId === 'dir_personnel') {
                 docHtml = `
@@ -1674,6 +1761,7 @@
                             `).join('')}
                         </tbody>
                     </table>
+                    ${NOUR_COPYRIGHT_FOOTER}
                 `;
             } else if (docId === 'dir_passation') {
                 docHtml = `
@@ -1761,6 +1849,7 @@
                             ............................................
                         </div>
                     </div>
+                    ${NOUR_COPYRIGHT_FOOTER}
                 `;
             } else if (docId === 'dir_reunions') {
                 docHtml = `
@@ -1817,6 +1906,7 @@
                         <div>المقرر / Rapporteur: ................................</div>
                         <div>المدير / Directeur: ................................</div>
                     </div>
+                    ${NOUR_COPYRIGHT_FOOTER}
                 `;
             } else if (docId === 'dir_visites') {
                 docHtml = `
@@ -1849,6 +1939,7 @@
                             `).join('')}
                         </tbody>
                     </table>
+                    ${NOUR_COPYRIGHT_FOOTER}
                 `;
             }
 
@@ -1938,7 +2029,7 @@
             editWindow.document.close();
         }
 
-        // توليد استمارة حقيبة المدرس
+        // توليد استمارات حقيبة المدرس
         function generateAndPrintDoc(docId, docTitle) {
             const editWindow = window.open('', '_blank');
             if (!editWindow) {
@@ -2234,6 +2325,7 @@
                             </div>
                         </div>
                     </div>
+                    ${NOUR_COPYRIGHT_FOOTER}
                 `;
 
             } else if (docId === 'p1') {
@@ -2293,6 +2385,7 @@
                         <div>توقيع الأستاذ / المعلم:</div>
                         <div>ملاحظة وتأشيرة الإدارة:</div>
                     </div>
+                    ${NOUR_COPYRIGHT_FOOTER}
                 `;
             } else {
                 customHeaderHtml = `
@@ -2339,6 +2432,7 @@
                         <div>توقيع الأستاذ / المعلم:</div>
                         <div>ملاحظة وتأشيرة الإدارة:</div>
                     </div>
+                    ${NOUR_COPYRIGHT_FOOTER}
                 `;
             }
 
@@ -2482,7 +2576,7 @@
             document.getElementById('input-region-pin').focus();
         }
 
-        // التحقق من صحة رمز المرور (للجهة أو الولاية) عبر Supabase
+        // التحقق من صحة رمز المرور (للجهة أو الهيئة)
         async function submitRegionPin() {
             const pin = document.getElementById('input-region-pin').value.trim();
             const err = document.getElementById('region-pin-error');
@@ -2535,7 +2629,6 @@
             }
         }
 
-        // جلب وعرض بيانات المكتب الوطني بعد التحقق من الرمز
         async function loadAndShowOffice() {
             const modal = document.getElementById('office-modal');
             const list = document.getElementById('office-list');
@@ -2567,7 +2660,6 @@
             }
         }
 
-        // جلب وعرض بيانات المجلس الوطني بعد التحقق من الرمز
         async function loadAndShowCouncil() {
             const modal = document.getElementById('council-modal');
             const list = document.getElementById('council-list');
@@ -2599,7 +2691,6 @@
             }
         }
 
-        // جلب وعرض بيانات المنسقية المحددة
         async function fetchAndDisplayRegion(code) {
             const conf = WILAYAS_CONFIG[code] || { name: 'المنسقية الجهوية', filter: `wilaya_code.eq.${code}` };
             const modal = document.getElementById('region-modal');
@@ -2632,7 +2723,6 @@
             }
         }
 
-        // رسم بطاقات أعضاء المنسقية مع ربط الفهرس الصحيح
         function renderRegionMembersList(listData) {
             const list = document.getElementById('region-members-list');
             const counter = document.getElementById('region-search-counter');
@@ -2662,7 +2752,6 @@
             }).join('');
         }
 
-        // فلترة أعضاء المنسقية فورياً أثناء الكتابة في شريط البحث
         function filterRegionMembers() {
             const query = (document.getElementById('input-region-search').value || '').trim().toLowerCase();
             if (!query) {
@@ -2691,7 +2780,6 @@
             renderRegionMembersList(filtered);
         }
 
-        // عرض بطاقة عضو من أعضاء المنسقية
         function viewRegionMemberCard(index) {
             const member = regionMembersData[index];
             if (member) {
@@ -2699,7 +2787,6 @@
             }
         }
 
-        // إظهار بطاقة العضو وضبط الشارة المالية ورابط الواتساب
         function showCard(m) {
             activeMember = m;
             isCardFrench = false;
@@ -2707,7 +2794,6 @@
             document.getElementById('card-modal').style.display = 'block';
         }
 
-        // تحديث محتوى ولغة البطاقة
         function renderCardData() {
             if (!activeMember) return;
             const m = activeMember;
@@ -2757,13 +2843,11 @@
             document.getElementById('btn-whatsapp-coordinator').href = `https://wa.me/${coordinatorPhone}?text=${defaultMsg}`;
         }
 
-        // التبديل بين العربية والفرنسية
         function toggleCardLang() {
             isCardFrench = !isCardFrench;
             renderCardData();
         }
         
-        // فتح وإغلاق النوافذ
         function openAboutModal() {
             document.getElementById('about-modal').style.display = 'block';
         }
@@ -2778,14 +2862,12 @@
             }
         };
 
-        // دعم ضغط زر Enter في حقل رمز منسقية الولاية أو الهيئة
         document.getElementById('input-region-pin').addEventListener('keypress', function (e) {
             if (e.key === 'Enter') {
                 submitRegionPin();
             }
         });
 
-        // تسجيل الـ Service Worker لتفعيل PWA والتثبيت على الهواتف
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('./sw.js')
