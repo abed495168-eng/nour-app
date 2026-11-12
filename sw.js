@@ -1,4 +1,4 @@
-const CACHE_NAME = 'nour-pwa-v11';
+const CACHE_NAME = 'nour-pwa-v12';
 const ASSETS = [
   './',
   './index.html',
@@ -30,7 +30,11 @@ self.addEventListener('activate', (e) => {
 
 // استراتيجية Network-First: جلب أحدث نسخة دائماً مع تجنب كاش الصفحات الرئيسية
 self.addEventListener('fetch', (e) => {
-  if (e.request.url.includes('.apk') || e.request.url.includes('supabase.co')) {
+  if (
+    e.request.url.includes('.apk') || 
+    e.request.url.includes('.pdf') || 
+    e.request.url.includes('supabase.co')
+  ) {
     return;
   }
 
