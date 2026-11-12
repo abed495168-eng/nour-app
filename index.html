@@ -879,12 +879,12 @@
         <!-- أزرار استعراض الهيئات القيادية والنصوص وحقائب المعلم والمدير -->
         <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px;">
             
-            <!-- زر حقيبة المدرس الرقمية (تم حذف القفل وفتحها مباشرة) -->
+            <!-- زر حقيبة المدرس الرقمية -->
             <button class="btn btn-block" style="background: linear-gradient(135deg, #0284c7, #0369a1); color: white; border: 1.5px solid #38bdf8; box-shadow: 0 4px 10px rgba(2, 132, 199, 0.25);" onclick="openBagModal()">
                 <i class="fas fa-briefcase" style="color: #fde047;"></i> حقيبة المدرس الرقمية (استمارات ونماذج تربوية)
             </button>
 
-            <!-- زر حقيبة المدير (تم حذف القفل وفتحها مباشرة) -->
+            <!-- زر حقيبة المدير -->
             <button class="btn btn-block" style="background: linear-gradient(135deg, #0f766e, #115e59); color: white; border: 1.5px solid #2dd4bf; box-shadow: 0 4px 10px rgba(15, 118, 110, 0.25);" onclick="openDirectorBagModal()">
                 <i class="fas fa-user-tie" style="color: #fde047;"></i> حقيبة المدير (سجلات ومحاضر إدارة المؤسسة)
             </button>
@@ -900,6 +900,12 @@
             <!-- زر النصوص القانونية والمقررات -->
             <button class="btn btn-block" style="background: linear-gradient(135deg, #116835, #08331a); color: white; border: 1.5px solid var(--gold);" onclick="openLegalModal()">
                 <i class="fas fa-balance-scale" style="color: var(--gold);"></i> النصوص القانونية والمقررات
+            </button>
+
+            <!-- زر بوابة المنسق (إدارة وتعيين الرمز السري للأعضاء) -->
+            <button class="btn btn-block" style="background: linear-gradient(135deg, #1e293b, #0f172a); color: white; border: 1.5px solid var(--gold);" onclick="openCoordinatorPinModal()">
+                <i class="fas fa-user-shield" style="color: var(--gold);"></i> بوابة المنسق (إدارة الرمز السري للأعضاء)
+                <i class="fas fa-key" style="font-size: 11px; color: var(--gold); margin-right: auto;"></i>
             </button>
         </div>
 
@@ -1039,6 +1045,40 @@
             </div>
         </div>
 
+    </div>
+
+    <!-- نافذة بوابة المنسق لتعيين وتغيير الرمز السري للأعضاء -->
+    <div id="coordinator-pin-modal" class="modal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal('coordinator-pin-modal')">&times;</button>
+            <div style="text-align: center; margin-bottom: 15px; border-bottom: 2px solid var(--gold); padding-bottom: 10px;">
+                <i class="fas fa-user-shield" style="font-size: 32px; color: var(--primary);"></i>
+                <h3 style="margin-top: 8px; color: var(--primary);">بوابة المنسق - إدارة الرمز السري</h3>
+                <p style="font-size: 12px; color: #64748b; margin-top: 4px;">إعادة تعيين أو إضافة رمز سري لأي منتسب في المنصة</p>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px;">
+                <div>
+                    <label style="font-size: 12px; font-weight: bold; color: #475569; display: block; margin-bottom: 4px; text-align: right;">رمز اعتماد المنسق:</label>
+                    <input type="password" id="coord-secret-input" placeholder="أدخل الرمز السري للمنسق" style="width: 100%;">
+                </div>
+
+                <div>
+                    <label style="font-size: 12px; font-weight: bold; color: #475569; display: block; margin-bottom: 4px; text-align: right;">معرّف الأستاذ (الدليل المالي، الرقم الوطني، أو الهاتف):</label>
+                    <input type="text" id="coord-target-member" placeholder="الدليل المالي أو NNI أو الهاتف" style="width: 100%;">
+                </div>
+
+                <div>
+                    <label style="font-size: 12px; font-weight: bold; color: #475569; display: block; margin-bottom: 4px; text-align: right;">الرمز السري الجديد للأستاذ (4 أرقام):</label>
+                    <input type="text" id="coord-new-pin" maxlength="4" placeholder="مثلاً: 1234" style="width: 100%; font-size: 20px; letter-spacing: 4px;">
+                </div>
+            </div>
+
+            <button class="btn btn-block" id="btn-coord-submit" onclick="submitCoordinatorPinReset()">
+                <i class="fas fa-check-circle"></i> حفظ وتعيين الرمز السري
+            </button>
+            <p id="coord-status-msg" style="font-size: 13px; text-align: center; margin-top: 12px; display: none; font-weight: bold;"></p>
+        </div>
     </div>
 
     <!-- نافذة إدخال أو تعيين الرمز السري (PIN) مع زر استعادة الرمز -->
@@ -1408,6 +1448,95 @@
         }
 
         document.addEventListener('DOMContentLoaded', loadPlatformStats);
+
+        // فتح نافذة بوابة المنسق لإدارة الرمز السري
+        function openCoordinatorPinModal() {
+            document.getElementById('coord-target-member').value = '';
+            document.getElementById('coord-new-pin').value = '';
+            document.getElementById('coord-status-msg').style.display = 'none';
+            document.getElementById('coordinator-pin-modal').style.display = 'block';
+        }
+
+        // تنفيذ تعديل أو تعيين الرمز السري للأستاذ بواسطة المنسق
+        async function submitCoordinatorPinReset() {
+            const adminSecret = document.getElementById('coord-secret-input').value.trim();
+            const targetInput = document.getElementById('coord-target-member').value.trim();
+            const newPin = document.getElementById('coord-new-pin').value.trim();
+            const statusMsg = document.getElementById('coord-status-msg');
+            const submitBtn = document.getElementById('btn-coord-submit');
+
+            statusMsg.style.display = 'none';
+
+            if (!adminSecret || !targetInput || !newPin) {
+                statusMsg.style.color = '#dc2626';
+                statusMsg.innerText = 'يرجى تعبئة جميع الحقول المطلوبة.';
+                statusMsg.style.display = 'block';
+                return;
+            }
+
+            if (newPin.length !== 4 || isNaN(newPin)) {
+                statusMsg.style.color = '#dc2626';
+                statusMsg.innerText = 'الرمز السري الجديد يجب أن يتكون من 4 أرقام.';
+                statusMsg.style.display = 'block';
+                return;
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري التحديث...';
+
+            try {
+                // البحث الذكي لدعم الدليل المالي أو الرقم الوطني أو الهاتف أو رقم العضوية
+                let identifierForRpc = targetInput;
+                let memberName = '';
+
+                const { data: foundMember } = await client
+                    .from('members')
+                    .select('full_name, phone, national_id, membership_number, financial_id')
+                    .or(`financial_id.eq.${targetInput},national_id.eq.${targetInput},phone.eq.${targetInput},membership_number.eq.${targetInput}`)
+                    .maybeSingle();
+
+                if (foundMember) {
+                    identifierForRpc = foundMember.national_id || foundMember.phone || foundMember.membership_number || targetInput;
+                    memberName = foundMember.full_name || '';
+                }
+
+                const { data, error } = await client.rpc('admin_change_member_pin', {
+                    admin_secret: adminSecret,
+                    target_identifier: identifierForRpc,
+                    new_pin_val: newPin
+                });
+
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-check-circle"></i> حفظ وتعيين الرمز السري';
+
+                if (error) {
+                    statusMsg.style.color = '#dc2626';
+                    statusMsg.innerText = 'خطأ في الاتصال بالخادم، حاول مجدداً.';
+                    statusMsg.style.display = 'block';
+                    return;
+                }
+
+                if (data && data.success) {
+                    statusMsg.style.color = '#15803d';
+                    statusMsg.innerText = memberName 
+                        ? `تم تعيين الرمز السري الجديد للأستاذ(ة): ${memberName} بنجاح!` 
+                        : data.message;
+                    statusMsg.style.display = 'block';
+                    document.getElementById('coord-target-member').value = '';
+                    document.getElementById('coord-new-pin').value = '';
+                } else {
+                    statusMsg.style.color = '#dc2626';
+                    statusMsg.innerText = data ? data.message : 'تعذر العثور على الأستاذ أو الرمز غير صحيح.';
+                    statusMsg.style.display = 'block';
+                }
+            } catch (err) {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-check-circle"></i> حفظ وتعيين الرمز السري';
+                statusMsg.style.color = '#dc2626';
+                statusMsg.innerText = 'تعذر الاتصال بقاعدة البيانات.';
+                statusMsg.style.display = 'block';
+            }
+        }
 
         // التحقق من الدليل المالي أو الرقم الوطني للبطاقة الفردية
         async function checkMember() {
