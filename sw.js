@@ -1,4 +1,4 @@
-const CACHE_NAME = 'nour-pwa-v12';
+const CACHE_NAME = 'nour-pwa-v13';
 const ASSETS = [
   './',
   './index.html',
@@ -7,7 +7,6 @@ const ASSETS = [
   './manifest.json'
 ];
 
-// التثبيت والتخزين المؤقت وتجاوز الانتظار فوراً
 self.addEventListener('install', (e) => {
   e.waitUntil(
     caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS))
@@ -15,7 +14,6 @@ self.addEventListener('install', (e) => {
   self.skipWaiting();
 });
 
-// التفعيل وحذف كافة نسخ الكاش القديمة والسيطرة الفورية على الصفحات
 self.addEventListener('activate', (e) => {
   e.waitUntil(
     caches.keys().then((keys) => {
@@ -28,7 +26,6 @@ self.addEventListener('activate', (e) => {
   );
 });
 
-// استراتيجية Network-First: جلب أحدث نسخة دائماً مع تجنب كاش الصفحات الرئيسية
 self.addEventListener('fetch', (e) => {
   if (
     e.request.url.includes('.apk') || 
