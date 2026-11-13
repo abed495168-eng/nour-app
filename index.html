@@ -2937,3 +2937,642 @@
                             <tr style="background:#d1d5db;color:#111;text-align:center;">
                                 <th style="border:1.5px solid #111;padding:8px;width:36%;font-size:15px;">نوع الأثاث</th>
                                 <th style="border:1.5px solid #111;padding:8px;width:14%;font-size:
+                                            else if (docId === 'p_inventory') {
+                const defaultFurniture = [
+                    'الطاولات', 'المقاعد', 'السبورة', 'الخزانة', 'النوافذ',
+                    'الباب', 'سلة المهملات', 'مكتب المعلم', 'المدفأة', 'المصابيح',
+                    '', '', '', ''
+                ];
+
+                customHeaderHtml = `
+                    ${buildOfficialPrimaryHeader(true)}
+                    <div style="text-align:center;margin:8px 0 14px;">
+                        <h2 style="margin:0;font-size:26px;font-weight:900;color:#111;text-shadow:2px 2px 0 #cbd5e1;">بطاقة جرد أثاث القسم</h2>
+                    </div>
+                `;
+                tableContent = `
+                    <table id="printable-table" style="width:100%;border-collapse:collapse;font-size:13.5px;">
+                        <thead>
+                            <tr style="background:#d1d5db;color:#111;text-align:center;">
+                                <th style="border:1.5px solid #111;padding:8px;width:40%;font-size:15px;">نوع الأثاث</th>
+                                <th style="border:1.5px solid #111;padding:8px;width:15%;font-size:15px;">العدد</th>
+                                <th style="border:1.5px solid #111;padding:8px;font-size:15px;">الملاحظات</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${defaultFurniture.map((item) => `
+                                <tr>
+                                    <td contenteditable="true" style="border:1.5px solid #111;padding:7px 10px;font-weight:bold;">${item}</td>
+                                    <td contenteditable="true" style="border:1.5px solid #111;padding:7px;text-align:center;font-weight:bold;"></td>
+                                    <td contenteditable="true" style="border:1.5px solid #111;padding:7px;"></td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+                customFooterHtml = `
+                    ${buildOfficialPrimarySignatures()}
+                    ${NOUR_COPYRIGHT_FOOTER}
+                `;
+            }
+
+            // 9. لائحة الأناشيد والمحفوظات (Tableau de chant et récitations)
+            else if (docId === 'p_chants') {
+                customHeaderHtml = `
+                    ${buildOfficialPrimaryHeader(true)}
+                    <div style="text-align:center;margin:8px 0 14px;">
+                        <h2 style="margin:0;font-size:24px;font-weight:900;color:#111;">لائحة الأناشيد والمحفوظات — <span style="font-family:Arial,sans-serif;font-size:16px;">Tableau de chant et récitations</span></h2>
+                    </div>
+                `;
+                tableContent = `
+                    <table id="printable-table" style="width:100%;border-collapse:collapse;font-size:13px;">
+                        <thead>
+                            <tr style="background:#d1d5db;color:#111;text-align:center;">
+                                <th style="border:1.5px solid #111;padding:8px;width:35%;">العنوان / Titre</th>
+                                <th style="border:1.5px solid #111;padding:8px;">المطلع / Intonation</th>
+                                <th style="border:1.5px solid #111;padding:8px;width:35%;">العنوان / Titre</th>
+                                <th style="border:1.5px solid #111;padding:8px;">المطلع / Intonation</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${Array.from({length: 10}, () => `
+                                <tr>
+                                    <td contenteditable="true" style="border:1.5px solid #111;padding:10px;font-weight:bold;"></td>
+                                    <td contenteditable="true" style="border:1.5px solid #111;padding:10px;"></td>
+                                    <td contenteditable="true" style="border:1.5px solid #111;padding:10px;font-weight:bold;"></td>
+                                    <td contenteditable="true" style="border:1.5px solid #111;padding:10px;"></td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+                customFooterHtml = `
+                    ${buildOfficialPrimarySignatures()}
+                    ${NOUR_COPYRIGHT_FOOTER}
+                `;
+            }
+
+            // 10. الجدول الزمني الأسبوعي (أفقي Landscape)
+            else if (docId === 'p_timetable') {
+                isLandscape = true;
+                const makeTimeRows = (periodName, count) => {
+                    let r = '';
+                    for (let c = 1; c <= count; c++) {
+                        r += `
+                            <tr>
+                                ${c === 1 ? `<th rowspan="${count}" style="border:1.5px solid #111;background:#e5e7eb;padding:6px;width:90px;font-size:13px;writing-mode:vertical-rl;transform:rotate(180deg);">${periodName}</th>` : ''}
+                                ${Array.from({length: 5}, () => `
+                                    <td contenteditable="true" style="border:1.5px solid #111;padding:8px;font-weight:bold;text-align:center;"></td>
+                                    <td contenteditable="true" style="border:1.5px solid #111;padding:8px;text-align:center;font-size:11px;color:#475569;"></td>
+                                `).join('')}
+                            </tr>
+                        `;
+                    }
+                    return r;
+                };
+
+                customHeaderHtml = `
+                    ${buildOfficialPrimaryHeader(true)}
+                    <div style="text-align:center;margin:6px 0 12px;">
+                        <h2 style="margin:0;font-size:24px;font-weight:900;color:#111;">الجدول الزمني الأسبوعي</h2>
+                    </div>
+                `;
+                tableContent = `
+                    <table id="printable-table" style="width:100%;border-collapse:collapse;font-size:12px;">
+                        <thead>
+                            <tr style="background:#d1d5db;color:#111;text-align:center;">
+                                <th rowspan="2" style="border:1.5px solid #111;padding:6px;">أيام الدوام / الفترة</th>
+                                <th colspan="2" style="border:1.5px solid #111;padding:6px;">الإثنين</th>
+                                <th colspan="2" style="border:1.5px solid #111;padding:6px;">الثلاثاء</th>
+                                <th colspan="2" style="border:1.5px solid #111;padding:6px;">الأربعاء</th>
+                                <th colspan="2" style="border:1.5px solid #111;padding:6px;">الخميس</th>
+                                <th colspan="2" style="border:1.5px solid #111;padding:6px;">الجمعة</th>
+                            </tr>
+                            <tr style="background:#f1f5f9;text-align:center;font-size:11px;">
+                                <th style="border:1.5px solid #111;padding:4px;">المادة</th><th style="border:1.5px solid #111;padding:4px;">التوقيت</th>
+                                <th style="border:1.5px solid #111;padding:4px;">المادة</th><th style="border:1.5px solid #111;padding:4px;">التوقيت</th>
+                                <th style="border:1.5px solid #111;padding:4px;">المادة</th><th style="border:1.5px solid #111;padding:4px;">التوقيت</th>
+                                <th style="border:1.5px solid #111;padding:4px;">المادة</th><th style="border:1.5px solid #111;padding:4px;">التوقيت</th>
+                                <th style="border:1.5px solid #111;padding:4px;">المادة</th><th style="border:1.5px solid #111;padding:4px;">التوقيت</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${makeTimeRows('قبل الراحة', 4)}
+                            <tr style="background:#fef3c7;text-align:center;font-weight:800;font-size:13px;">
+                                <td colspan="11" style="border:1.5px solid #111;padding:6px;">استراحة / Récréation</td>
+                            </tr>
+                            ${makeTimeRows('بعد الراحة', 3)}
+                        </tbody>
+                    </table>
+                `;
+                customFooterHtml = `
+                    ${buildOfficialPrimarySignatures()}
+                    ${NOUR_COPYRIGHT_FOOTER}
+                `;
+            }
+
+            // 11. لائحة الزيارات والملاحظات
+            else if (docId === 'p_visits') {
+                customHeaderHtml = `
+                    ${buildOfficialPrimaryHeader(true)}
+                    <div style="text-align:center;margin:8px 0 14px;">
+                        <h2 style="margin:0;font-size:24px;font-weight:900;color:#111;">لائحة الزيارات والملاحظات</h2>
+                    </div>
+                `;
+                tableContent = `
+                    <table id="printable-table" style="width:100%;border-collapse:collapse;font-size:12px;">
+                        <thead>
+                            <tr style="background:#d1d5db;color:#111;text-align:center;">
+                                <th style="border:1.5px solid #111;padding:8px;width:90px;">التاريخ<br>Date</th>
+                                <th style="border:1.5px solid #111;padding:8px;width:140px;">اسم الزائر<br>Nom du visiteur</th>
+                                <th style="border:1.5px solid #111;padding:8px;width:110px;">الوظيفة<br>Fonction</th>
+                                <th style="border:1.5px solid #111;padding:8px;width:130px;">هدف الزيارة<br>Objet</th>
+                                <th style="border:1.5px solid #111;padding:8px;">الملاحظات والتوجهاتها التربوية<br>Remarques</th>
+                                <th style="border:1.5px solid #111;padding:8px;width:80px;">التوقيع<br>Signature</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${Array.from({length: 12}, () => `
+                                <tr>
+                                    <td contenteditable="true" style="border:1.5px solid #111;padding:10px;text-align:center;"></td>
+                                    <td contenteditable="true" style="border:1.5px solid #111;padding:10px;font-weight:bold;"></td>
+                                    <td contenteditable="true" style="border:1.5px solid #111;padding:10px;text-align:center;"></td>
+                                    <td contenteditable="true" style="border:1.5px solid #111;padding:10px;"></td>
+                                    <td contenteditable="true" style="border:1.5px solid #111;padding:10px;line-height:1.6;"></td>
+                                    <td contenteditable="true" style="border:1.5px solid #111;padding:10px;text-align:center;"></td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+                customFooterHtml = `
+                    ${buildOfficialPrimarySignatures()}
+                    ${NOUR_COPYRIGHT_FOOTER}
+                `;
+            }
+
+            // كشوف الإعدادي والثانوي المنظفة (بدون مؤسسة محددة مسبقاً)
+            else if (docId.startsWith('s_') || docId.startsWith('s')) {
+                customHeaderHtml = `
+                    <div style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #116835;padding-bottom:8px;margin-bottom:15px;font-size:12px;font-weight:bold;">
+                        <div>
+                            الجمهورية الإسلامية الموريتانية<br>
+                            وزارة التربية وإصلاح النظام التعليمي<br>
+                            الإدارة الجهوية: <span contenteditable="true">...................</span><br>
+                            المؤسسة: <span contenteditable="true">...................</span>
+                        </div>
+                        <div style="text-align:center;">
+                            ${OFFICIAL_MAURITANIA_EMBLEM_SVG}
+                            <h3 style="margin:5px 0 0;color:#116835;font-size:16px;">${docTitle}</h3>
+                        </div>
+                        <div style="text-align:left;" dir="ltr">
+                            République Islamique de Mauritanie<br>
+                            Ministère de l'Éducation<br>
+                            DREN: <span contenteditable="true">...................</span><br>
+                            Etablissement: <span contenteditable="true">...................</span>
+                        </div>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;gap:10px;padding:8px 12px;background:#f8fafc;border:1px solid #cbd5e1;border-radius:6px;margin-bottom:12px;font-size:12.5px;font-weight:bold;">
+                        <div>اسم التلميذ: <span contenteditable="true" style="border-bottom:1px dotted #111;min-width:150px;display:inline-block;">........................</span></div>
+                        <div>القسم: <span contenteditable="true" style="border-bottom:1px dotted #111;min-width:80px;display:inline-block;">............</span></div>
+                        <div>السنة الدراسية: <span contenteditable="true" style="border-bottom:1px dotted #111;min-width:90px;display:inline-block;">2026-2027</span></div>
+                    </div>
+                `;
+                tableContent = `
+                    <table id="printable-table" style="width:100%;border-collapse:collapse;font-size:12px;">
+                        <thead>
+                            <tr style="background:#f1f5f9;text-align:center;">
+                                <th style="border:1px solid #111;padding:8px;">المادة الدراسية</th>
+                                <th style="border:1px solid #111;padding:8px;width:90px;">الفرض 1</th>
+                                <th style="border:1px solid #111;padding:8px;width:90px;">الفرض 2</th>
+                                <th style="border:1px solid #111;padding:8px;width:90px;">الاختبار</th>
+                                <th style="border:1px solid #111;padding:8px;width:90px;">المعدل</th>
+                                <th style="border:1px solid #111;padding:8px;width:75px;">الضارب</th>
+                                <th style="border:1px solid #111;padding:8px;width:90px;">المجموع</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${['اللغة العربية وآدابها', 'اللغة الفرنسية', 'الرياضيات', 'العلوم الطبيعية', 'الفيزياء والكيمياء', 'التاريخ والجغرافيا', 'التربية الإسلاميةوالمواطنة', 'اللغة الإنجليزية'].map(sub => `
+                                <tr>
+                                    <td style="border:1px solid #111;padding:7px 10px;font-weight:bold;">${sub}</td>
+                                    <td contenteditable="true" style="border:1px solid #111;padding:7px;text-align:center;"></td>
+                                    <td contenteditable="true" style="border:1px solid #111;padding:7px;text-align:center;"></td>
+                                    <td contenteditable="true" style="border:1px solid #111;padding:7px;text-align:center;"></td>
+                                    <td contenteditable="true" style="border:1px solid #111;padding:7px;text-align:center;font-weight:bold;"></td>
+                                    <td contenteditable="true" style="border:1px solid #111;padding:7px;text-align:center;"></td>
+                                    <td contenteditable="true" style="border:1px solid #111;padding:7px;text-align:center;"></td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+                customFooterHtml = `
+                    <div style="display:flex;justify-content:space-between;margin-top:25px;font-size:13px;font-weight:bold;text-align:center;">
+                        <div>توقيع الأستاذ<br><br>............................</div>
+                        <div>توقيع ولي الأمر<br><br>............................</div>
+                        <div>ختم وتوقيع المدير<br><br>............................</div>
+                    </div>
+                    ${NOUR_COPYRIGHT_FOOTER}
+                `;
+            }
+
+            editWindow.document.write(`
+                <!DOCTYPE html>
+                <html lang="ar" dir="rtl">
+                <head>
+                    <meta charset="UTF-8">
+                    <title>${docTitle}</title>
+                    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+                    <style>
+                        * { box-sizing: border-box; font-family: 'Tajawal', sans-serif; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+                        body { margin: 15px; color: #111; direction: rtl; background-color: #f8fafc; }
+                        .paper-container { max-width: ${isLandscape ? '1120px' : '950px'}; margin: 0 auto; background: #fff; padding: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-radius: 8px; }
+                        .no-print-bar {
+                            position: sticky; top: 0; z-index: 100; background: #116835; color: white; padding: 12px 18px;
+                            border-radius: 8px; margin-bottom: 20px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+                        }
+                        .action-btn { border: none; padding: 8px 14px; border-radius: 6px; font-weight: bold; font-size: 13px; cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; gap: 5px; }
+                        .btn-save { background: #10b981; color: #fff; }
+                        .btn-print { background: #d4af37; color: #111; }
+                        .btn-clear { background: #ef4444; color: #fff; }
+                        .btn-add { background: #3b82f6; color: #fff; }
+                        [contenteditable="true"] { outline: none; }
+                        [contenteditable="true"]:hover { background-color: #f0fdf4; }
+                        [contenteditable="true"]:focus { background-color: #e8f5e9; box-shadow: inset 0 0 0 1px #116835; }
+                        @media print {
+                            body { background: #fff; margin: 0; padding: 0; }
+                            .paper-container { box-shadow: none; padding: 0; margin: 0; max-width: 100%; border-radius: 0; }
+                            .no-print-bar { display: none !important; }
+                            @page { size: ${isLandscape ? 'landscape' : 'portrait'}; margin: 8mm; }
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="no-print-bar">
+                        <div style="font-size: 13px;">
+                            ✍️ <strong>حقيبة المدرس:</strong> اضغط على أي خانة أو سطر للتحرير المباشر، ثم احفظ أو اطبع المستند.
+                        </div>
+                        <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                            ${extraBarButtons}
+                            <button class="action-btn btn-save" onclick="saveDocData()">💾 حفظ في الهاتف</button>
+                            <button class="action-btn btn-print" onclick="window.print()">🖨️ طباعة / حفظ كـ PDF</button>
+                            <button class="action-btn btn-clear" onclick="clearDocData()">🗑️ تفريغ</button>
+                        </div>
+                    </div>
+                    <div class="paper-container" id="printable-content">
+                        ${customHeaderHtml}
+                        ${tableContent}
+                        ${customFooterHtml}
+                    </div>
+                    <script>
+                        const DOC_STORAGE_KEY = 'nour_doc_' + '${docId}';
+
+                        function cycleAttMark(cell) {
+                            const states = ['', '|', '/', '×'];
+                            const cur = cell.innerText.trim();
+                            const next = states[(states.indexOf(cur) + 1) % states.length];
+                            cell.innerText = next;
+                            if (next === '|') cell.style.color = '#2563eb';
+                            else if (next === '/') cell.style.color = '#d97706';
+                            else if (next === '×') cell.style.color = '#dc2626';
+                            else cell.style.color = '#111';
+                        }
+
+                        function addNewRow() {
+                            const tbody = document.querySelector('#printable-table tbody');
+                            if (!tbody) return;
+                            const rowCount = tbody.rows.length + 1;
+                            const newTr = document.createElement('tr');
+                            newTr.innerHTML = \`
+                                <td style="border: 1px solid #111; padding: 5px; text-align: center; font-weight: 800; background:#f8fafc;">\${rowCount}</td>
+                                <td contenteditable="true" style="border: 1px solid #111; padding: 5px; text-align: center; font-weight: bold;"></td>
+                                <td contenteditable="true" style="border: 1px solid #111; padding: 5px; font-weight: bold;"></td>
+                                <td contenteditable="true" style="border: 1px solid #111; padding: 5px; text-align: center;"></td>
+                                <td contenteditable="true" style="border: 1px solid #111; padding: 5px; text-align: center;"></td>
+                                <td contenteditable="true" style="border: 1px solid #111; padding: 5px;"></td>
+                                <td contenteditable="true" style="border: 1px solid #111; padding: 5px; text-align: center;"></td>
+                                <td contenteditable="true" style="border: 1px solid #111; padding: 5px;"></td>
+                            \`;
+                            tbody.appendChild(newTr);
+                        }
+
+                        function saveDocData() {
+                            const editables = document.querySelectorAll('[contenteditable="true"]');
+                            const savedVals = [];
+                            editables.forEach(el => savedVals.push(el.innerText));
+                            localStorage.setItem(DOC_STORAGE_KEY, JSON.stringify(savedVals));
+                            alert('تم حفظ بيانات الوثيقة بنجاح في ذاكرة هاتفك!');
+                        }
+
+                        function loadDocData() {
+                            const saved = localStorage.getItem(DOC_STORAGE_KEY);
+                            if (!saved) return;
+                            try {
+                                const savedVals = JSON.parse(saved);
+                                const editables = document.querySelectorAll('[contenteditable="true"]');
+                                editables.forEach((el, idx) => {
+                                    if (savedVals[idx] !== undefined) el.innerText = savedVals[idx];
+                                });
+                            } catch(e) {
+                                console.error('خطأ في استرجاع بيانات المستند:', e);
+                            }
+                        }
+
+                        function clearDocData() {
+                            if (confirm('هل أنت متأكد من رغبتك في تفريغ المستند ومسح النسخة المحفوظة على هذا الهاتف؟')) {
+                                localStorage.removeItem(DOC_STORAGE_KEY);
+                                location.reload();
+                            }
+                        }
+
+                        window.addEventListener('DOMContentLoaded', loadDocData);
+                    <\/script>
+                </body>
+                </html>
+            `);
+            editWindow.document.close();
+        }
+
+        // الدوال العامة للتحكم في النوافذ وإغلاقها
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        // إغلاق النوافذ عند النقر خارج المحتوى
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
+            }
+        };
+
+        // فتح نافذة من نحن
+        function openAboutModal() {
+            document.getElementById('about-modal').style.display = 'block';
+        }
+
+        // فتح نافذة المكتب الوطني (محمية برمز)
+        function openOfficeModal() {
+            pendingWilayaCode = 'OFFICE_NAT';
+            document.getElementById('region-pin-title').innerText = 'دخول أعضاء المكتب الوطني';
+            document.getElementById('input-region-pin').value = '';
+            document.getElementById('region-pin-error').style.display = 'none';
+            document.getElementById('region-pin-modal').style.display = 'block';
+        }
+
+        // فتح نافذة المجلس الوطني (محمية برمز)
+        function openCouncilModal() {
+            pendingWilayaCode = 'COUNCIL_NAT';
+            document.getElementById('region-pin-title').innerText = 'دخول أعضاء المجلس الوطني';
+            document.getElementById('input-region-pin').value = '';
+            document.getElementById('region-pin-error').style.display = 'none';
+            document.getElementById('region-pin-modal').style.display = 'block';
+        }
+
+        // فتح نافذة الولاية الجهوية (محمية بررمز)
+        function openRegionModal(code) {
+            pendingWilayaCode = code;
+            const config = WILAYAS_CONFIG[code];
+            document.getElementById('region-pin-title').innerText = config ? config.name : 'منسقية الولاية';
+            document.getElementById('input-region-pin').value = '';
+            document.getElementById('region-pin-error').style.display = 'none';
+            document.getElementById('region-pin-modal').style.display = 'block';
+        }
+
+        // مطابقة رمز الدخول للهيئات أو الولايات
+        async function submitRegionPin() {
+            const pinVal = document.getElementById('input-region-pin').value.trim();
+            const err = document.getElementById('region-pin-error');
+            err.style.display = 'none';
+
+            if (!pinVal) {
+                err.innerText = 'يرجى إدخال رمز المرور.';
+                err.style.display = 'block';
+                return;
+            }
+
+            try {
+                const { data, error } = await client.rpc('verify_region_pin', {
+                    p_code: pendingWilayaCode,
+                    p_pin: pinVal
+                });
+
+                if (error || !data || !data.success) {
+                    err.innerText = 'رمز المرور غير صحيح.';
+                    err.style.display = 'block';
+                    return;
+                }
+
+                closeModal('region-pin-modal');
+
+                if (pendingWilayaCode === 'OFFICE_NAT') {
+                    loadNationalOfficeMembers();
+                } else if (pendingWilayaCode === 'COUNCIL_NAT') {
+                    loadNationalCouncilMembers();
+                } else {
+                    loadRegionMembers(pendingWilayaCode);
+                }
+            } catch (e) {
+                err.innerText = 'تعذر التحقق من الرمز، حاول مجدداً.';
+                err.style.display = 'block';
+            }
+        }
+
+        // تحميل وتثبيت أعضاء المكتب الوطني
+        async function loadNationalOfficeMembers() {
+            const modal = document.getElementById('office-modal');
+            const list = document.getElementById('office-list');
+            modal.style.display = 'block';
+            list.innerHTML = '<div style="text-align: center; color: #64748b; padding: 20px; grid-column: span 2;"><i class="fas fa-spinner fa-spin"></i> جاري التحميل...</div>';
+
+            try {
+                const { data, error } = await client
+                    .from('members')
+                    .select('*')
+                    .eq('is_national_office', true);
+
+                if (error || !data || data.length === 0) {
+                    list.innerHTML = '<div style="text-align: center; color: #64748b; padding: 20px; grid-column: span 2;">لا توجد بيانات مسجلة لأعضاء المكتب الوطني حالياً.</div>';
+                    return;
+                }
+
+                list.innerHTML = data.map(m => `
+                    <div class="office-member-card">
+                        <img src="${m.photo_url || 'IM9.jpg'}" class="office-avatar" onerror="this.src='IM9.jpg'">
+                        <div class="office-name">${m.full_name || 'عضو المكتب'}</div>
+                        <div class="office-role">${m.union_role || 'عضو المكتب الوطني'}</div>
+                    </div>
+                `).join('');
+            } catch (e) {
+                list.innerHTML = '<div style="text-align: center; color: red; padding: 20px; grid-column: span 2;">تعذر جلب البيانات.</div>';
+            }
+        }
+
+        // تحميل وتثبيت أعضاء المجلس الوطني
+        async function loadNationalCouncilMembers() {
+            const modal = document.getElementById('council-modal');
+            const list = document.getElementById('council-list');
+            modal.style.display = 'block';
+            list.innerHTML = '<div style="text-align: center; color: #64748b; padding: 20px; grid-column: span 2;"><i class="fas fa-spinner fa-spin"></i> جاري التحميل...</div>';
+
+            try {
+                const { data, error } = await client
+                    .from('members')
+                    .select('*')
+                    .eq('is_national_council', true);
+
+                if (error || !data || data.length === 0) {
+                    list.innerHTML = '<div style="text-align: center; color: #64748b; padding: 20px; grid-column: span 2;">لا توجد بيانات مسجلة لأعضاء المجلس الوطني حالياً.</div>';
+                    return;
+                }
+
+                list.innerHTML = data.map(m => `
+                    <div class="office-member-card">
+                        <img src="${m.photo_url || 'IM9.jpg'}" class="office-avatar" onerror="this.src='IM9.jpg'">
+                        <div class="office-name">${m.full_name || 'عضو المجلس'}</div>
+                        <div class="office-role">${m.union_role || 'عضو المجلس الوطني'}</div>
+                    </div>
+                `).join('');
+            } catch (e) {
+                list.innerHTML = '<div style="text-align: center; color: red; padding: 20px; grid-column: span 2;">تعذر جلب البيانات.</div>';
+            }
+        }
+
+        // جلب واستعراض أعضاء المنسقية الجهوية للولاية
+        async function loadRegionMembers(code) {
+            const config = WILAYAS_CONFIG[code];
+            const modal = document.getElementById('region-modal');
+            const title = document.getElementById('region-modal-title');
+            const list = document.getElementById('region-members-list');
+            const counter = document.getElementById('region-search-counter');
+
+            title.innerText = config ? config.name : 'منسقية الولاية';
+            modal.style.display = 'block';
+            document.getElementById('input-region-search').value = '';
+            list.innerHTML = '<div style="text-align: center; color: #64748b; padding: 25px;"><i class="fas fa-spinner fa-spin"></i> جاري جلب أعضاء المنسقية...</div>';
+            counter.innerText = '';
+
+            try {
+                const { data, error } = await client
+                    .from('members')
+                    .select('*')
+                    .or(config.filter)
+                    .order('full_name', { ascending: true });
+
+                if (error) {
+                    list.innerHTML = '<div style="text-align: center; color: red; padding: 20px;">تعذر جلب البيانات.</div>';
+                    return;
+                }
+
+                regionMembersData = data || [];
+                renderRegionMembersList(regionMembersData);
+            } catch (e) {
+                list.innerHTML = '<div style="text-align: center; color: red; padding: 20px;">حدث خطأ في الاتصال.</div>';
+            }
+        }
+
+        function renderRegionMembersList(arr) {
+            const list = document.getElementById('region-members-list');
+            const counter = document.getElementById('region-search-counter');
+            counter.innerText = `عدد النتائج: ${arr.length} منتسب`;
+
+            if (arr.length === 0) {
+                list.innerHTML = '<div style="text-align: center; color: #64748b; padding: 20px;">لا توجد نتائج مطابقة للبحث.</div>';
+                return;
+            }
+
+            list.innerHTML = arr.map(m => `
+                <div class="region-member-card" onclick="showMemberCardFromRegion('${m.membership_number || m.national_id || m.financial_id}')">
+                    <img src="${m.photo_url || 'IM9.jpg'}" class="region-avatar" onerror="this.src='IM9.jpg'">
+                    <div class="region-member-info">
+                        <div class="region-member-name">${m.full_name || 'بدون اسم'}</div>
+                        <div class="region-member-details"><i class="fas fa-briefcase"></i> ${m.specialty || m.union_role || 'مدرس'} | <i class="fas fa-school"></i> ${m.school || 'غير محدد'}</div>
+                    </div>
+                    <div class="region-badge-num">${m.membership_number || m.financial_id || '---'}</div>
+                </div>
+            `).join('');
+        }
+
+        function filterRegionMembers() {
+            const query = document.getElementById('input-region-search').value.trim().toLowerCase();
+            if (!query) {
+                renderRegionMembersList(regionMembersData);
+                return;
+            }
+            const filtered = regionMembersData.filter(m => 
+                (m.full_name && m.full_name.toLowerCase().includes(query)) ||
+                (m.financial_id && m.financial_id.toLowerCase().includes(query)) ||
+                (m.national_id && m.national_id.toLowerCase().includes(query)) ||
+                (m.school && m.school.toLowerCase().includes(query)) ||
+                (m.membership_number && m.membership_number.toLowerCase().includes(query))
+            );
+            renderRegionMembersList(filtered);
+        }
+
+        async function showMemberCardFromRegion(identifier) {
+            const found = regionMembersData.find(m => m.membership_number === identifier || m.national_id === identifier || m.financial_id === identifier);
+            if (found) {
+                closeModal('region-modal');
+                activeMember = found;
+                showCard(found);
+            }
+        }
+
+        // عرض بطاقة العضو الرقمية بالبيانات الحقيقية
+        function showCard(member) {
+            isCardFrench = false;
+            updateCardContent(member);
+            document.getElementById('card-modal').style.display = 'block';
+        }
+
+        function updateCardContent(m) {
+            document.getElementById('m-name').innerText = isCardFrench ? (m.full_name_fr || m.full_name || 'Membre') : (m.full_name || 'اسم العضو');
+            document.getElementById('m-role').innerText = isCardFrench ? (m.union_role_fr || m.union_role || 'Adhérent') : (m.union_role || 'منتسب للنقابة');
+            document.getElementById('m-num').innerText = m.membership_number || '---';
+            document.getElementById('m-nid').innerText = m.financial_id || m.national_id || '---';
+            document.getElementById('m-id-label').innerText = isCardFrench ? 'Matricule / NNI:' : 'المعرّف (المالي / الوطني):';
+            document.getElementById('m-spec').innerText = isCardFrench ? (m.specialty_fr || m.specialty || 'Enseignant') : (m.specialty || 'مدرس');
+            document.getElementById('m-school').innerText = isCardFrench ? (m.school_fr || m.school || 'Établissement') : (m.school || 'غير محدد');
+            document.getElementById('m-loc').innerText = isCardFrench ? `${m.wilaya_fr || m.wilaya || ''}, ${m.moughataa_fr || m.moughataa || ''}` : `${m.wilaya || ''} - ${m.moughataa || ''}`;
+            
+            const photoEl = document.getElementById('m-photo');
+            photoEl.src = m.photo_url || 'IM9.jpg';
+            photoEl.onerror = () => { photoEl.src = 'IM9.jpg'; };
+
+            const badge = document.getElementById('m-status-badge');
+            const icon = document.getElementById('m-status-icon');
+            const txt = document.getElementById('m-status-txt');
+
+            const isPaid = m.fees_paid === true || m.fees_paid === 'true' || m.fees_paid === 1;
+            if (isPaid) {
+                badge.className = 'status-badge status-paid';
+                icon.className = 'fas fa-check-circle';
+                txt.innerText = isCardFrench ? 'Cotisation réglée' : 'تم تسديد الاشتراكات';
+            } else {
+                badge.className = 'status-badge status-unpaid';
+                icon.className = 'fas fa-times-circle';
+                txt.innerText = isCardFrench ? 'Non réglé' : 'غير مسدد';
+            }
+
+            document.getElementById('lbl-num').innerText = isCardFrench ? 'N° d\'adhésion:' : 'رقم العضوية:';
+            document.getElementById('lbl-spec').innerText = isCardFrench ? 'Corps & Spécialité:' : 'السلك والتخصص:';
+            document.getElementById('lbl-school').innerText = isCardFrench ? 'Lieu de travail:' : 'مكان العمل:';
+            document.getElementById('lbl-loc').innerText = isCardFrench ? 'Wilaya & Moughataa:' : 'الولاية والمقاطعة:';
+            document.getElementById('lbl-wa-btn').innerText = isCardFrench ? 'Contactez la direction / Réclamation' : 'تواصل مع القيادة / تقديم طلب أو تظلم';
+            document.getElementById('lbl-footer-card').innerHTML = isCardFrench ? 
+                '<i class="fas fa-shield-alt"></i> Cette carte est un document numérique officiel émis par le bureau national de Nour.' : 
+                '<i class="fas fa-shield-alt"></i> هذه البطاقة وثيقة رقمية معتمدة صادرة عن أمانة النقابة (للعرض فقط).';
+            document.getElementById('btn-lang-txt').innerText = isCardFrench ? 'العربية' : 'Français';
+
+            const waBtn = document.getElementById('btn-whatsapp-coordinator');
+            const cleanPhone = m.phone ? m.phone.replace(/\s+/g, '') : '22249496272';
+            waBtn.href = `https://wa.me/22249496272?text=${encodeURIComponent(`السلام عليكم، أنا الزميل: ${m.full_name}، أعمل في ${m.school || '---'} بولاية ${m.wilaya || '---'}، ورقم عضويتي: ${m.membership_number || '---'}. أود التواصل مع القيادة بخصوص:`)}`;
+        }
+
+        function toggleCardLang() {
+            isCardFrench = !isCardFrench;
+            if (activeMember) updateCardContent(activeMember);
+        }
+    </script>
+</body>
+</html>
+
