@@ -14,7 +14,7 @@
     <link rel="apple-touch-icon" href="IM9.jpg">
 
     <!-- خط تجوال الرسمي -->
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
     <!-- مكتبة الأيقونات Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- مكتبة Supabase -->
@@ -75,9 +75,66 @@
             color: #e0e0e0;
         }
 
+        /* شريط الأخبار العاجلة العلوي */
+        .news-ticker-bar {
+            background: #08331a;
+            color: #ffffff;
+            border-bottom: 2px solid var(--gold);
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+            height: 38px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.12);
+            position: relative;
+            z-index: 20;
+        }
+
+        .news-ticker-label {
+            background: var(--gold);
+            color: #08331a;
+            font-weight: 800;
+            font-size: 12.5px;
+            padding: 0 12px;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+            z-index: 2;
+            box-shadow: -3px 0 8px rgba(0,0,0,0.2);
+        }
+
+        .news-ticker-track-wrap {
+            flex: 1;
+            overflow: hidden;
+            position: relative;
+            height: 100%;
+            display: flex;
+            align-items: center;
+        }
+
+        .news-ticker-track {
+            display: inline-block;
+            white-space: nowrap;
+            padding-right: 100%;
+            animation: tickerScroll 28s linear infinite;
+            font-size: 13px;
+            font-weight: 700;
+            color: #fef08a;
+        }
+
+        .news-ticker-track:hover {
+            animation-play-state: paused;
+        }
+
+        @keyframes tickerScroll {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
         .container {
             max-width: 520px;
-            margin: -20px auto 30px;
+            margin: 15px auto 30px;
             padding: 0 15px;
             width: 100%;
             flex: 1;
@@ -205,7 +262,7 @@
             margin-bottom: 15px;
         }
 
-        input[type="text"], input[type="password"], input[type="tel"] {
+        input[type="text"], input[type="password"], input[type="tel"], textarea {
             flex: 1;
             padding: 12px;
             border: 1.5px solid #cbd5e1;
@@ -217,7 +274,7 @@
             transition: border-color 0.2s;
         }
 
-        input[type="text"]:focus, input[type="password"]:focus, input[type="tel"]:focus {
+        input[type="text"]:focus, input[type="password"]:focus, input[type="tel"]:focus, textarea:focus {
             border-color: var(--primary);
         }
 
@@ -801,6 +858,34 @@
             font-size: 16px;
             margin: 0;
         }
+
+        /* عناصر إدارة أخبار المنسق */
+        .coord-news-item {
+            background: #f8fafc;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            padding: 8px 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            margin-bottom: 8px;
+            font-size: 12.5px;
+            font-weight: 700;
+            text-align: right;
+        }
+
+        .btn-del-news {
+            background: #fee2e2;
+            color: #dc2626;
+            border: 1px solid #fca5a5;
+            border-radius: 6px;
+            padding: 4px 8px;
+            font-size: 11.5px;
+            font-weight: 700;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
     </style>
 </head>
 <body>
@@ -811,6 +896,18 @@
         <h1>النقابة الوطنية للمدرسين (نور)</h1>
         <p>بوابة الخدمات الإلكترونية والتحقق الرقمي</p>
     </header>
+
+    <!-- شريط الأخبار العلوي المتحرك -->
+    <div id="nour-news-ticker-bar" class="news-ticker-bar">
+        <div class="news-ticker-label">
+            <i class="fas fa-bullhorn"></i> أخبار النقابة
+        </div>
+        <div class="news-ticker-track-wrap">
+            <div id="nour-news-ticker-text" class="news-ticker-track">
+                مرحباً بكم في المنصة الرقمية للنقابة الوطنية للمدرسين (نور) — وحدة • نضال • حوار
+            </div>
+        </div>
+    </div>
 
     <div class="container">
 
@@ -902,9 +999,9 @@
                 <i class="fas fa-balance-scale" style="color: var(--gold);"></i> النصوص القانونية والمقررات
             </button>
 
-            <!-- زر بوابة المنسق (إدارة وتعيين الرمز السري للأعضاء) -->
+            <!-- زر بوابة المنسق (إدارة الرمز السري للأعضاء + شريط الأخبار) -->
             <button class="btn btn-block" style="background: linear-gradient(135deg, #1e293b, #0f172a); color: white; border: 1.5px solid var(--gold);" onclick="openCoordinatorPinModal()">
-                <i class="fas fa-user-shield" style="color: var(--gold);"></i> بوابة المنسق (إدارة الرمز السري للأعضاء)
+                <i class="fas fa-user-shield" style="color: var(--gold);"></i> بوابة المنسق (الأرقام السرية وشريط الأخبار)
                 <i class="fas fa-key" style="font-size: 11px; color: var(--gold); margin-right: auto;"></i>
             </button>
         </div>
@@ -1047,37 +1144,72 @@
 
     </div>
 
-    <!-- نافذة بوابة المنسق لتعيين وتغيير الرمز السري للأعضاء -->
+    <!-- نافذة بوابة المنسق (إدارة الرمز السري للأعضاء + إدارة شريط الأخبار) -->
     <div id="coordinator-pin-modal" class="modal">
         <div class="modal-content">
             <button class="close-btn" onclick="closeModal('coordinator-pin-modal')">&times;</button>
-            <div style="text-align: center; margin-bottom: 15px; border-bottom: 2px solid var(--gold); padding-bottom: 10px;">
+            <div style="text-align: center; margin-bottom: 12px; border-bottom: 2px solid var(--gold); padding-bottom: 10px;">
                 <i class="fas fa-user-shield" style="font-size: 32px; color: var(--primary);"></i>
-                <h3 style="margin-top: 8px; color: var(--primary);">بوابة المنسق - إدارة الرمز السري</h3>
-                <p style="font-size: 12px; color: #64748b; margin-top: 4px;">إعادة تعيين أو إضافة رمز سري لأي منتسب في المنصة</p>
+                <h3 style="margin-top: 8px; color: var(--primary);">بوابة المنسق</h3>
+                <p style="font-size: 12px; color: #64748b; margin-top: 4px;">إدارة الأرقام السرية للأعضاء والتحكم في شريط الأخبار</p>
             </div>
 
-            <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px;">
-                <div>
-                    <label style="font-size: 12px; font-weight: bold; color: #475569; display: block; margin-bottom: 4px; text-align: right;">رمز اعتماد المنسق:</label>
-                    <input type="password" id="coord-secret-input" placeholder="أدخل الرمز السري للمنسق" style="width: 100%;">
-                </div>
-
-                <div>
-                    <label style="font-size: 12px; font-weight: bold; color: #475569; display: block; margin-bottom: 4px; text-align: right;">معرّف الأستاذ (الدليل المالي، الرقم الوطني، أو الهاتف):</label>
-                    <input type="text" id="coord-target-member" placeholder="الدليل المالي أو NNI أو الهاتف" style="width: 100%;">
-                </div>
-
-                <div>
-                    <label style="font-size: 12px; font-weight: bold; color: #475569; display: block; margin-bottom: 4px; text-align: right;">الرمز السري الجديد للأستاذ (4 أرقام):</label>
-                    <input type="text" id="coord-new-pin" maxlength="4" placeholder="مثلاً: 1234" style="width: 100%; font-size: 20px; letter-spacing: 4px;">
-                </div>
+            <!-- حقل رمز المنسق الموحد -->
+            <div style="margin-bottom: 14px; background: #f8fafc; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1;">
+                <label style="font-size: 12px; font-weight: bold; color: #0f172a; display: block; margin-bottom: 4px; text-align: right;">
+                    <i class="fas fa-key" style="color: var(--gold);"></i> رمز اعتماد المنسق:
+                </label>
+                <input type="password" id="coord-secret-input" placeholder="أدخل الرمز السري للمنسق" style="width: 100%;">
             </div>
 
-            <button class="btn btn-block" id="btn-coord-submit" onclick="submitCoordinatorPinReset()">
-                <i class="fas fa-check-circle"></i> حفظ وتعيين الرمز السري
-            </button>
-            <p id="coord-status-msg" style="font-size: 13px; text-align: center; margin-top: 12px; display: none; font-weight: bold;"></p>
+            <!-- تبويبات بوابة المنسق -->
+            <div class="bag-tabs" style="margin-bottom: 12px;">
+                <button type="button" class="bag-tab-btn active" id="coord-tab-pin-btn" onclick="switchCoordTab('pin')">
+                    <i class="fas fa-user-lock"></i> الرمز السري لمنتسب
+                </button>
+                <button type="button" class="bag-tab-btn" id="coord-tab-news-btn" onclick="switchCoordTab('news')">
+                    <i class="fas fa-newspaper"></i> إدارة شريط الأخبار
+                </button>
+            </div>
+
+            <!-- القسم 1: تعيين الرمز السري لمنتسب -->
+            <div id="coord-section-pin">
+                <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px;">
+                    <div>
+                        <label style="font-size: 12px; font-weight: bold; color: #475569; display: block; margin-bottom: 4px; text-align: right;">معرّف الأستاذ (الدليل المالي، الرقم الوطني، أو الهاتف):</label>
+                        <input type="text" id="coord-target-member" placeholder="الدليل المالي أو NNI أو الهاتف" style="width: 100%;">
+                    </div>
+
+                    <div>
+                        <label style="font-size: 12px; font-weight: bold; color: #475569; display: block; margin-bottom: 4px; text-align: right;">الرمز السري الجديد للأستاذ (4 أرقام):</label>
+                        <input type="text" id="coord-new-pin" maxlength="4" placeholder="مثلاً: 1234" style="width: 100%; font-size: 20px; letter-spacing: 4px;">
+                    </div>
+                </div>
+
+                <button class="btn btn-block" id="btn-coord-submit" onclick="submitCoordinatorPinReset()">
+                    <i class="fas fa-check-circle"></i> حفظ وتعيين الرمز السري
+                </button>
+                <p id="coord-status-msg" style="font-size: 13px; text-align: center; margin-top: 12px; display: none; font-weight: bold;"></p>
+            </div>
+
+            <!-- القسم 2: إدارة شريط الأخبار -->
+            <div id="coord-section-news" style="display: none;">
+                <div style="margin-bottom: 12px;">
+                    <label style="font-size: 12px; font-weight: bold; color: #475569; display: block; margin-bottom: 4px; text-align: right;">نص الخبر الجديد في الشريط:</label>
+                    <textarea id="coord-news-input" rows="2" placeholder="اكتب نص الخبر أو الإعلان النقابي هنا..." style="width: 100%; text-align: right; font-size: 13px; padding: 10px;"></textarea>
+                </div>
+                <button class="btn btn-block" id="btn-coord-add-news" onclick="submitCoordinatorNews('add')">
+                    <i class="fas fa-plus-circle"></i> نشر الخبر في الشريط
+                </button>
+                <p id="coord-news-status" style="font-size: 13px; text-align: center; margin-top: 10px; display: none; font-weight: bold;"></p>
+
+                <div style="margin-top: 15px; border-top: 1px solid #e2e8f0; padding-top: 10px;">
+                    <div style="font-size: 12.5px; font-weight: 800; color: var(--primary); margin-bottom: 8px; text-align: right;">
+                        <i class="fas fa-list"></i> الأخبار المنشورة حالياً في الشريط:
+                    </div>
+                    <div id="coord-news-list" style="max-height: 180px; overflow-y: auto;"></div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -1181,7 +1313,7 @@
             <div style="text-align: center; border-bottom: 2px solid var(--gold); padding-bottom: 12px; margin-bottom: 15px;">
                 <i class="fas fa-briefcase" style="font-size: 32px; color: #0284c7; margin-bottom: 6px;"></i>
                 <h3 style="color: var(--primary-dark);">حقيبة المدرس الرقمية</h3>
-                <p style="font-size: 12px; color: #64748b;">وثائق، نماذج واستمارات تربوية قابلة للتعديل والطباعة (A4)</p>
+                <p style="font-size: 12px; color: #64748b;">وثائق، نماذج واستمارات تربوية رسمية ملونة قابلة للتعديل والطباعة (A4)</p>
             </div>
 
             <!-- تبويبات التعليم الأساسي والثانوي -->
@@ -1194,7 +1326,7 @@
                 </button>
             </div>
 
-            <div id="bag-docs-list" style="max-height: 400px; overflow-y: auto; padding-left: 4px;"></div>
+            <div id="bag-docs-list" style="max-height: 420px; overflow-y: auto; padding-left: 4px;"></div>
         </div>
     </div>
 
@@ -1350,11 +1482,12 @@
         let activeMember = null;
         let isCardFrench = false;
         let pendingWilayaCode = null;
+        let activeNewsList = [];
 
         // إعدادات وبيانات المنسقيات الجهوية للولايات الـ 15 المعتمدة
         const WILAYAS_CONFIG = {
             'HCH01': { name: 'ولاية الحوض الشرقي', filter: 'wilaya_code.eq.HCH01,wilaya_code.eq.HC01,membership_number.ilike.HCH01%,membership_number.ilike.HC01%,membership_number.ilike.HS01%,wilaya.eq.الحوض الشرقي' },
-            'HGH02': { name: 'ولاية الحوض الغربي', filter: 'wilaya_code.eq.HGH02,wilaya_code.eq.HG02,membership_number.ilike.HGH02%,membership_number.ilike.HG02%,wilaya.eq.الحوض الغربي' },
+            'HGH02': { name: 'ولاية الحوض الغربي', filter: 'wilaya_code.eq.HGH02,wilaya_code.eq.HG02,membership_number.ilike.HGH01%,membership_number.ilike.HGH02%,membership_number.ilike.HG02%,wilaya.eq.الحوض الغربي' },
             'AS03':  { name: 'ولاية لعصابه', filter: 'wilaya_code.eq.AS03,membership_number.ilike.AS03%,wilaya.eq.لعصابه,wilaya.eq.لعصابة' },
             'GOG04': { name: 'ولاية كوركول', filter: 'wilaya_code.eq.GOG04,wilaya_code.eq.GO04,membership_number.ilike.GOG04%,membership_number.ilike.GO04%,membership_number.ilike.GG04%,wilaya.eq.كوركول,wilaya.eq.غورغول' },
             'BR05':  { name: 'ولاية لبراكنة', filter: 'wilaya_code.eq.BR05,membership_number.ilike.BR05%,wilaya.eq.لبراكنة,wilaya.eq.لبراكنه' },
@@ -1383,14 +1516,20 @@
             'الاتفاقيات': { icon: 'fas fa-handshake', border: 'var(--gold)', color: 'var(--gold)' }
         };
 
+        // وثائق حقيبة المدرس الرقمية (التعليم الابتدائي المطور بالنسخ الرسمية الملونة + التعليم الثانوي)
         const TEACHER_BAG_DOCS = {
             primary: [
-                { id: 'p_bulletin', title: 'كشف الامتحان الفصلي (كشف فردي معتمد)', desc: 'نموذج كشف النقاط الرسمي للتلميذ للمراحل الابتدائية (3AP وغيرها)', icon: 'fas fa-file-invoice' },
-                { id: 'p1', title: 'لائحة تلاميذ القسم الرسمي', desc: 'استمارة تفريغ أسماء التلاميذ وتواريخ الميلاد والأرقام الوطنية', icon: 'fas fa-user-friends' },
-                { id: 'p2', title: 'سجل النداء والغياب الشهري', desc: 'دفتر المتابعة اليومية لغياب وحضور التلاميذ', icon: 'fas fa-calendar-check' },
-                { id: 'p3', title: 'جدول النظافة وتنظيم القسم', desc: 'توزيع المهام اليومية للمجموعات داخل الحجرة الصفية', icon: 'fas fa-broom' },
-                { id: 'p4', title: 'لائحة مجموعات منشدي القسم', desc: 'جدول توزيع الأناشيد الصباحية ولجان الأنشطة المدرسية', icon: 'fas fa-music' },
-                { id: 'p5', title: 'كشف تفريغ درجات التقويم والاختبارات', desc: 'جدول احتساب المعدلات الفصلية ومتابعة المستوى', icon: 'fas fa-poll' }
+                { id: 'p_bulletin', title: 'كشف الامتحان الفصلي (كشف فردي معتمد)', desc: 'نموذج كشف النقاط الرسمي للتلميذ للمراحل الابتدائية (3AP وغيرها) بالترويسة والشعار', icon: 'fas fa-file-invoice' },
+                { id: 'p1', title: 'لائحة تلاميذ القسم (اللائحة التفصيلية - 124 تلميذ)', desc: 'استمارة تفريغ أسماء التلاميذ والرقم المدرسي وتاريخ الميلاد والأرقام الوطنية (تصل إلى 124 تلميذ)', icon: 'fas fa-user-friends' },
+                { id: 'p_nominative', title: 'لائحة بأسماء التلاميذ (Liste Nominative - 124)', desc: 'اللائحة الاسمية المزدوجة الرسمية الملونة من 1 إلى 124 تلميذ مع التوقيع', icon: 'fas fa-users' },
+                { id: 'p_attendance', title: 'سجل النداء والغياب الشهري (124 تلميذ)', desc: 'سجل المتابعة اليومية للغياب لكل نصف يوم (1 إلى 31) مع الحضور الفعلي والنسبة (124 تلميذ)', icon: 'fas fa-calendar-check' },
+                { id: 'p_cover', title: 'غلاف سجل النداء ووثائق القسم', desc: 'صفحة الغلاف الرسمية الملونة لسجل القسم وبيانات المعلم والدليل المالي والهاتف', icon: 'fas fa-book-reader' },
+                { id: 'p_balayage', title: 'فرق الكناسة (Groupe de Balayage)', desc: 'النموذج الرسمي الملون لتوزيع فرق النظافة على أيام الأسبوع (النظافة من الإيمان)', icon: 'fas fa-broom' },
+                { id: 'p_anthem_team', title: 'فرقة الأناشيد', desc: 'الاستمارة الرسمية المصورة لأعضاء ومجموعات فرقة النشيد المدرسي بالقسم', icon: 'fas fa-music' },
+                { id: 'p_inventory', title: 'بطاقة جرد أثاث القسم (سجل أثاث القسم)', desc: 'بطاقة جرد تجهيزات الحجرة الصفية (الطاولات، المقاعد، السبورة...) ووضعيتها وعددها', icon: 'fas fa-chair' },
+                { id: 'p_chants', title: 'لائحة الأناشيد والمحفوظات', desc: 'الجدول الرسمي لتدوين عناوين ومطالع الأناشيد والمحفوظات المقررة بالقسم', icon: 'fas fa-microphone-alt' },
+                { id: 'p_timetable', title: 'الجدول الزمني الأسبوعي', desc: 'توزيع الحصص والمواد والتوقيت قبل الراحة وبعد الراحة طيلة أيام الدوام', icon: 'fas fa-clock' },
+                { id: 'p_visits', title: 'لائحة الزيارات والملاحظات', desc: 'سجل توثيق الزيارات التربوية والإدارية والملاحظات والتوقيع بالقسم', icon: 'fas fa-clipboard-check' }
             ],
             secondary: [
                 { id: 's_bulletin_prep', title: 'كشف درجات التعليم الإعدادي (1AS - 4AS)', desc: 'النموذج الرسمي الشامل للسنوات الأربع الإعدادية (مجموع الضوارب: 28)', icon: 'fas fa-file-signature' },
@@ -1410,6 +1549,137 @@
             { id: 'dir_reunions', title: 'دفتر محاضر جلسات المعلمين (Cahier des Procès-verbaux)', desc: 'سجل مداولات مجلس المعلمين، الحضور، وتدوين القرارات التربوية', icon: 'fas fa-users-class' },
             { id: 'dir_visites', title: 'دفتر زيارات المدرسة (Cahier des visites de l\'école)', desc: 'سجل توثيق زيارات المفتشين، المؤطرين، والوفود الرسمية للمؤسسة', icon: 'fas fa-door-open' }
         ];
+
+        // جلب وتحديث شريط الأخبار العلوي وقسم الأخبار الرسمية
+        async function loadNewsTicker() {
+            try {
+                const { data, error } = await client
+                    .from('news_ticker')
+                    .select('*')
+                    .eq('is_active', true)
+                    .order('created_at', { ascending: false });
+
+                if (error) return;
+                activeNewsList = data || [];
+
+                const tickerTextEl = document.getElementById('nour-news-ticker-text');
+                const newsContainerEl = document.getElementById('news-container');
+
+                if (activeNewsList.length > 0) {
+                    tickerTextEl.innerHTML = activeNewsList
+                        .map(item => `<span>${item.content}</span>`)
+                        .join(' &nbsp;&nbsp; <span style="color:#ffffff;">★</span> &nbsp;&nbsp; ');
+
+                    if (newsContainerEl) {
+                        newsContainerEl.innerHTML = activeNewsList.map(item => `
+                            <div class="news-item">
+                                <span class="news-tag">إخباري</span>
+                                <div class="news-desc" style="margin-top:6px;font-weight:700;color:#1e293b;">${item.content}</div>
+                            </div>
+                        `).join('');
+                    }
+                } else {
+                    tickerTextEl.innerHTML = 'مرحباً بكم في المنصة الرقمية للنقابة الوطنية للمدرسين (نور) — وحدة • نضال • حوار';
+                }
+
+                renderCoordinatorNewsList();
+            } catch (err) {
+                console.error('خطأ في تحميل شريط الأخبار:', err);
+            }
+        }
+
+        function renderCoordinatorNewsList() {
+            const listEl = document.getElementById('coord-news-list');
+            if (!listEl) return;
+            if (!activeNewsList || activeNewsList.length === 0) {
+                listEl.innerHTML = '<div style="font-size:12px;color:#64748b;text-align:center;padding:10px;">لا توجد أخبار مضافة حالياً.</div>';
+                return;
+            }
+            listEl.innerHTML = activeNewsList.map(item => `
+                <div class="coord-news-item">
+                    <span style="flex:1;">${item.content}</span>
+                    <button type="button" class="btn-del-news" onclick="submitCoordinatorNews('delete', ${item.id})">
+                        <i class="fas fa-trash-alt"></i> حذف
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function switchCoordTab(tab) {
+            const pinBtn = document.getElementById('coord-tab-pin-btn');
+            const newsBtn = document.getElementById('coord-tab-news-btn');
+            const pinSec = document.getElementById('coord-section-pin');
+            const newsSec = document.getElementById('coord-section-news');
+
+            if (tab === 'pin') {
+                pinBtn.classList.add('active');
+                newsBtn.classList.remove('active');
+                pinSec.style.display = 'block';
+                newsSec.style.display = 'none';
+            } else {
+                newsBtn.classList.add('active');
+                pinBtn.classList.remove('active');
+                pinSec.style.display = 'none';
+                newsSec.style.display = 'block';
+                loadNewsTicker();
+            }
+        }
+
+        async function submitCoordinatorNews(actionType, targetId = null) {
+            const adminSecret = document.getElementById('coord-secret-input').value.trim();
+            const newsInput = document.getElementById('coord-news-input');
+            const statusEl = document.getElementById('coord-news-status');
+            const addBtn = document.getElementById('btn-coord-add-news');
+
+            statusEl.style.display = 'none';
+
+            if (!adminSecret) {
+                statusEl.style.color = '#dc2626';
+                statusEl.innerText = 'يرجى إدخال رمز اعتماد المنسق في الأعلى أولاً.';
+                statusEl.style.display = 'block';
+                return;
+            }
+
+            const contentVal = newsInput ? newsInput.value.trim() : '';
+            if (actionType === 'add' && !contentVal) {
+                statusEl.style.color = '#dc2626';
+                statusEl.innerText = 'يرجى كتابة نص الخبر قبل النشر.';
+                statusEl.style.display = 'block';
+                return;
+            }
+
+            if (addBtn) addBtn.disabled = true;
+
+            try {
+                const { data, error } = await client.rpc('admin_manage_news', {
+                    admin_secret: adminSecret,
+                    action_type: actionType,
+                    news_content: actionType === 'add' ? contentVal : null,
+                    target_id: actionType === 'delete' ? targetId : null
+                });
+
+                if (addBtn) addBtn.disabled = false;
+
+                if (error) {
+                    statusEl.style.color = '#dc2626';
+                    statusEl.innerText = 'رمز المنسق غير صحيح أو تعذر الاتصال بالخادم.';
+                    statusEl.style.display = 'block';
+                    return;
+                }
+
+                statusEl.style.color = '#15803d';
+                statusEl.innerText = actionType === 'add' ? 'تم نشر الخبر في الشريط بنجاح!' : 'تم حذف الخبر بنجاح!';
+                statusEl.style.display = 'block';
+
+                if (actionType === 'add' && newsInput) newsInput.value = '';
+                await loadNewsTicker();
+            } catch (e) {
+                if (addBtn) addBtn.disabled = false;
+                statusEl.style.color = '#dc2626';
+                statusEl.innerText = 'تعذر تنفيذ العملية، تأكد من الاتصال.';
+                statusEl.style.display = 'block';
+            }
+        }
 
         // تحميل الإحصائيات التلقائية الحية من Supabase
         async function loadPlatformStats() {
@@ -1447,13 +1717,18 @@
             }
         }
 
-        document.addEventListener('DOMContentLoaded', loadPlatformStats);
+        document.addEventListener('DOMContentLoaded', () => {
+            loadPlatformStats();
+            loadNewsTicker();
+        });
 
-        // فتح نافذة بوابة المنسق لإدارة الرمز السري
+        // فتح نافذة بوابة المنسق لإدارة الرمز السري وشريط الأخبار
         function openCoordinatorPinModal() {
             document.getElementById('coord-target-member').value = '';
             document.getElementById('coord-new-pin').value = '';
             document.getElementById('coord-status-msg').style.display = 'none';
+            document.getElementById('coord-news-status').style.display = 'none';
+            switchCoordTab('pin');
             document.getElementById('coordinator-pin-modal').style.display = 'block';
         }
 
@@ -1485,7 +1760,6 @@
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري التحديث...';
 
             try {
-                // البحث الذكي لدعم الدليل المالي أو الرقم الوطني أو الهاتف أو رقم العضوية
                 let identifierForRpc = targetInput;
                 let memberName = '';
 
@@ -1643,7 +1917,6 @@
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري التحقق والتحديث...';
 
             try {
-                // 1. التحقق من تطابق (الدليل المالي أو الوطني) مع رقم الهاتف في جدول members
                 const { data: memberData, error: fetchErr } = await client
                     .from('members')
                     .select('*')
@@ -1659,7 +1932,6 @@
                     return;
                 }
 
-                // 2. تحديث الرمز عبر RPC verify_or_setup_member لضمان توافق التشفير
                 const { data: updateRes, error: updateErr } = await client.rpc('verify_or_setup_member', {
                     p_identifier: idVal,
                     p_pin: newPin
@@ -1787,10 +2059,61 @@
 
         // تذييل حفظ الحقوق الرسمي لنقابة نور المضاف لجميع المستندات
         const NOUR_COPYRIGHT_FOOTER = `
-            <div style="text-align: center; margin-top: 25px; padding-top: 10px; border-top: 1px solid #94a3b8; font-size: 11.5px; font-weight: bold; color: #475569;">
+            <div style="text-align: center; margin-top: 18px; padding-top: 8px; border-top: 1px solid #94a3b8; font-size: 11px; font-weight: bold; color: #475569;">
                 جميع الحقوق محفوظة لنقابة نور &copy; 2026 | النقابة الوطنية للمدرسين
             </div>
         `;
+
+        // الشعار الرسمي الملون للجمهورية الإسلامية الموريتانية مع شريط العلم الوطني
+        const OFFICIAL_MAURITANIA_EMBLEM_SVG = `
+            <div style="display:flex;align-items:center;justify-content:center;gap:0;">
+                <div style="width:42px;height:10px;background:linear-gradient(to bottom, #D01C1F 0%, #D01C1F 25%, #006233 25%, #006233 75%, #FFC400 75%, #FFC400 100%);border-radius:2px 0 0 2px;"></div>
+                <svg width="68" height="68" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0;">
+                    <circle cx="60" cy="60" r="57" fill="#D01C1F" stroke="#FFC400" stroke-width="3"/>
+                    <circle cx="60" cy="60" r="46" fill="#006233" stroke="#FFC400" stroke-width="2"/>
+                    <path d="M35 58 A25 25 0 0 0 85 58 A22 20 0 0 1 35 58 Z" fill="#FFC400"/>
+                    <polygon points="60,31 63.5,41 74,41 65.5,47 68.5,57 60,51 51.5,57 54.5,47 46,41 56.5,41" fill="#FFC400"/>
+                    <path d="M40 85 Q60 65 80 85" stroke="#86efac" stroke-width="2.5" fill="none"/>
+                    <text x="60" y="13" text-anchor="middle" fill="#FFC400" font-size="6.5" font-weight="bold">الجمهورية الإسلامية الموريتانية</text>
+                    <text x="60" y="112" text-anchor="middle" fill="#FFC400" font-size="6.5" font-weight="bold">RÉPUBLIQUE ISLAMIQUE DE MAURITANIE</text>
+                </svg>
+                <div style="width:42px;height:10px;background:linear-gradient(to bottom, #D01C1F 0%, #D01C1F 25%, #006233 25%, #006233 75%, #FFC400 75%, #FFC400 100%);border-radius:0 2px 2px 0;"></div>
+            </div>
+        `;
+
+        function buildOfficialPrimaryHeader(includeBasmala = true) {
+            return `
+                ${includeBasmala ? `<div style="text-align:center;font-weight:800;font-size:14px;margin-bottom:4px;color:#111;">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>` : ''}
+                <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid #006233;padding-bottom:8px;margin-bottom:12px;font-size:12px;font-weight:800;line-height:1.65;color:#111;">
+                    <div style="text-align:right;min-width:210px;">
+                        الجمهورية الإسلامية الموريتانية<br>
+                        وزارة التربية وإصلاح النظام التعليمي<br>
+                        الإدارة الجهوية بولاية: <span contenteditable="true" style="border-bottom:1px dotted #333;display:inline-block;min-width:95px;">.......................</span><br>
+                        مفتشية مقاطعة: <span contenteditable="true" style="border-bottom:1px dotted #333;display:inline-block;min-width:95px;">.......................</span>
+                    </div>
+                    <div style="text-align:center;">
+                        ${OFFICIAL_MAURITANIA_EMBLEM_SVG}
+                    </div>
+                    <div style="text-align:right;min-width:190px;">
+                        <div style="text-align:center;font-weight:900;margin-bottom:2px;">شرف - إخاء - عدل</div>
+                        السنة الدراسية: <span contenteditable="true" style="border-bottom:1px dotted #333;display:inline-block;min-width:75px;">2026 / 2027</span><br>
+                        مدرسة: <span contenteditable="true" style="border-bottom:1px dotted #333;display:inline-block;min-width:110px;">.......................</span><br>
+                        القسم: <span contenteditable="true" style="border-bottom:1px dotted #333;display:inline-block;min-width:110px;">.......................</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        function buildOfficialPrimarySignatures() {
+            return `
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-top:22px;padding-top:8px;font-size:13.5px;font-weight:800;color:#111;text-align:center;">
+                    <div contenteditable="true" style="min-width:110px;">المعلم(ة):</div>
+                    <div contenteditable="true" style="min-width:120px;">المدير(ة):</div>
+                    <div contenteditable="true" style="min-width:130px;">المستشار التربوي:</div>
+                    <div contenteditable="true" style="min-width:110px;">المفتش:</div>
+                </div>
+            `;
+        }
 
         // توليد استمارات حقيبة المدير
         function generateAndPrintDirectorDoc(docId, docTitle) {
@@ -1811,8 +2134,7 @@
                         مدرسة: <span contenteditable="true">...................</span>
                     </div>
                     <div style="text-align: center;">
-                        <div style="width: 44px; height: 44px; border-radius: 50%; border: 2px solid #0f766e; margin: 0 auto 3px; display: flex; align-items: center; justify-content: center; font-size: 18px; color: #d4af37;">★</div>
-                        <div style="font-size: 11px; font-weight: 800; color: #0f766e;">★ RIM ★</div>
+                        ${OFFICIAL_MAURITANIA_EMBLEM_SVG}
                     </div>
                     <div style="text-align: left;" dir="ltr">
                         République Islamique de Mauritanie<br>
@@ -1897,14 +2219,14 @@
                     <div style="border-bottom: 2px solid #0f766e; padding-bottom: 8px; margin-bottom: 12px; font-size: 11px; line-height: 1.5; font-weight: bold; display: flex; justify-content: space-between;">
                         <div>
                             شرف - إخاء - عدالة<br>
-                            السنة الدراسية / Année Scolaire: <span contenteditable="true">2025 - 2026</span><br>
+                            السنة الدراسية / Année Scolaire: <span contenteditable="true">2026 - 2027</span><br>
                             الفصل الدراسي / Trimestre: <span contenteditable="true">...................</span><br>
                             المدرسة / Ecole: <span contenteditable="true">...................</span><br>
                             دليل المدرسة / Code école: <span contenteditable="true">...................</span>
                         </div>
                         <div style="text-align: center;">
-                            <div style="width: 44px; height: 44px; border-radius: 50%; border: 2px solid #0f766e; margin: 0 auto 3px; display: flex; align-items: center; justify-content: center; font-size: 18px; color: #d4af37;">★</div>
-                            <h2 style="margin: 0; color: #0f766e; font-size: 17px;">محضر تبادل مهام</h2>
+                            ${OFFICIAL_MAURITANIA_EMBLEM_SVG}
+                            <h2 style="margin: 4px 0 0; color: #0f766e; font-size: 17px;">محضر تبادل مهام</h2>
                             <span style="font-size: 12px; color: #475569;">P.V de Passation de Service</span>
                         </div>
                         <div style="text-align: left;">
@@ -2080,7 +2402,7 @@
                     <title>${docTitle}</title>
                     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;600;700;800&display=swap" rel="stylesheet">
                     <style>
-                        * { box-sizing: border-box; font-family: 'Tajawal', sans-serif; }
+                        * { box-sizing: border-box; font-family: 'Tajawal', sans-serif; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
                         body { margin: 15px; color: #111; direction: rtl; background-color: #f8fafc; }
                         .paper-container { max-width: 950px; margin: 0 auto; background: #fff; padding: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-radius: 8px; }
                         .no-print-bar {
@@ -2089,11 +2411,8 @@
                         }
                         .action-btn { border: none; padding: 8px 14px; border-radius: 6px; font-weight: bold; font-size: 13px; cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; gap: 5px; }
                         .btn-save { background: #10b981; color: #fff; }
-                        .btn-save:hover { background: #059669; }
                         .btn-print { background: #d4af37; color: #111; }
-                        .btn-print:hover { background: #c29d2b; }
                         .btn-clear { background: #ef4444; color: #fff; }
-                        .btn-clear:hover { background: #dc2626; }
                         [contenteditable="true"] { outline: none; }
                         [contenteditable="true"]:hover { background-color: #f0fdf4; }
                         [contenteditable="true"]:focus { background-color: #e8f5e9; box-shadow: inset 0 0 0 1px #0f766e; }
@@ -2158,7 +2477,7 @@
             editWindow.document.close();
         }
 
-        // توليد استمارات حقيبة المدرس
+        // توليد استمارات حقيبة المدرس (الابتدائية الملونة الرسمية + الإعدادية والثانوية المنظفة)
         function generateAndPrintDoc(docId, docTitle) {
             const editWindow = window.open('', '_blank');
             if (!editWindow) {
@@ -2169,57 +2488,43 @@
             let customHeaderHtml = '';
             let tableContent = '';
             let customFooterHtml = '';
+            let isLandscape = false;
+            let extraBarButtons = '';
 
+            // 1. كشف الامتحان الفصلي للابتدائي (بالترويسة الرسمية وبدون بيانات شخصية)
             if (docId === 'p_bulletin') {
                 customHeaderHtml = `
-                    <div style="border: 2px solid #111; padding: 15px; margin-bottom: 12px; border-radius: 6px;">
-                        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid #111; padding-bottom: 8px;">
-                            <div style="font-size: 11.5px; font-weight: bold; line-height: 1.5;">
-                                شرف - إخاء - عدالة<br>
-                                السنة الدراسية: <span contenteditable="true">2025 - 2026</span><br>
-                                القسم: <span contenteditable="true">3AP</span><br>
-                                الفصل: <span contenteditable="true">الأول</span>
-                            </div>
-                            <div style="text-align: center;">
-                                <div style="width: 48px; height: 48px; border-radius: 50%; border: 2px solid #116835; margin: 0 auto 4px; display: flex; align-items: center; justify-content: center; font-size: 20px; color: #d4af37;">★</div>
-                                <h2 contenteditable="true" style="margin: 0; font-size: 17px; font-weight: 800;">كشف الامتحان الأول</h2>
-                            </div>
-                            <div style="text-align: left; font-size: 11.5px; font-weight: bold; line-height: 1.5;">
-                                الجمهورية الإسلامية الموريتانية<br>
-                                وزارة التربية وإصلاح النظام التعليمي<br>
-                                الإدارة الجهوية: <span contenteditable="true">كيدي ماغا</span><br>
-                                مفتشية مقاطعة: <span contenteditable="true">سيليبابي</span><br>
-                                مدرسة: <span contenteditable="true">مدرسة 5</span>
-                            </div>
-                        </div>
-
-                        <div style="display: flex; justify-content: space-between; padding-top: 10px; font-size: 13px; font-weight: bold;">
-                            <div>الاسم الكامل: <span contenteditable="true" style="display: inline-block; min-width: 140px; border-bottom: 1px dotted #333;">أحمد</span></div>
-                            <div>رقم النداء: <span contenteditable="true" style="display: inline-block; min-width: 40px; border-bottom: 1px dotted #333; text-align: center;">1</span></div>
-                            <div>الرقم المدرسي: <span contenteditable="true" style="display: inline-block; min-width: 100px; border-bottom: 1px dotted #333;">....................</span></div>
-                        </div>
+                    ${buildOfficialPrimaryHeader(true)}
+                    <div style="text-align:center;margin:8px 0 12px;">
+                        <h2 contenteditable="true" style="display:inline-block;margin:0;padding:5px 24px;background:#f0fdf4;border:2px solid #006233;border-radius:8px;color:#006233;font-size:19px;font-weight:900;">كشف الامتحان الفصلي</h2>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;padding:8px 12px;background:#f8fafc;border:1.5px solid #111;border-radius:6px;margin-bottom:12px;font-size:13px;font-weight:800;">
+                        <div>الاسم الكامل للتلميذ: <span contenteditable="true" style="display:inline-block;min-width:160px;border-bottom:1px dotted #333;">....................................</span></div>
+                        <div>رقم النداء: <span contenteditable="true" style="display:inline-block;min-width:45px;border-bottom:1px dotted #333;text-align:center;">........</span></div>
+                        <div>الرقم المدرسي: <span contenteditable="true" style="display:inline-block;min-width:110px;border-bottom:1px dotted #333;">........................</span></div>
+                        <div>الفصل: <span contenteditable="true" style="display:inline-block;min-width:75px;border-bottom:1px dotted #333;">................</span></div>
                     </div>
                 `;
 
                 const primarySubjects = [
-                    { ar: 'التربية الإسلامية', fr: 'Education Islamique', max: '30', note: '25' },
-                    { ar: 'اللغة العربية', fr: 'Langue arabe', max: '50', note: '22' },
-                    { ar: 'الرياضيات', fr: 'Mathématiques', max: '40', note: '22' },
-                    { ar: 'التربية المدنية', fr: 'Education Civique', max: '10', note: '8' },
-                    { ar: 'التربية الفنية', fr: 'Education Technique', max: '10', note: '8' },
-                    { ar: 'الفرنسية', fr: 'Français', max: '30', note: '22' },
-                    { ar: 'التاريخ والجغرافيا', fr: 'Histoire Géographie', max: '10', note: '8' },
-                    { ar: 'العلوم الطبيعية', fr: 'Sciences Naturelles', max: '10', note: '7' },
-                    { ar: 'الرياضة البدنية', fr: 'Education Sportive', max: '10', note: '8' }
+                    { ar: 'التربية الإسلامية', fr: 'Education Islamique', max: '30' },
+                    { ar: 'اللغة العربية', fr: 'Langue arabe', max: '50' },
+                    { ar: 'الرياضيات', fr: 'Mathématiques', max: '40' },
+                    { ar: 'التربية المدنية', fr: 'Education Civique', max: '10' },
+                    { ar: 'التربية الفنية', fr: 'Education Technique', max: '10' },
+                    { ar: 'الفرنسية', fr: 'Français', max: '30' },
+                    { ar: 'التاريخ والجغرافيا', fr: 'Histoire Géographie', max: '10' },
+                    { ar: 'العلوم الطبيعية', fr: 'Sciences Naturelles', max: '10' },
+                    { ar: 'الرياضة البدنية', fr: 'Education Sportive', max: '10' }
                 ];
 
                 tableContent = `
                     <div style="display: flex; border: 1.5px solid #111;">
                         <table id="printable-table" style="width: 75%; border-collapse: collapse; font-size: 12.5px;">
                             <thead>
-                                <tr style="background: #f1f5f9;">
-                                    <th style="border: 1px solid #111; padding: 7px;">المادة</th>
-                                    <th style="border: 1px solid #111; padding: 7px; width: 120px; text-align: center;">النقاط</th>
+                                <tr style="background: #d1d5db;">
+                                    <th style="border: 1px solid #111; padding: 7px;">المادة الدراسية</th>
+                                    <th style="border: 1px solid #111; padding: 7px; width: 130px; text-align: center;">النقاط</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -2229,781 +2534,406 @@
                                             ${sub.ar} - <span style="font-size: 11px; color: #475569;">${sub.fr}</span>
                                         </td>
                                         <td contenteditable="true" style="border: 1px solid #111; padding: 6px; text-align: center; font-weight: bold; font-size: 13px;">
-                                            ${sub.max} / ${sub.note}
+                                            ${sub.max} / ....
                                         </td>
                                     </tr>
                                 `).join('')}
-                                <tr style="background: #f8fafc; font-weight: 800;">
+                                <tr style="background: #f0fdf4; font-weight: 800;">
                                     <td style="border: 1px solid #111; padding: 7px 10px;">مجموع النقاط</td>
-                                    <td contenteditable="true" style="border: 1px solid #111; padding: 7px; text-align: center;">200 / 130</td>
+                                    <td contenteditable="true" style="border: 1px solid #111; padding: 7px; text-align: center;">200 / ......</td>
                                 </tr>
-                                <tr style="background: #f8fafc; font-weight: 800;">
+                                <tr style="background: #fef9c3; font-weight: 800;">
                                     <td style="border: 1px solid #111; padding: 7px 10px;">معدل الفصل</td>
-                                    <td contenteditable="true" style="border: 1px solid #111; padding: 7px; text-align: center; color: #0b4824; font-size: 14px;">20 / 13</td>
+                                    <td contenteditable="true" style="border: 1px solid #111; padding: 7px; text-align: center; color: #0b4824; font-size: 14px;">20 / ......</td>
                                 </tr>
                                 <tr>
                                     <td style="border: 1px solid #111; padding: 6px 10px; font-weight: bold;">النتيجة</td>
-                                    <td contenteditable="true" style="border: 1px solid #111; padding: 6px; text-align: center; font-weight: bold;">ناجح</td>
+                                    <td contenteditable="true" style="border: 1px solid #111; padding: 6px; text-align: center; font-weight: bold;"></td>
                                 </tr>
                                 <tr>
                                     <td style="border: 1px solid #111; padding: 6px 10px; font-weight: bold;">الرتبة في القسم</td>
-                                    <td contenteditable="true" style="border: 1px solid #111; padding: 6px; text-align: center; font-weight: bold;">1 / 1</td>
+                                    <td contenteditable="true" style="border: 1px solid #111; padding: 6px; text-align: center; font-weight: bold;"></td>
                                 </tr>
                             </tbody>
                         </table>
                         
                         <div style="width: 25%; border-right: 1.5px solid #111; display: flex; flex-direction: column;">
-                            <div style="background: #f1f5f9; border-bottom: 1px solid #111; padding: 7px; text-align: center; font-weight: bold; font-size: 12px;">الملاحظات والقرار</div>
-                            <div contenteditable="true" style="flex: 1; padding: 15px; font-weight: bold; font-size: 14px; text-align: center; display: flex; align-items: center; justify-content: center;">
-                                جيد
-                            </div>
+                            <div style="background: #d1d5db; border-bottom: 1px solid #111; padding: 7px; text-align: center; font-weight: bold; font-size: 12px;">الملاحظات والقرار</div>
+                            <div contenteditable="true" style="flex: 1; padding: 15px; font-weight: bold; font-size: 14px; text-align: center; display: flex; align-items: center; justify-content: center;"></div>
                         </div>
                     </div>
                 `;
 
                 customFooterHtml = `
-                    <div style="display: flex; justify-content: space-between; margin-top: 35px; font-size: 13px; font-weight: bold; text-align: center;">
-                        <div style="width: 30%;">
-                            توقيع المعلم<br><br>
-                            <span style="border-bottom: 1px dotted #333; display: inline-block; width: 100%;"></span>
-                        </div>
-                        <div style="width: 30%;">
-                            توقيع الوكيل<br><br>
-                            <span style="border-bottom: 1px dotted #333; display: inline-block; width: 100%;"></span>
-                        </div>
-                        <div style="width: 30%;">
-                            توقيع المدير<br><br>
-                            <span style="border-bottom: 1px dotted #333; display: inline-block; width: 100%;"></span>
-                        </div>
-                    </div>
-                `;
-
-            } else if (docId === 's_bulletin_prep' || docId === 's_bulletin_5d' || docId === 's_bulletin_7d') {
-                let sectionTitle = '';
-                let defaultClass = '';
-                let defaultStudent = '';
-                let defaultNatId = '';
-                let subjectsList = [];
-                let totalCoeff = 28;
-                let defaultTotal = '468.83';
-                let defaultMoy = '16.74';
-
-                if (docId === 's_bulletin_prep') {
-                    sectionTitle = 'كشف درجات التعليم الإعدادي ★ Bulletin de Notes (1AS, 2AS, 3AS, 4AS)';
-                    defaultClass = '1AS';
-                    defaultStudent = 'صدام ولد يوسف';
-                    defaultNatId = '468632';
-                    totalCoeff = 28;
-                    defaultTotal = '468.83';
-                    defaultMoy = '16.74';
-                    subjectsList = [
-                        { name: '(Ed. Islamique) التربية الإسلامية', c1: '19.00', c2: '17.00', c3: '18.00', mEx: '17.00', moy: '17.83', coef: '3', tot: '53.50' },
-                        { name: '(Arabe) العربية', c1: '15.00', c2: '14.00', c3: '12.00', mEx: '13.67', moy: '13.17', coef: '5', tot: '65.83' },
-                        { name: '(Histoire-Géo) التاريخ والجغرافيا', c1: '16.00', c2: '16.00', c3: '17.00', mEx: '17.00', moy: '16.50', coef: '1', tot: '16.50' },
-                        { name: '(Instruction Civique) التربية المدنية', c1: '18.00', c2: '18.00', c3: '18.00', mEx: '18.33', moy: '18.00', coef: '1', tot: '18.00' },
-                        { name: '(Français) الفرنسية', c1: '18.00', c2: '18.00', c3: '17.00', mEx: '18.33', moy: '17.50', coef: '4', tot: '70.00' },
-                        { name: '(Anglais) الإنجليزية', c1: '15.00', c2: '17.00', c3: '18.00', mEx: '17.00', moy: '17.17', coef: '2', tot: '34.33' },
-                        { name: '(Maths) الرياضيات', c1: '18.00', c2: '19.00', c3: '17.00', mEx: '18.53', moy: '17.83', coef: '6', tot: '107.00' },
-                        { name: '(Sciences Nat.) العلوم الطبيعية', c1: '19.00', c2: '18.00', c3: '18.00', mEx: '18.00', moy: '18.00', coef: '2', tot: '36.00' },
-                        { name: '(Physiques) الفيزياء والكيمياء', c1: '18.00', c2: '18.00', c3: '18.00', mEx: '18.33', moy: '18.00', coef: '1', tot: '18.00' },
-                        { name: '(Informatique et Technologie) المعلوماتية والتكنولوجيا', c1: '15.00', c2: '16.00', c3: '17.00', mEx: '11.00', moy: '16.33', coef: '2', tot: '32.67' },
-                        { name: '(E.P.S) التربية البدنية', c1: '13.00', c2: '16.00', c3: '17.00', mEx: '11.00', moy: '16.00', coef: '1', tot: '16.00' }
-                    ];
-                } else if (docId === 's_bulletin_5d') {
-                    sectionTitle = 'كشف درجات ★ BULLETIN DE NOTES (5D) ★';
-                    defaultClass = '5D (الخامس علمي D)';
-                    defaultStudent = 'زينب منت محمد عالي';
-                    defaultNatId = '348754';
-                    totalCoeff = 29;
-                    defaultTotal = '354.23';
-                    defaultMoy = '11.81';
-                    subjectsList = [
-                        { name: '(Ed. Islamique) التربية الإسلامية', c1: '15.00', c2: '14.00', c3: '14.00', mEx: '11.00', moy: '11.00', coef: '3', tot: '33.00' },
-                        { name: '(Arabe) العربية', c1: '11.00', c2: '12.00', c3: '14.00', mEx: '11.00', moy: '11.00', coef: '3', tot: '33.00' },
-                        { name: '(Hist-Géo) التاريخ والجغرافيا', c1: '14.00', c2: '14.00', c3: '16.00', mEx: '14.33', moy: '14.33', coef: '2', tot: '28.66' },
-                        { name: '(Ed. Civique) التربية المدنية', c1: '11.00', c2: '11.00', c3: '10.00', mEx: '11.33', moy: '11.33', coef: '1', tot: '11.33' },
-                        { name: '(Français) الفرنسية', c1: '12.00', c2: '16.00', c3: '12.00', mEx: '13.00', moy: '13.00', coef: '3', tot: '39.00' },
-                        { name: '(Anglais) الإنجليزية', c1: '10.00', c2: '14.00', c3: '12.00', mEx: '12.67', moy: '12.67', coef: '2', tot: '25.34' },
-                        { name: '(Mathématiques) الرياضيات', c1: '13.00', c2: '15.00', c3: '15.00', mEx: '12.67', moy: '12.67', coef: '4', tot: '50.68' },
-                        { name: '(Sciences Nat.) العلوم الطبيعية', c1: '11.00', c2: '13.00', c3: '12.00', mEx: '11.33', moy: '11.33', coef: '6', tot: '67.98' },
-                        { name: '(Physique-Chimie) الفيزياء والكيمياء', c1: '12.00', c2: '12.00', c3: '12.00', mEx: '11.67', moy: '11.67', coef: '4', tot: '46.68' },
-                        { name: '(E.P.S) التربية البدنية', c1: '10.00', c2: '12.00', c3: '10.00', mEx: '13.33', moy: '13.33', coef: '1', tot: '13.33' }
-                    ];
-                } else if (docId === 's_bulletin_7d') {
-                    sectionTitle = 'كشف درجات (سابعة علمية 7D) ★ Bulletin de Notes (7D) ★';
-                    defaultClass = '7D (سابع علمي D)';
-                    defaultStudent = 'موسى ولد عابدين';
-                    defaultNatId = '25863';
-                    totalCoeff = 31;
-                    defaultTotal = '507.67';
-                    defaultMoy = '16.38';
-                    subjectsList = [
-                        { name: '(Ed. Islamique) التربية الإسلامية', c1: '17.00', c2: '18.00', c3: '19.00', mEx: '13.33', moy: '18.33', coef: '2', tot: '36.67' },
-                        { name: '(Arabe) العربية', c1: '16.00', c2: '16.00', c3: '19.00', mEx: '17.67', moy: '17.50', coef: '3', tot: '52.50' },
-                        { name: '(Français) الفرنسية', c1: '17.00', c2: '18.00', c3: '19.00', mEx: '12.33', moy: '18.33', coef: '2', tot: '36.67' },
-                        { name: '(Anglais) الإنجليزية', c1: '11.00', c2: '10.00', c3: '18.00', mEx: '12.33', moy: '14.17', coef: '2', tot: '28.33' },
-                        { name: '(Maths) الرياضيات', c1: '18.00', c2: '18.00', c3: '19.00', mEx: '15.00', moy: '18.50', coef: '6', tot: '111.00' },
-                        { name: '(Sciences Nat.) العلوم الطبيعية', c1: '11.00', c2: '16.00', c3: '17.00', mEx: '16.67', moy: '15.67', coef: '8', tot: '125.33' },
-                        { name: '(Physiques) الفيزياء والكيمياء', c1: '17.00', c2: '13.00', c3: '15.00', mEx: '17.67', moy: '14.67', coef: '7', tot: '102.67' },
-                        { name: '(E.P.S) التربية البدنية', c1: '12.00', c2: '15.00', c3: '15.00', mEx: '0.00', moy: '14.50', coef: '1', tot: '14.50' }
-                    ];
-                }
-
-                customHeaderHtml = `
-                    <div style="border-bottom: 2px solid #111; padding-bottom: 10px; margin-bottom: 10px;">
-                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                            <div style="font-size: 11px; line-height: 1.4; font-weight: bold; text-align: right;">
-                                الجمهورية الإسلامية الموريتانية<br>
-                                شرف - إخاء - عدل<br>
-                                وزارة التربية وإصلاح النظام التعليمي<br>
-                                مديرية التعليم الثانوي<br>
-                                مصلحة الشؤون المدرسية
-                            </div>
-                            <div style="text-align: center;">
-                                <div style="width: 48px; height: 48px; border-radius: 50%; border: 2px solid #116835; margin: 0 auto 3px; display: flex; align-items: center; justify-content: center; font-size: 20px; color: #d4af37;">★</div>
-                                <div style="font-size: 11px; font-weight: 800; color: #116835;">★ RIM ★</div>
-                                <h2 style="margin: 3px 0 0; font-size: 15px; font-weight: 800;">${sectionTitle}</h2>
-                            </div>
-                            <div style="font-size: 11px; line-height: 1.4; font-weight: bold; text-align: left;" dir="ltr">
-                                République Islamique de Mauritanie<br>
-                                Honneur - Fraternité - Justice<br>
-                                Ministère de l'Éducation et de la Réforme du Système d'Enseignement<br>
-                                Direction de l'Enseignement Secondaire<br>
-                                Service des Affaires Scolaires
-                            </div>
-                        </div>
-
-                        <div style="text-align: center; margin-top: 8px; font-size: 12.5px; font-weight: bold;">
-                            المؤسسة / Établissement: <span contenteditable="true" style="border-bottom: 1px dotted #333; min-width: 140px; display: inline-block;">ثانوية تيكماطين</span> |
-                            السنة الدراسية / Année Scolaire: <span contenteditable="true" style="border-bottom: 1px dotted #333; min-width: 90px; display: inline-block;">2025 - 2026</span>
-                        </div>
-
-                        <div style="display: flex; justify-content: space-between; margin-top: 8px; font-size: 12.5px; font-weight: bold;">
-                            <div>الاسم الكامل / Nom et Prénom: <span contenteditable="true" style="border-bottom: 1px dotted #333; min-width: 160px; display: inline-block;">${defaultStudent}</span></div>
-                            <div>القسم / Classe: <span contenteditable="true" style="border-bottom: 1px dotted #333; min-width: 50px; display: inline-block;">${defaultClass}</span></div>
-                            <div>رقم التسجيل: <span contenteditable="true" style="border-bottom: 1px dotted #333; min-width: 40px; display: inline-block;">1</span></div>
-                            <div>الرقم الوطني / Numéro National: <span contenteditable="true" style="border-bottom: 1px dotted #333; min-width: 90px; display: inline-block;">${defaultNatId}</span></div>
-                            <div>القسم: <span contenteditable="true" style="border-bottom: 1px dotted #333; min-width: 30px; display: inline-block;">1</span></div>
-                        </div>
-                    </div>
-                `;
-
-                tableContent = `
-                    <table id="printable-table" style="width: 100%; border-collapse: collapse; font-size: 11px;">
-                        <thead>
-                            <tr style="background: #0b4824; color: #fff; text-align: center;">
-                                <th style="border: 1px solid #111; padding: 6px;">المواد<br>Matières</th>
-                                <th style="border: 1px solid #111; padding: 5px; width: 65px;">الامتحان 1<br><span style="font-size: 9.5px;">1er Comp.</span></th>
-                                <th style="border: 1px solid #111; padding: 5px; width: 65px;">الامتحان 2<br><span style="font-size: 9.5px;">2ème Comp.</span></th>
-                                <th style="border: 1px solid #111; padding: 5px; width: 65px;">الامتحان 3<br><span style="font-size: 9.5px;">3ème Comp.</span></th>
-                                <th style="border: 1px solid #111; padding: 5px; width: 75px;">معدل الاختبارات<br><span style="font-size: 9.5px;">Moy. Tests</span></th>
-                                <th style="border: 1px solid #111; padding: 5px; width: 65px;">معدل المادة<br><span style="font-size: 9.5px;">Moyenne</span></th>
-                                <th style="border: 1px solid #111; padding: 5px; width: 45px;">الضارب<br><span style="font-size: 9.5px;">Coeff.</span></th>
-                                <th style="border: 1px solid #111; padding: 5px; width: 60px;">المجموع<br><span style="font-size: 9.5px;">Total</span></th>
-                                <th style="border: 1px solid #111; padding: 5px; width: 95px;">ملاحظات<br><span style="font-size: 9.5px;">Observations</span></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${subjectsList.map(sub => `
-                                <tr>
-                                    <td style="border: 1px solid #111; padding: 5px 8px; font-weight: bold;">${sub.name}</td>
-                                    <td contenteditable="true" style="border: 1px solid #111; padding: 4px; text-align: center;">${sub.c1}</td>
-                                    <td contenteditable="true" style="border: 1px solid #111; padding: 4px; text-align: center;">${sub.c2}</td>
-                                    <td contenteditable="true" style="border: 1px solid #111; padding: 4px; text-align: center;">${sub.c3}</td>
-                                    <td contenteditable="true" style="border: 1px solid #111; padding: 4px; text-align: center; font-weight: bold;">${sub.mEx}</td>
-                                    <td contenteditable="true" style="border: 1px solid #111; padding: 4px; text-align: center; font-weight: bold; background: #f8fafc;">${sub.moy}</td>
-                                    <td contenteditable="true" style="border: 1px solid #111; padding: 4px; text-align: center; font-weight: bold;">${sub.coef}</td>
-                                    <td contenteditable="true" style="border: 1px solid #111; padding: 4px; text-align: center; font-weight: bold; background: #f0fdf4;">${sub.tot}</td>
-                                    <td contenteditable="true" style="border: 1px solid #111; padding: 4px; font-size: 10px;"></td>
-                                </tr>
-                            `).join('')}
-                            <tr style="background: #f1f5f9; font-weight: 800; text-align: center;">
-                                <td style="border: 1px solid #111; padding: 6px;">المجموع العام / Total Général</td>
-                                <td colspan="5" style="border: 1px solid #111;"></td>
-                                <td contenteditable="true" style="border: 1px solid #111; padding: 5px; font-size: 13px;">${totalCoeff}</td>
-                                <td contenteditable="true" style="border: 1px solid #111; padding: 5px; font-size: 13px; color: #0b4824;">${defaultTotal}</td>
-                                <td style="border: 1px solid #111;"></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                `;
-
-                customFooterHtml = `
-                    <div style="border: 1.5px solid #111; margin-top: 10px; padding: 10px; font-size: 11.5px; font-weight: bold;">
-                        <div style="display: flex; justify-content: space-between; border-bottom: 1px dashed #999; padding-bottom: 6px; margin-bottom: 6px;">
-                            <div>المعدل السنوي العام / Moyenne Annuelle: <span contenteditable="true" style="border-bottom: 1px dotted #333; min-width: 60px; display: inline-block; color: #0b4824; font-size: 13.5px;">${defaultMoy}</span> / 20</div>
-                            <div>الرتبة / Rang: <span contenteditable="true" style="border-bottom: 1px dotted #333; min-width: 40px; display: inline-block;">1</span></div>
-                            <div>التاريخ / Date: <span contenteditable="true">..... / ..... / 202...</span></div>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-top: 6px;">
-                            <div style="line-height: 1.8;">
-                                القرار / DÉCISION:<br>
-                                <label><input type="checkbox" checked> متجاوز إلى القسم الأعلى / Pass</label><br>
-                                <label><input type="checkbox"> مرخص له في الإعادة / Redouble</label><br>
-                                <label><input type="checkbox"> مطرود نهائياً / Exclu</label>
-                            </div>
-                            <div style="text-align: center; min-width: 220px;">
-                                توقيع وختم مدير المؤسسة<br>
-                                Signature et cachet du Directeur<br><br><br>
-                                (ختم المؤسسة)
-                            </div>
-                            <div style="width: 250px;">
-                                ملاحظات المدير / Observations du Directeur:<br>
-                                <div contenteditable="true" style="border-bottom: 1px dotted #333; height: 22px;">لوحة الشرف مع تهنئة</div>
-                                <div contenteditable="true" style="border-bottom: 1px dotted #333; height: 22px;"></div>
-                            </div>
-                        </div>
-                    </div>
-                    ${NOUR_COPYRIGHT_FOOTER}
-                `;
-
-            } else if (docId === 'p1') {
-                customHeaderHtml = `
-                    <div class="header-wrap">
-                        <div style="font-size: 13px; font-weight: bold; line-height: 1.6;">
-                            الجمهورية الإسلامية الموريتانية<br>
-                            وزارة التربية وإصلاح النظام التعليمي<br>
-                            النقابة الوطنية للمدرسين (نور)
-                        </div>
-                        <div style="text-align: center;">
-                            <h2 contenteditable="true" id="field-title" style="margin: 0; color: #116835; font-size: 18px;">${docTitle}</h2>
-                            <span contenteditable="true" id="field-year" style="font-size: 12px; color: #555;">السنة الدراسية: 2025 - 2026</span>
-                        </div>
-                        <div style="text-align: right; font-size: 12px; line-height: 1.6;">
-                            المؤسسة: <span contenteditable="true" id="field-school" style="border-bottom: 1px dotted #999; display: inline-block; min-width: 120px;">.........................</span><br>
-                            القسم / الشعبة: <span contenteditable="true" id="field-class" style="border-bottom: 1px dotted #999; display: inline-block; min-width: 80px;">.................</span><br>
-                            المدرس: <span contenteditable="true" id="field-teacher" style="border-bottom: 1px dotted #999; display: inline-block; min-width: 120px;">.........................</span>
-                        </div>
-                    </div>
-                    <div class="meta-info">
-                        <div>الولاية: <span contenteditable="true" id="field-wilaya" style="border-bottom: 1px dotted #999; min-width: 100px; display: inline-block;">..............................</span></div>
-                        <div>المقاطعة: <span contenteditable="true" id="field-moughataa" style="border-bottom: 1px dotted #999; min-width: 100px; display: inline-block;">..............................</span></div>
-                        <div>التاريخ: <span contenteditable="true" id="field-date" style="border-bottom: 1px dotted #999; min-width: 90px; display: inline-block;">..... / ..... / 202...</span></div>
-                    </div>
-                `;
-                tableContent = `
-                    <table id="printable-table" style="width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 12px;">
-                        <thead>
-                            <tr style="background: #f1f5f9;">
-                                <th style="border: 1px solid #333; padding: 6px; width: 35px;">الرقم</th>
-                                <th style="border: 1px solid #333; padding: 6px;">الاسم الكامل للتلميذ</th>
-                                <th style="border: 1px solid #333; padding: 6px; width: 95px;">تاريخ الميلاد</th>
-                                <th style="border: 1px solid #333; padding: 6px; width: 100px;">الرقم الوطني</th>
-                                <th style="border: 1px solid #333; padding: 6px; width: 120px;">اسم ولي الأمر</th>
-                                <th style="border: 1px solid #333; padding: 6px; width: 90px;">الهاتف</th>
-                                <th style="border: 1px solid #333; padding: 6px; width: 90px;">ملاحظات</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${Array.from({length: 30}, (_, i) => `
-                                <tr>
-                                    <td style="border: 1px solid #333; padding: 6px; text-align: center; font-weight: bold;">${i + 1}</td>
-                                    <td contenteditable="true" style="border: 1px solid #333; padding: 6px;"></td>
-                                    <td contenteditable="true" style="border: 1px solid #333; padding: 6px; text-align: center;"></td>
-                                    <td contenteditable="true" style="border: 1px solid #333; padding: 6px; text-align: center;"></td>
-                                    <td contenteditable="true" style="border: 1px solid #333; padding: 6px;"></td>
-                                    <td contenteditable="true" style="border: 1px solid #333; padding: 6px; text-align: center;"></td>
-                                    <td contenteditable="true" style="border: 1px solid #333; padding: 6px;"></td>
-                                </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
-                `;
-                customFooterHtml = `
-                    <div style="display: flex; justify-content: space-between; margin-top: 30px; font-size: 13px; font-weight: bold;">
-                        <div>توقيع الأستاذ / المعلم:</div>
-                        <div>ملاحظة وتأشيرة الإدارة:</div>
-                    </div>
-                    ${NOUR_COPYRIGHT_FOOTER}
-                `;
-            } else {
-                customHeaderHtml = `
-                    <div class="header-wrap">
-                        <div style="font-size: 13px; font-weight: bold; line-height: 1.6;">
-                            الجمهورية الإسلامية الموريتانية<br>
-                            وزارة التربية وإصلاح النظام التعليمي<br>
-                            النقابة الوطنية للمدرسين (نور)
-                        </div>
-                        <div style="text-align: center;">
-                            <h2 contenteditable="true" id="field-title" style="margin: 0; color: #116835; font-size: 18px;">${docTitle}</h2>
-                            <span contenteditable="true" id="field-year" style="font-size: 12px; color: #555;">السنة الدراسية: 2025 - 2026</span>
-                        </div>
-                        <div style="text-align: right; font-size: 12px; line-height: 1.6;">
-                            المؤسسة: <span contenteditable="true" id="field-school" style="border-bottom: 1px dotted #999; display: inline-block; min-width: 120px;">.........................</span><br>
-                            القسم: <span contenteditable="true" id="field-class" style="border-bottom: 1px dotted #999; display: inline-block; min-width: 80px;">.................</span>
-                        </div>
-                    </div>
-                `;
-                tableContent = `
-                    <table id="printable-table" style="width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 12px;">
-                        <thead>
-                            <tr style="background: #f1f5f9;">
-                                <th style="border: 1px solid #333; padding: 6px; width: 35px;">م</th>
-                                <th style="border: 1px solid #333; padding: 6px;">الاسم الكامل</th>
-                                <th style="border: 1px solid #333; padding: 6px; width: 140px;">المهمة / المادة</th>
-                                <th style="border: 1px solid #333; padding: 6px;">التقويم والملاحظات التربوية</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${Array.from({length: 25}, (_, i) => `
-                                <tr>
-                                    <td style="border: 1px solid #333; padding: 7px; text-align: center; font-weight: bold;">${i + 1}</td>
-                                    <td contenteditable="true" style="border: 1px solid #333; padding: 7px;"></td>
-                                    <td contenteditable="true" style="border: 1px solid #333; padding: 7px; text-align: center;"></td>
-                                    <td contenteditable="true" style="border: 1px solid #333; padding: 7px;"></td>
-                                </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
-                `;
-                customFooterHtml = `
-                    <div style="display: flex; justify-content: space-between; margin-top: 30px; font-size: 13px; font-weight: bold;">
-                        <div>توقيع الأستاذ / المعلم:</div>
-                        <div>ملاحظة وتأشيرة الإدارة:</div>
-                    </div>
+                    ${buildOfficialPrimarySignatures()}
                     ${NOUR_COPYRIGHT_FOOTER}
                 `;
             }
 
-            editWindow.document.write(`
-                <!DOCTYPE html>
-                <html lang="ar" dir="rtl">
-                <head>
-                    <meta charset="UTF-8">
-                    <title>${docTitle} - تعديل وحفظ</title>
-                    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;600;700;800&display=swap" rel="stylesheet">
-                    <style>
-                        * { box-sizing: border-box; font-family: 'Tajawal', sans-serif; }
-                        body { margin: 15px; color: #111; direction: rtl; background-color: #f8fafc; }
-                        .paper-container { max-width: 950px; margin: 0 auto; background: #fff; padding: 22px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-radius: 8px; }
-                        .no-print-bar {
-                            position: sticky; top: 0; z-index: 100; background: #0b4824; color: white; padding: 12px 18px;
-                            border-radius: 8px; margin-bottom: 20px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-                        }
-                        .action-btn { border: none; padding: 8px 14px; border-radius: 6px; font-weight: bold; font-size: 13px; cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; gap: 5px; }
-                        .btn-save { background: #10b981; color: #fff; }
-                        .btn-save:hover { background: #059669; }
-                        .btn-print { background: #d4af37; color: #111; }
-                        .btn-print:hover { background: #c29d2b; }
-                        .btn-add { background: #ffffff; color: #0b4824; }
-                        .btn-add:hover { background: #e2e8f0; }
-                        .btn-clear { background: #ef4444; color: #fff; }
-                        .btn-clear:hover { background: #dc2626; }
-                        .header-wrap { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #116835; padding-bottom: 10px; margin-bottom: 12px; }
-                        .meta-info { display: flex; justify-content: space-between; font-size: 13px; font-weight: bold; margin-bottom: 10px; }
-                        [contenteditable="true"] { outline: none; }
-                        [contenteditable="true"]:hover { background-color: #f0fdf4; }
-                        [contenteditable="true"]:focus { background-color: #e8f5e9; box-shadow: inset 0 0 0 1px #116835; }
-                        
-                        @media print {
-                            body { background: #fff; margin: 0; padding: 0; }
-                            .paper-container { box-shadow: none; padding: 0; margin: 0; max-width: 100%; border-radius: 0; }
-                            .no-print-bar { display: none !important; }
-                        }
-                    </style>
-                </head>
-                <body>
-                    <div class="no-print-bar">
-                        <div style="font-size: 13px;">
-                            ✍️ <strong>وضع التحرير المباشر:</strong> يمكنك تعديل أي خانة أو كتابة النقاط مباشرة، ثم حفظها في هاتفك أو طباعتها.
-                        </div>
-                        <div style="display: flex; gap: 6px; flex-wrap: wrap;">
-                            <button class="action-btn btn-save" onclick="saveToDevice()">💾 حفظ في الهاتف</button>
-                            ${docId === 'p1' ? '<button class="action-btn btn-add" onclick="addNewRow()">➕ إضافة صف</button>' : ''}
-                            <button class="action-btn btn-print" onclick="window.print()">🖨️ طباعة / حفظ كـ PDF</button>
-                            <button class="action-btn btn-clear" onclick="clearData()">🗑️ تفريغ</button>
-                        </div>
+            // 2. لائحة تلاميذ القسم (اللائحة التفصيلية مع الرقم المدرسي - 124 تلميذ)
+            else if (docId === 'p1') {
+                extraBarButtons = `<button class="action-btn btn-add" onclick="addNewRow()">➕ إضافة صف</button>`;
+                customHeaderHtml = `
+                    ${buildOfficialPrimaryHeader(true)}
+                    <div style="text-align:center;margin:6px 0 10px;">
+                        <h2 contenteditable="true" style="margin:0;font-size:21px;font-weight:900;color:#111;text-shadow:1px 1px 0 #cbd5e1;">لائحة تلاميذ القسم (اللائحة التفصيلية)</h2>
                     </div>
-
-                    <div class="paper-container" id="printable-content">
-                        ${customHeaderHtml}
-                        ${tableContent}
-                        ${customFooterHtml}
-                    </div>
-
-                    <script>
-                        const STORAGE_KEY = 'nour_doc_' + '${docId}';
-
-                        function addNewRow() {
-                            const tbody = document.querySelector('#printable-table tbody');
-                            if (!tbody) return;
-                            const rowCount = tbody.rows.length + 1;
-                            const sampleRow = tbody.rows[0];
-                            const newRow = sampleRow.cloneNode(true);
-                            newRow.cells[0].innerText = rowCount;
-                            for (let i = 1; i < newRow.cells.length; i++) {
-                                newRow.cells[i].innerText = '';
-                            }
-                            tbody.appendChild(newRow);
-                        }
-
-                        function saveToDevice() {
-                            const editables = document.querySelectorAll('[contenteditable="true"]');
-                            const savedVals = [];
-                            editables.forEach(el => savedVals.push(el.innerText));
-                            localStorage.setItem(STORAGE_KEY, JSON.stringify(savedVals));
-                            alert('تم حفظ كشف الدرجات بنجاح في ذاكرة هاتفك!');
-                        }
-
-                        function loadFromDevice() {
-                            const saved = localStorage.getItem(STORAGE_KEY);
-                            if (!saved) return;
-                            try {
-                                const savedVals = JSON.parse(saved);
-                                const editables = document.querySelectorAll('[contenteditable="true"]');
-                                editables.forEach((el, idx) => {
-                                    if (savedVals[idx] !== undefined) el.innerText = savedVals[idx];
-                                });
-                            } catch(e) {
-                                console.error('خطأ في استرجاع كشف الدرجات:', e);
-                            }
-                        }
-
-                        function clearData() {
-                            if (confirm('هل أنت متأكد من رغبتك في تفريغ الكشف ومسح النسخة المحفوظة على هذا الهاتف؟')) {
-                                localStorage.removeItem(STORAGE_KEY);
-                                location.reload();
-                            }
-                        }
-
-                        window.addEventListener('DOMContentLoaded', loadFromDevice);
-                    <\/script>
-                </body>
-                </html>
-            `);
-            editWindow.document.close();
-        }
-
-        // فتح نافذة طلب رمز المرور للمكتب الوطني
-        function openOfficeModal() {
-            pendingWilayaCode = 'BUREAU';
-            document.getElementById('region-pin-title').innerText = 'المكتب الوطني';
-            document.getElementById('input-region-pin').value = '';
-            document.getElementById('region-pin-error').style.display = 'none';
-            document.getElementById('region-pin-modal').style.display = 'block';
-            document.getElementById('input-region-pin').focus();
-        }
-
-        // فتح نافذة طلب رمز المرور للمجلس الوطني
-        function openCouncilModal() {
-            pendingWilayaCode = 'COUNCIL';
-            document.getElementById('region-pin-title').innerText = 'المجلس الوطني';
-            document.getElementById('input-region-pin').value = '';
-            document.getElementById('region-pin-error').style.display = 'none';
-            document.getElementById('region-pin-modal').style.display = 'block';
-            document.getElementById('input-region-pin').focus();
-        }
-
-        // فتح نافذة طلب رمز المرور للمنسقية الجهوية
-        function openRegionModal(code) {
-            pendingWilayaCode = code;
-            const conf = WILAYAS_CONFIG[code] || { name: 'الولاية' };
-            document.getElementById('region-pin-title').innerText = `منسقية ${conf.name}`;
-            document.getElementById('input-region-pin').value = '';
-            document.getElementById('region-pin-error').style.display = 'none';
-            document.getElementById('region-pin-modal').style.display = 'block';
-            document.getElementById('input-region-pin').focus();
-        }
-
-        // التحقق من صحة رمز المرور (للجهة أو الهيئة)
-        async function submitRegionPin() {
-            const pin = document.getElementById('input-region-pin').value.trim();
-            const err = document.getElementById('region-pin-error');
-            const btn = document.getElementById('btn-region-pin-submit');
-            err.style.display = 'none';
-
-            if (!pin) {
-                err.innerText = 'يرجى إدخال رمز الدخول السري.';
-                err.style.display = 'block';
-                return;
+                `;
+                tableContent = `
+                    <table id="printable-table" style="width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 11.5px;">
+                        <thead>
+                            <tr style="background: #d1d5db; color: #111;">
+                                <th style="border: 1.5px solid #111; padding: 6px; width: 36px;">الرقم</th>
+                                <th style="border: 1.5px solid #111; padding: 6px; width: 95px;">الرقم المدرسي</th>
+                                <th style="border: 1.5px solid #111; padding: 6px;">الاسم الكامل للتلميذ</th>
+                                <th style="border: 1.5px solid #111; padding: 6px; width: 90px;">تاريخ الميلاد</th>
+                                <th style="border: 1.5px solid #111; padding: 6px; width: 100px;">الرقم الوطني</th>
+                                <th style="border: 1.5px solid #111; padding: 6px; width: 115px;">اسم ولي الأمر</th>
+                                <th style="border: 1.5px solid #111; padding: 6px; width: 85px;">الهاتف</th>
+                                <th style="border: 1.5px solid #111; padding: 6px; width: 85px;">ملاحظات</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${Array.from({length: 124}, (_, i) => `
+                                <tr>
+                                    <td style="border: 1px solid #111; padding: 5px; text-align: center; font-weight: 800; background:#f8fafc;">${i + 1}</td>
+                                    <td contenteditable="true" style="border: 1px solid #111; padding: 5px; text-align: center; font-weight: bold;"></td>
+                                    <td contenteditable="true" style="border: 1px solid #111; padding: 5px; font-weight: bold;"></td>
+                                    <td contenteditable="true" style="border: 1px solid #111; padding: 5px; text-align: center;"></td>
+                                    <td contenteditable="true" style="border: 1px solid #111; padding: 5px; text-align: center;"></td>
+                                    <td contenteditable="true" style="border: 1px solid #111; padding: 5px;"></td>
+                                    <td contenteditable="true" style="border: 1px solid #111; padding: 5px; text-align: center;"></td>
+                                    <td contenteditable="true" style="border: 1px solid #111; padding: 5px;"></td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+                customFooterHtml = `
+                    ${buildOfficialPrimarySignatures()}
+                    ${NOUR_COPYRIGHT_FOOTER}
+                `;
             }
 
-            btn.disabled = true;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري التحقق...';
-
-            try {
-                const { data: isValid, error } = await client.rpc('verify_wilaya_access', {
-                    target_wilaya: pendingWilayaCode,
-                    input_pin: pin
-                });
-
-                btn.disabled = false;
-                btn.innerHTML = '<i class="fas fa-key"></i> تأكيد ودخول';
-
-                if (error) {
-                    err.innerText = 'خطأ أثناء التحقق، حاول مجدداً.';
-                    err.style.display = 'block';
-                    return;
+            // 3. لائحة بأسماء التلاميذ المزدوجة (Liste Nominative des élèves - 124 تلميذ)
+            else if (docId === 'p_nominative') {
+                let rowsPage1 = '';
+                for (let i = 1; i <= 30; i++) {
+                    const leftNum = i + 30;
+                    rowsPage1 += `
+                        <tr>
+                            <td style="border:1.5px solid #111;padding:5px;text-align:center;font-weight:800;width:42px;background:#f8fafc;">${i}</td>
+                            <td contenteditable="true" style="border:1.5px solid #111;padding:5px 8px;font-weight:bold;"></td>
+                            <td style="border:1.5px solid #111;padding:5px;text-align:center;font-weight:800;width:42px;background:#f8fafc;">${leftNum}</td>
+                            <td contenteditable="true" style="border:1.5px solid #111;padding:5px 8px;font-weight:bold;"></td>
+                        </tr>
+                    `;
                 }
 
-                if (isValid === true) {
-                    closeModal('region-pin-modal');
-                    
-                    if (pendingWilayaCode === 'BUREAU') {
-                        loadAndShowOffice();
-                    } else if (pendingWilayaCode === 'COUNCIL') {
-                        loadAndShowCouncil();
-                    } else {
-                        fetchAndDisplayRegion(pendingWilayaCode);
+                let rowsPage2 = '';
+                for (let i = 61; i <= 93; i++) {
+                    const leftNum = i + 33;
+                    const leftCells = leftNum <= 124
+                        ? `<td style="border:1.5px solid #111;padding:5px;text-align:center;font-weight:800;width:42px;background:#f8fafc;">${leftNum}</td>
+                           <td contenteditable="true" style="border:1.5px solid #111;padding:5px 8px;font-weight:bold;"></td>`
+                        : `<td colspan="2" style="border:1.5px solid #111;padding:5px;text-align:center;font-weight:900;font-size:15px;background:#f8fafc;">التوقيع</td>`;
+                    rowsPage2 += `
+                        <tr>
+                            <td style="border:1.5px solid #111;padding:5px;text-align:center;font-weight:800;width:42px;background:#f8fafc;">${i}</td>
+                            <td contenteditable="true" style="border:1.5px solid #111;padding:5px 8px;font-weight:bold;"></td>
+                            ${leftCells}
+                        </tr>
+                    `;
+                }
+
+                customHeaderHtml = '';
+                tableContent = `
+                    <!-- الصفحة الأولى: 1 إلى 60 -->
+                    <div style="page-break-after: always; padding-bottom: 15px;">
+                        ${buildOfficialPrimaryHeader(true)}
+                        <div style="text-align:center;margin:6px 0 10px;">
+                            <h2 style="margin:0;font-size:21px;font-weight:900;color:#111;">لائحة بأسماء التلاميذ — <span style="font-family:Arial,sans-serif;font-size:17px;">Liste Nominative des élèves</span></h2>
+                        </div>
+                        <table style="width:100%;border-collapse:collapse;font-size:12px;">
+                            <thead>
+                                <tr style="background:#d1d5db;color:#111;">
+                                    <th style="border:1.5px solid #111;padding:6px;width:42px;">الرقم<br>N°</th>
+                                    <th style="border:1.5px solid #111;padding:6px;">الاسم الكامل &nbsp; Nom et Prénom</th>
+                                    <th style="border:1.5px solid #111;padding:6px;width:42px;">الرقم<br>N°</th>
+                                    <th style="border:1.5px solid #111;padding:6px;">الاسم الكامل &nbsp; Nom et Prénom</th>
+                                </tr>
+                            </thead>
+                            <tbody>${rowsPage1}</tbody>
+                        </table>
+                        ${buildOfficialPrimarySignatures()}
+                    </div>
+
+                    <!-- الصفحة الثانية: 61 إلى 124 -->
+                    <div style="padding-top: 10px;">
+                        ${buildOfficialPrimaryHeader(true)}
+                        <div style="text-align:center;margin:6px 0 10px;">
+                            <h2 style="margin:0;font-size:20px;font-weight:900;color:#111;">تابع لائحة بأسماء التلاميذ (61 - 124)</h2>
+                        </div>
+                        <table style="width:100%;border-collapse:collapse;font-size:12px;">
+                            <thead>
+                                <tr style="background:#d1d5db;color:#111;">
+                                    <th style="border:1.5px solid #111;padding:6px;width:42px;">الرقم<br>N°</th>
+                                    <th style="border:1.5px solid #111;padding:6px;">الاسم الكامل &nbsp; Nom et Prénom</th>
+                                    <th style="border:1.5px solid #111;padding:6px;width:42px;">الرقم<br>N°</th>
+                                    <th style="border:1.5px solid #111;padding:6px;">الاسم الكامل &nbsp; Nom et Prénom</th>
+                                </tr>
+                            </thead>
+                            <tbody>${rowsPage2}</tbody>
+                        </table>
+                        ${buildOfficialPrimarySignatures()}
+                    </div>
+                `;
+                customFooterHtml = NOUR_COPYRIGHT_FOOTER;
+            }
+
+            // 4. سجل النداء والغياب الشهري (124 تلميذ)
+            else if (docId === 'p_attendance') {
+                isLandscape = true;
+                let daysTh = '';
+                for (let d = 1; d <= 31; d++) {
+                    const dStr = d < 10 ? '0' + d : d;
+                    daysTh += `<th style="border:1px solid #111;padding:2px;font-size:8.5px;width:18px;">${dStr}</th>`;
+                }
+
+                let attRows = '';
+                for (let i = 1; i <= 124; i++) {
+                    let dayTds = '';
+                    for (let d = 1; d <= 31; d++) {
+                        dayTds += `<td contenteditable="true" onclick="cycleAttMark(this)" style="border:1px solid #111;padding:1px;text-align:center;font-weight:900;font-size:10px;cursor:pointer;user-select:none;"></td>`;
                     }
-                } else {
-                    err.innerText = 'رمز الدخول غير صحيح! ليس لديك صلاحية الاطلاع.';
-                    err.style.display = 'block';
-                }
-            } catch (e) {
-                btn.disabled = false;
-                btn.innerHTML = '<i class="fas fa-key"></i> تأكيد ودخول';
-                err.innerText = 'تعذر الاتصال بالخادم، يرجى المحاولة لاحقاً.';
-                err.style.display = 'block';
-            }
-        }
-
-        async function loadAndShowOffice() {
-            const modal = document.getElementById('office-modal');
-            const list = document.getElementById('office-list');
-            modal.style.display = 'block';
-            list.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: #64748b; padding: 20px;"><i class="fas fa-spinner fa-spin"></i> جاري جلب قائمة الأعضاء...</div>';
-
-            try {
-                const { data, error } = await client
-                    .from('members')
-                    .select('full_name, union_role, photo_url, display_order')
-                    .eq('is_national_office', true)
-                    .order('display_order', { ascending: true });
-
-                if (error || !data || data.length === 0) {
-                    list.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: #64748b; padding: 20px;">لا توجد سجلات متاحة حالياً.</div>';
-                    return;
+                    attRows += `
+                        <tr>
+                            <td style="border:1px solid #111;padding:3px;text-align:center;font-weight:800;background:#f8fafc;">${i}</td>
+                            <td contenteditable="true" style="border:1px solid #111;padding:3px 5px;font-weight:bold;min-width:135px;"></td>
+                            ${dayTds}
+                            <td contenteditable="true" style="border:1px solid #111;padding:3px;text-align:center;width:42px;"></td>
+                            <td contenteditable="true" style="border:1px solid #111;padding:3px;text-align:center;width:42px;"></td>
+                            <td contenteditable="true" style="border:1px solid #111;padding:3px;text-align:center;width:42px;"></td>
+                            <td contenteditable="true" style="border:1px solid #111;padding:3px;text-align:center;width:42px;"></td>
+                        </tr>
+                    `;
                 }
 
-                list.innerHTML = data.map(mem => `
-                    <div class="office-member-card">
-                        <img class="office-avatar" src="${mem.photo_url || 'IM9.jpg'}" onerror="this.src='IM9.jpg'">
-                        <div class="office-name">${mem.full_name}</div>
-                        <div class="office-role">${mem.union_role}</div>
-                    </div>
-                `).join('');
-
-            } catch (e) {
-                list.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: red; padding: 20px;">تعذر تحميل القائمة.</div>';
-            }
-        }
-
-        async function loadAndShowCouncil() {
-            const modal = document.getElementById('council-modal');
-            const list = document.getElementById('council-list');
-            modal.style.display = 'block';
-            list.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: #64748b; padding: 20px;"><i class="fas fa-spinner fa-spin"></i> جاري جلب أعضاء المجلس الوطني...</div>';
-
-            try {
-                const { data, error } = await client
-                    .from('members')
-                    .select('full_name, photo_url, display_order')
-                    .eq('is_national_council', true)
-                    .order('display_order', { ascending: true });
-
-                if (error || !data || data.length === 0) {
-                    list.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: #64748b; padding: 20px;">لا توجد سجلات متاحة حالياً.</div>';
-                    return;
-                }
-
-                list.innerHTML = data.map(mem => `
-                    <div class="office-member-card">
-                        <img class="office-avatar" src="${mem.photo_url || 'IM9.jpg'}" onerror="this.src='IM9.jpg'">
-                        <div class="office-name">${mem.full_name}</div>
-                        <div class="office-role">عضو المجلس الوطني</div>
-                    </div>
-                `).join('');
-
-            } catch (e) {
-                list.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: red; padding: 20px;">تعذر تحميل القائمة.</div>';
-            }
-        }
-
-        async function fetchAndDisplayRegion(code) {
-            const conf = WILAYAS_CONFIG[code] || { name: 'المنسقية الجهوية', filter: `wilaya_code.eq.${code}` };
-            const modal = document.getElementById('region-modal');
-            const list = document.getElementById('region-members-list');
-            const searchInput = document.getElementById('input-region-search');
-            
-            if (searchInput) searchInput.value = '';
-            document.getElementById('region-modal-title').innerText = `منسقية ${conf.name} (${code})`;
-            document.getElementById('region-search-counter').innerText = '';
-            modal.style.display = 'block';
-            list.innerHTML = `<div style="text-align: center; color: #64748b; padding: 25px;"><i class="fas fa-spinner fa-spin"></i> جاري جلب لوائح ${conf.name}...</div>`;
-
-            try {
-                const { data, error } = await client
-                    .from('members')
-                    .select('*')
-                    .or(conf.filter)
-                    .order('national_id_card', { ascending: true });
-
-                if (error || !data || data.length === 0) {
-                    list.innerHTML = `<div style="text-align: center; color: #64748b; padding: 25px;">لا توجد سجلات معتمدة لـ ${conf.name} حالياً.</div>`;
-                    return;
-                }
-
-                regionMembersData = data;
-                renderRegionMembersList(regionMembersData);
-
-            } catch (e) {
-                list.innerHTML = '<div style="text-align: center; color: red; padding: 20px;">تعذر تحميل القائمة، يرجى المحاولة لاحقاً.</div>';
-            }
-        }
-
-        function renderRegionMembersList(listData) {
-            const list = document.getElementById('region-members-list');
-            const counter = document.getElementById('region-search-counter');
-
-            if (counter) {
-                counter.innerText = `عدد النتائج المعروضة: ${listData.length} منتسب`;
-            }
-
-            if (!listData || listData.length === 0) {
-                list.innerHTML = '<div style="text-align: center; color: #64748b; padding: 25px; font-size: 13.5px;"><i class="fas fa-search" style="font-size: 20px; margin-bottom: 6px; display: block; color: #cbd5e1;"></i>لم يتم العثور على أي مدرس مطابق للبحث.</div>';
-                return;
-            }
-
-            list.innerHTML = listData.map((mem) => {
-                const originalIndex = regionMembersData.indexOf(mem);
-                const displayNum = mem.financial_id || mem.national_id_card || mem.membership_number || mem.national_id || '-';
-                return `
-                    <div class="region-member-card" onclick="viewRegionMemberCard(${originalIndex})">
-                        <img class="region-avatar" src="${mem.photo_url || 'IM9.jpg'}" onerror="this.src='IM9.jpg'">
-                        <div class="region-member-info">
-                            <div class="region-member-name">${mem.full_name || '-'}</div>
-                            <div class="region-member-details">${mem.school || 'المؤسسة غير محددة'} • ${mem.moughataa || ''}</div>
-                        </div>
-                        <div class="region-badge-num">${displayNum}</div>
+                customHeaderHtml = `
+                    ${buildOfficialPrimaryHeader(true)}
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                        <h2 style="margin:0;font-size:18px;font-weight:900;color:#006233;">سجل النداء — Registre d'appel</h2>
+                        <div style="font-size:13px;font-weight:800;">الشهر / Mois : <span contenteditable="true" style="border-bottom:1px dotted #111;display:inline-block;min-width:120px;">........................</span></div>
                     </div>
                 `;
-            }).join('');
-        }
-
-        function filterRegionMembers() {
-            const query = (document.getElementById('input-region-search').value || '').trim().toLowerCase();
-            if (!query) {
-                renderRegionMembersList(regionMembersData);
-                return;
+                tableContent = `
+                    <table id="printable-table" style="width:100%;border-collapse:collapse;font-size:10px;">
+                        <thead>
+                            <tr style="background:#d1d5db;color:#111;text-align:center;">
+                                <th rowspan="2" style="border:1px solid #111;padding:4px;width:28px;">الرقم</th>
+                                <th rowspan="2" style="border:1px solid #111;padding:4px;">الاسم الكامل</th>
+                                <th colspan="31" style="border:1px solid #111;padding:3px;font-size:9.5px;">
+                                    لتسجيل الغياب لكل نصف يوم (إشارة | لغياب الفترة الأولى وإشارة / لغياب الفترة الثانية)<br>
+                                    <span style="font-weight:normal;font-size:8.5px;">Indiquer les absences par demi-journée (| pour 1ère demi-journée, / pour 2ème demi-journée)</span>
+                                </th>
+                                <th rowspan="2" style="border:1px solid #111;padding:3px;font-size:8.5px;">الحضور المتوقع خلال الشهر</th>
+                                <th rowspan="2" style="border:1px solid #111;padding:3px;font-size:8.5px;">غياب الشهر</th>
+                                <th rowspan="2" style="border:1px solid #111;padding:3px;font-size:8.5px;">الحضور الفعلي في الشهر</th>
+                                <th rowspan="2" style="border:1px solid #111;padding:3px;font-size:8.5px;">نسبة الحضور %</th>
+                            </tr>
+                            <tr style="background:#f1f5f9;text-align:center;">
+                                ${daysTh}
+                            </tr>
+                        </thead>
+                        <tbody>${attRows}</tbody>
+                    </table>
+                `;
+                customFooterHtml = `
+                    ${buildOfficialPrimarySignatures()}
+                    ${NOUR_COPYRIGHT_FOOTER}
+                `;
             }
 
-            const filtered = regionMembersData.filter(mem => {
-                const name = (mem.full_name || '').toLowerCase();
-                const fid = (mem.financial_id || '').toLowerCase();
-                const nid = (mem.national_id || '').toLowerCase();
-                const cardNum = (mem.national_id_card || '').toLowerCase();
-                const memNum = (mem.membership_number || '').toLowerCase();
-                const school = (mem.school || '').toLowerCase();
-                const moughataa = (mem.moughataa || '').toLowerCase();
+            // 5. غلاف سجل النداء ووثائق القسم الملون
+            else if (docId === 'p_cover') {
+                customHeaderHtml = '';
+                tableContent = `
+                    <div style="border:4px double #006233;border-radius:16px;padding:25px 20px;min-height:255mm;display:flex;flex-direction:column;justify-content:space-between;background:linear-gradient(180deg,#ffffff 0%,#f8fafc 100%);">
+                        ${buildOfficialPrimaryHeader(true)}
 
-                return name.includes(query) || 
-                       fid.includes(query) || 
-                       nid.includes(query) || 
-                       cardNum.includes(query) || 
-                       memNum.includes(query) || 
-                       school.includes(query) || 
-                       moughataa.includes(query);
-            });
+                        <div style="text-align:center;margin:25px 0;">
+                            <div style="font-size:52px;font-weight:900;color:#3b4252;text-shadow:2px 3px 0 #cbd5e1;letter-spacing:1px;">سجل النداء</div>
+                            <div style="font-size:36px;font-weight:900;color:#2e7d32;margin-top:8px;">وثائق القسم</div>
+                        </div>
 
-            renderRegionMembersList(filtered);
-        }
+                        <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;margin:20px 0;">
+                            <div style="font-size:17px;font-weight:800;line-height:2.4;text-align:right;flex:1;min-width:260px;">
+                                <div><span style="color:#475569;">●</span> إسم المعلم : <span contenteditable="true" style="border-bottom:2px dotted #333;display:inline-block;min-width:200px;">....................................</span></div>
+                                <div><span style="color:#2e7d32;">●</span> الدليل المالي : <span contenteditable="true" style="border-bottom:2px dotted #333;display:inline-block;min-width:190px;">....................................</span></div>
+                                <div><span style="color:#d97706;">●</span> الهاتف : <span contenteditable="true" style="border-bottom:2px dotted #333;display:inline-block;min-width:215px;">....................................</span></div>
+                                <div><span style="color:#0284c7;">●</span> القسم : <span contenteditable="true" style="border-bottom:2px dotted #333;display:inline-block;min-width:215px;">....................................</span></div>
+                            </div>
 
-        function viewRegionMemberCard(index) {
-            const member = regionMembersData[index];
-            if (member) {
-                showCard(member);
-            }
-        }
+                            <!-- رسمة الكتب وحامل الأقلام الملونة -->
+                            <div style="width:180px;text-align:center;">
+                                <svg width="170" height="150" viewBox="0 0 200 170" xmlns="http://www.w3.org/2000/svg">
+                                    <!-- الكتب -->
+                                    <rect x="15" y="130" width="95" height="20" rx="4" fill="#0284c7" stroke="#1e293b" stroke-width="2"/>
+                                    <rect x="20" y="134" width="82" height="12" fill="#fff"/>
+                                    <rect x="22" y="110" width="88" height="20" rx="4" fill="#f59e0b" stroke="#1e293b" stroke-width="2"/>
+                                    <rect x="27" y="114" width="76" height="12" fill="#fff"/>
+                                    <rect x="18" y="90" width="85" height="20" rx="4" fill="#10b981" stroke="#1e293b" stroke-width="2"/>
+                                    <rect x="23" y="94" width="74" height="12" fill="#fff"/>
+                                    <!-- حامل الأقلام -->
+                                    <rect x="115" y="65" width="40" height="20" transform="rotate(-15 115 65)" fill="#fde047" stroke="#1e293b" stroke-width="2"/>
+                                    <rect x="130" y="55" width="10" height="45" fill="#ef4444" stroke="#1e293b" stroke-width="2"/>
+                                    <rect x="145" y="50" width="10" height="50" fill="#3b82f6" stroke="#1e293b" stroke-width="2"/>
+                                    <polygon points="115,90 165,90 158,150 122,150" fill="#38bdf8" stroke="#1e293b" stroke-width="2"/>
+                                </svg>
+                            </div>
+                        </div>
 
-        function showCard(m) {
-            activeMember = m;
-            isCardFrench = false;
-            renderCardData();
-            document.getElementById('card-modal').style.display = 'block';
-        }
-
-        function renderCardData() {
-            if (!activeMember) return;
-            const m = activeMember;
-
-            const isPaid = (m.fees_paid === true);
-            const badge = document.getElementById('m-status-badge');
-            const icon = document.getElementById('m-status-icon');
-            const txt = document.getElementById('m-status-txt');
-
-            if (isPaid) {
-                badge.className = 'status-badge status-paid';
-                icon.className = 'fas fa-check-circle';
-                txt.innerText = isCardFrench ? 'Cotisation Réglée' : 'الاشتراك مسدد';
-            } else {
-                badge.className = 'status-badge status-unpaid';
-                icon.className = 'fas fa-times-circle';
-                txt.innerText = isCardFrench ? 'Non Réglée' : 'غير مسدد';
+                        ${buildOfficialPrimarySignatures()}
+                    </div>
+                `;
+                customFooterHtml = NOUR_COPYRIGHT_FOOTER;
             }
 
-            document.getElementById('btn-lang-txt').innerText = isCardFrench ? 'العربية' : 'Français';
-            document.getElementById('lbl-num').innerText = isCardFrench ? 'N° Adhérent :' : 'رقم العضوية:';
-            document.getElementById('lbl-spec').innerText = isCardFrench ? 'Corps & Spécialité :' : 'السلك والتخصص:';
-            document.getElementById('lbl-school').innerText = isCardFrench ? 'Établissement :' : 'مكان العمل:';
-            document.getElementById('lbl-loc').innerText = isCardFrench ? 'Wilaya & Moughataa :' : 'الولاية والمقاطعة:';
-            document.getElementById('lbl-wa-btn').innerText = isCardFrench ? 'Contacter la Direction (WhatsApp)' : 'تواصل مع القيادة / تقديم طلب أو تظلم';
-            document.getElementById('lbl-footer-card').innerHTML = `<i class="fas fa-shield-alt"></i> ${isCardFrench ? 'Cette carte est un document numérique officiel délivré par le syndicat (Consultation uniquement).' : 'هذه البطاقة وثيقة رقمية معتمدة صادرة عن أمانة النقابة (للعرض فقط).'}`;
+            // 6. فرق الكناسة الملونة طبق الأصل (Groupe de Balayage)
+            else if (docId === 'p_balayage') {
+                const makeDayCard = (dayName) => `
+                    <div style="border:2px solid #111;border-radius:6px;padding:24px 10px 10px;position:relative;background:#fff;min-height:195px;display:flex;flex-direction:column;">
+                        <div style="position:absolute;top:-14px;left:50%;transform:translateX(-50%);background:#fff;border:2px solid #111;border-radius:8px;padding:2px 22px;font-weight:900;font-size:16px;box-shadow:2px 2px 0 #111;white-space:nowrap;">
+                            ${dayName}
+                        </div>
+                        <div contenteditable="true" style="flex:1;font-size:13px;font-weight:bold;line-height:1.9;text-align:right;padding:4px;"></div>
+                    </div>
+                `;
 
-            if (m.financial_id) {
-                document.getElementById('m-id-label').innerText = isCardFrench ? 'Matricule :' : 'الدليل المالي:';
-                document.getElementById('m-nid').innerText = m.financial_id;
-            } else {
-                document.getElementById('m-id-label').innerText = isCardFrench ? 'NNI :' : 'الرقم الوطني:';
-                document.getElementById('m-nid').innerText = m.national_id || '-';
+                customHeaderHtml = `
+                    ${buildOfficialPrimaryHeader(true)}
+                    <div style="text-align:center;margin:8px 0 22px;">
+                        <h2 style="margin:0;font-size:28px;font-weight:900;color:#111;text-shadow:2px 2px 0 #cbd5e1;">فرق الكناســــة</h2>
+                    </div>
+                `;
+                tableContent = `
+                    <!-- الصف العلوي: الاثنين - الثلاثاء - الأربعاء -->
+                    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:26px;">
+                        ${makeDayCard('الاثنين')}
+                        ${makeDayCard('الثلاثاء')}
+                        ${makeDayCard('الأربعاء')}
+                    </div>
+
+                    <!-- الصف السفلي: الخميس - النظافة من الإيمان والرسمة الملونة - الجمعة -->
+                    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;align-items:center;">
+                        ${makeDayCard('الخميس')}
+
+                        <div style="text-align:center;padding:6px;">
+                            <div style="font-size:19px;font-weight:900;color:#111;margin-bottom:8px;text-shadow:1px 1px 0 #cbd5e1;">النظافة من الإيمان</div>
+                            <svg width="155" height="165" viewBox="0 0 180 190" xmlns="http://www.w3.org/2000/svg">
+                                <!-- عشب أخضر أسفل السلة والتلميذ -->
+                                <ellipse cx="90" cy="175" rx="75" ry="10" fill="#84cc16"/>
+                                <!-- سلة المهملات الصفراء والبرتقالية -->
+                                <rect x="22" y="96" width="52" height="68" rx="4" fill="#f59e0b" stroke="#78350f" stroke-width="2"/>
+                                <rect x="18" y="88" width="60" height="10" rx="3" fill="#ea580c" stroke="#78350f" stroke-width="2"/>
+                                <circle cx="48" cy="130" r="13" fill="#fff" opacity="0.9"/>
+                                <text x="48" y="135" text-anchor="middle" fill="#15803d" font-size="16" font-weight="bold">♻</text>
+                                <circle cx="30" cy="166" r="6" fill="#1e293b"/>
+                                <!-- التلميذ المبتسم -->
+                                <circle cx="122" cy="56" r="22" fill="#fed7aa" stroke="#431407" stroke-width="2"/>
+                                <path d="M100 50 Q122 25 144 50 Q135 36 105 46 Z" fill="#431407"/>
+                                <circle cx="115" cy="54" r="2.5" fill="#111"/>
+                                <circle cx="129" cy="54" r="2.5" fill="#111"/>
+                                <path d="M116 64 Q122 70 128 64" stroke="#9a3412" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+                                <!-- قميص وحقيبة -->
+                                <rect x="104" y="78" width="36" height="44" rx="8" fill="#eab308" stroke="#431407" stroke-width="2"/>
+                                <path d="M108 78 L122 96 L136 78" fill="#16a34a" stroke="#431407" stroke-width="1.5"/>
+                                <!-- الذراع تلقي المهملات -->
+                                <path d="M104 86 Q82 82 68 78" stroke="#fed7aa" stroke-width="8" fill="none" stroke-linecap="round"/>
+                                <circle cx="62" cy="76" r="5" fill="#cbd5e1" stroke="#475569" stroke-width="1.5"/>
+                                <!-- البنطال والحذاء -->
+                                <rect x="107" y="122" width="13" height="38" fill="#0284c7" stroke="#1e293b" stroke-width="2"/>
+                                <rect x="124" y="122" width="13" height="38" fill="#0284c7" stroke="#1e293b" stroke-width="2"/>
+                                <ellipse cx="112" cy="164" rx="9" ry="5" fill="#78350f"/>
+                                <ellipse cx="131" cy="164" rx="9" ry="5" fill="#78350f"/>
+                            </svg>
+                        </div>
+
+                        ${makeDayCard('الجمعة')}
+                    </div>
+                `;
+                customFooterHtml = `
+                    ${buildOfficialPrimarySignatures()}
+                    ${NOUR_COPYRIGHT_FOOTER}
+                `;
             }
 
-            document.getElementById('m-name').innerText = m.full_name || '-';
-            document.getElementById('m-role').innerText = m.union_role || (isCardFrench ? 'Membre' : 'عضو');
-            document.getElementById('m-num').innerText = m.national_id_card || m.membership_number || '-';
-            document.getElementById('m-spec').innerText = m.specialty || '-';
-            document.getElementById('m-school').innerText = m.school || '-';
-            document.getElementById('m-loc').innerText = (m.wilaya || '') + ' - ' + (m.moughataa || '');
-            document.getElementById('m-photo').src = m.photo_url || 'IM9.jpg';
+            // 7. فرقة الأناشيد طبق الأصل (مع المستطيلات الستة والمفتاح الموسيقي)
+            else if (docId === 'p_anthem_team') {
+                const boxesHtml = Array.from({length: 6}, (_, idx) => `
+                    <div contenteditable="true" style="border:2px solid #111;border-radius:16px;min-height:56px;padding:12px 16px;background:#fff;box-shadow:7px 6px 0 #111;font-size:15px;font-weight:800;display:flex;align-items:center;justify-content:center;text-align:center;"></div>
+                `).join('');
 
-            const coordinatorPhone = '22249496272';
-            const memberId = m.financial_id || m.national_id || m.membership_number || '-';
-            const defaultMsg = encodeURIComponent(`السلام عليكم ورحمة الله وبركاته،\nأنا المنتسب: ${m.full_name || ''}\nالمعرّف/الدليل المالي: ${memberId}\nأود الاستفسار بخصوص: `);
-            document.getElementById('btn-whatsapp-coordinator').href = `https://wa.me/${coordinatorPhone}?text=${defaultMsg}`;
-        }
+                customHeaderHtml = `
+                    ${buildOfficialPrimaryHeader(true)}
+                    <div style="text-align:center;margin:10px 0 18px;">
+                        <h2 style="margin:0;font-size:28px;font-weight:900;color:#111;text-shadow:2px 2px 0 #cbd5e1;">فرقــــة الأناشيــــد</h2>
+                    </div>
+                `;
+                tableContent = `
+                    <div style="display:flex;align-items:center;justify-content:space-between;gap:20px;margin:10px 0 20px;">
+                        <!-- المستطيلات الستة لأسماء الفرقة -->
+                        <div style="flex:1;display:flex;flex-direction:column;gap:16px;">
+                            ${boxesHtml}
+                        </div>
 
-        function toggleCardLang() {
-            isCardFrench = !isCardFrench;
-            renderCardData();
-        }
-        
-        function openAboutModal() {
-            document.getElementById('about-modal').style.display = 'block';
-        }
-
-        function closeModal(id) {
-            document.getElementById(id).style.display = 'none';
-        }
-
-        window.onclick = function(e) {
-            if (e.target.classList.contains('modal')) {
-                e.target.style.display = 'none';
+                        <!-- الزخرفة الموسيقية الجانبية -->
+                        <div style="width:155px;text-align:center;flex-shrink:0;">
+                            <svg width="145" height="420" viewBox="0 0 150 420" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M90 15 C40 70, 125 140, 65 210 C15 270, 120 340, 55 405" stroke="#111" stroke-width="2.5" fill="none"/>
+                                <path d="M100 15 C50 70, 135 140, 75 210 C25 270, 130 340, 65 405" stroke="#111" stroke-width="1.5" fill="none"/>
+                                <path d="M110 15 C60 70, 145 140, 85 210 C35 270, 140 340, 75 405" stroke="#111" stroke-width="1.5" fill="none"/>
+                                <text x="65" y="95" font-size="64" fill="#111">𝄞</text>
+                                <text x="25" y="165" font-size="38" fill="#111">♪</text>
+                                <text x="90" y="220" font-size="42" fill="#111">♫</text>
+                                <text x="35" y="295" font-size="68" fill="#111">𝄞</text>
+                                <text x="85" y="365" font-size="40" fill="#111">♬</text>
+                                <text x="30" y="395" font-size="36" fill="#111">♪</text>
+                            </svg>
+                        </div>
+                    </div>
+                `;
+                customFooterHtml = `
+                    ${buildOfficialPrimarySignatures()}
+                    ${NOUR_COPYRIGHT_FOOTER}
+                `;
             }
-        };
 
-        document.getElementById('input-region-pin').addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') {
-                submitRegionPin();
-            }
-        });
+            // 8. بطاقة جرد أثاث القسم (المعبأة بالعناصر الـ 10 الرسمية + صفوف إضافية)
+            else if (docId === 'p_inventory') {
+                const defaultFurniture = [
+                    'الطاولات',
+                    'المقاعد',
+                    'السبورة',
+                    'الخزانة',
+                    'النوافذ',
+                    'الباب',
+                    'سلة المهملات',
+                    'مكتب المعلم',
+                    'المدفأة',
+                    'المصابيح',
+                    '', '', '', ''
+                ];
 
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js')
-                    .then((reg) => console.log('PWA Service Worker Registered Successfully:', reg))
-                    .catch((err) => console.error('PWA Service Worker Registration Failed:', err));
-            });
-        }
-    </script>
-</body>
-</html>
+                customHeaderHtml = `
+                    ${buildOfficialPrimaryHeader(true)}
+                    <div style="text-align:center;margin:8px 0 14px;">
+                        <h2 style="margin:0;font-size:26px;font-weight:900;color:#111;text-shadow:2px 2px 0 #cbd5e1;">بطاقة جرد أثاث القسم</h2>
+                    </div>
+                `;
+                tableContent = `
+                    <table id="printable-table" style="width:100%;border-collapse:collapse;font-size:13.5px;">
+                        <thead>
+                            <tr style="background:#d1d5db;color:#111;text-align:center;">
+                                <th style="border:1.5px solid #111;padding:8px;width:36%;font-size:15px;">نوع الأثاث</th>
+                                <th style="border:1.5px solid #111;padding:8px;width:14%;font-size:
