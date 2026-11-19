@@ -1593,20 +1593,6 @@
             </div>
         </div>
 
-        <!-- قسم الأخبار الرسمية -->
-        <div class="card">
-            <div class="card-title">
-                <i class="fas fa-bullhorn" style="color: #e11d48;"></i> الأخبار الرسمية
-            </div>
-            <div id="news-container">
-                <div class="news-item">
-                    <span class="news-tag">بيان رسمي</span>
-                    <div class="news-title">إطلاق المنصة الرقمية للنقابة</div>
-                    <div class="news-desc">تم بحمد الله إطلاق البوابة الرقمية المحدثة للنقابة الوطنية للمدرسين (نور) لخدمة المعلمين والأساتذة.</div>
-                </div>
-            </div>
-        </div>
-
     </div>
 
     <!-- تذييل المنصة الرسمي -->
@@ -1830,7 +1816,7 @@
             <div id="coord-panel-news" class="coord-panel">
                 <div style="text-align: center; margin-bottom: 12px;">
                     <h4 style="color: var(--primary-dark); font-size: 15px;"><i class="fas fa-bullhorn"></i> إدارة شريط الأخبار والبيانات الرسمية</h4>
-                    <p style="font-size: 11.5px; color: #64748b;">نشر خبر فوري في الشريط الإخباري الأبيض وقسم الأخبار أو حذف خبر قديم</p>
+                    <p style="font-size: 11.5px; color: #64748b;">نشر خبر فوري في الشريط الإخباري المتحرك أعلى الصفحة أو حذف خبر قديم</p>
                 </div>
                 <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px;">
                     <input type="password" id="news-admin-pin" placeholder="أدخل رمز إدارة الأخبار السري" style="width: 100%;">
@@ -4375,11 +4361,10 @@
         }
         
 
-        // جلب وعرض شريط الأخبار النقابي الحي والأخبار الرسمية من جدول news_ticker
+        // جلب وعرض شريط الأخبار النقابي الحي المتحرك أعلى الصفحة من جدول news_ticker
         async function loadLiveNewsTicker() {
             const tickerBar = document.getElementById('top-news-ticker');
             const tickerText = document.getElementById('top-news-ticker-text');
-            const newsContainer = document.getElementById('news-container');
             
             const newsSeparatorHTML = '<span class="ticker-sep-word"><span class="ticker-sep-diamond">◆</span><span class="ticker-sep-pill">الأخبار</span><span class="ticker-sep-diamond">◆</span></span>';
             const defaultNewsItems = [
@@ -4402,16 +4387,6 @@
                             const txt = item.content || item.title || item.news_text || '';
                             return `<span class="news-ticker-item-text">${txt}</span>`;
                         }).join(newsSeparatorHTML);
-
-                        if (newsContainer) {
-                            newsContainer.innerHTML = activeNews.map(item => `
-                                <div class="news-item">
-                                    <span class="news-tag">${item.category || item.tag || 'الأخبار'}</span>
-                                    <div class="news-title">${item.title || item.content || ''}</div>
-                                    <div class="news-desc">${item.description || item.details || item.content || ''}</div>
-                                </div>
-                            `).join('');
-                        }
                         return;
                     }
                 }
@@ -4471,7 +4446,7 @@
                 }
 
                 msg.style.color = '#15803d';
-                msg.innerText = 'تم نشر الخبر بنجاح في الشريط المتحرك وقسم الأخبار!';
+                msg.innerText = 'تم نشر الخبر بنجاح في شريط الأخبار المتحرك أعلى الصفحة!';
                 document.getElementById('news-title-input').value = '';
                 document.getElementById('news-desc-input').value = '';
                 loadLiveNewsTicker();
