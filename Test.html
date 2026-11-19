@@ -1819,21 +1819,21 @@
                     <p style="font-size: 11.5px; color: #64748b;">نشر خبر فوري في الشريط الإخباري المتحرك أعلى الصفحة أو حذف خبر قديم</p>
                 </div>
                 <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px;">
-                    <input type="password" id="news-admin-pin" placeholder="أدخل رمز إدارة الأخبار السري" style="width: 100%;">
+                    <input type="password" id="news-admin-pin" placeholder="أدخل رمز إدارة الأخبار السري" style="width: 100%;" onkeydown="if(event.key==='Enter') loadCoordinatorNewsList()">
                     <input type="text" id="news-tag-input" placeholder="تصنيف الخبر (مثلاً: بيان رسمي / الأخبار / نشاط نقابي)" style="width: 100%;">
                     <input type="text" id="news-title-input" placeholder="عنوان الخبر أو نص الشريط المتحرك..." style="width: 100%;">
-                    <textarea id="news-desc-input" rows="3" placeholder="تفاصيل الخبر الكاملة..." style="width: 100%; padding: 10px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 13.5px; font-weight: bold; outline: none;"></textarea>
+                    <textarea id="news-desc-input" rows="3" placeholder="تفاصيل الخبر الكاملة (اختياري)..." style="width: 100%; padding: 10px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 13.5px; font-weight: bold; outline: none;"></textarea>
                 </div>
                 <div style="display: flex; gap: 8px;">
-                    <button class="btn" style="flex: 1; background: #0284c7;" onclick="publishCoordinatorNews()">
+                    <button type="button" id="btn-publish-news" class="btn" style="flex: 1; background: #0284c7;" onclick="publishCoordinatorNews()">
                         <i class="fas fa-paper-plane"></i> نشر الخبر فوراً
                     </button>
-                    <button class="btn" style="background: #475569;" onclick="loadCoordinatorNewsList()">
+                    <button type="button" id="btn-list-news" class="btn" style="background: #475569;" onclick="loadCoordinatorNewsList()">
                         <i class="fas fa-list"></i> استعراض وحذف
                     </button>
                 </div>
-                <p id="news-admin-msg" style="font-size: 12.5px; text-align: center; margin-top: 8px; display: none; font-weight: bold;"></p>
-                <div id="coord-news-manage-list" style="margin-top: 10px; max-height: 220px; overflow-y: auto;"></div>
+                <div id="news-admin-msg" role="alert" style="font-size: 12.5px; text-align: center; margin-top: 8px; display: none; font-weight: bold; padding: 9px 12px; border-radius: 8px; line-height: 1.55;"></div>
+                <div id="coord-news-manage-list" style="margin-top: 10px; max-height: 240px; overflow-y: auto;"></div>
             </div>
 
             <!-- 3. قسم إدارة المكتبة الرقمية والكتب المدرسية -->
@@ -2314,6 +2314,11 @@
             });
             if (tabName === 'grievances') {
                 refreshGrievancesViews(true);
+            } else if (tabName === 'news') {
+                const existingPin = typeof getNewsAdminPinValue === 'function' ? getNewsAdminPinValue() : '';
+                if (existingPin) {
+                    loadCoordinatorNewsList(true);
+                }
             }
         }
 
@@ -4361,43 +4366,138 @@
         }
         
 
+        // دوال مساعدة آمنة لإدارة الأخبار والشريط الإخباري المتحرك
+        function escapeNewsHtml(str) {
+            return String(str == null ? '' : str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        function getNewsAdminPinValue() {
+            const ids = ['news-admin-pin', 'coord-secret-input', 'books-admin-pin', 'grievances-admin-pin'];
+            for (const id of ids) {
+                const el = document.getElementById(id);
+                if (el && el.value && el.value.trim()) {
+                    return el.value.trim();
+                }
+            }
+            return '';
+        }
+
+        function setNewsAdminFeedback(type, message) {
+            const msg = document.getElementById('news-admin-msg');
+            if (!msg) return;
+            if (!message) {
+                msg.style.display = 'none';
+                msg.innerHTML = '';
+                return;
+            }
+            const styles = {
+                error: { bg: '#fef2f2', border: '#fecaca', color: '#b91c1c', icon: 'fa-exclamation-circle' },
+                info: { bg: '#eff6ff', border: '#bfdbfe', color: '#0369a1', icon: 'fa-spinner fa-spin' },
+                success: { bg: '#f0fdf4', border: '#bbf7d0', color: '#15803d', icon: 'fa-check-circle' }
+            };
+            const st = styles[type] || styles.info;
+            msg.style.background = st.bg;
+            msg.style.border = `1px solid ${st.border}`;
+            msg.style.color = st.color;
+            msg.innerHTML = `<i class="fas ${st.icon}" style="margin-left: 6px;"></i>${escapeNewsHtml(message)}`;
+            msg.style.display = 'block';
+        }
+
+        function isNewsAuthError(errObj) {
+            if (!errObj) return false;
+            const code = String(errObj.code || '');
+            const text = `${errObj.message || ''} ${errObj.details || ''} ${errObj.hint || ''}`;
+            return code === 'P0001' || /unauthorized|forbidden|invalid.*secret|wrong.*pin|رمز.*غير صحيح/i.test(text);
+        }
+
+        function formatNewsErrorReason(errObj, fallbackText) {
+            if (!errObj) return fallbackText;
+            const raw = String(errObj.message || errObj.details || errObj || '').trim();
+            if (!raw) return fallbackText;
+            if (isNewsAuthError(errObj)) {
+                return 'الرمز السري لإدارة الأخبار غير صحيح أو غير معتمد لدى الخادم (Unauthorized).';
+            }
+            if (/failed to fetch|networkerror|load failed|network request failed|err_internet_disconnected/i.test(raw)) {
+                return 'تعذر الاتصال بخادم قاعدة البيانات؛ يرجى التحقق من اتصال الإنترنت أو إعدادات المتصفح.';
+            }
+            if (/row-level security|permission denied|42501/i.test(raw)) {
+                return 'رفضت قاعدة البيانات العملية بسبب صلاحيات الأمان (RLS)؛ يرجى التحقق من الرمز السري أو صلاحيات النشر.';
+            }
+            return `${fallbackText} (${raw})`;
+        }
+
+        function formatNewsTimestamp(isoStr) {
+            if (!isoStr) return '';
+            try {
+                const d = new Date(isoStr);
+                if (isNaN(d.getTime())) return '';
+                return d.toLocaleString('ar-MA', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            } catch (e) {
+                return '';
+            }
+        }
+
         // جلب وعرض شريط الأخبار النقابي الحي المتحرك أعلى الصفحة من جدول news_ticker
         async function loadLiveNewsTicker() {
             const tickerBar = document.getElementById('top-news-ticker');
             const tickerText = document.getElementById('top-news-ticker-text');
-            
+            if (!tickerBar || !tickerText) return;
+
             const newsSeparatorHTML = '<span class="ticker-sep-word"><span class="ticker-sep-diamond">◆</span><span class="ticker-sep-pill">الأخبار</span><span class="ticker-sep-diamond">◆</span></span>';
             const defaultNewsItems = [
                 'إطلاق المنصة الرقمية المحدثة للنقابة الوطنية للمدرسين (نور)',
                 'إتاحة الولوج المباشر لمنصة «موظف» لكشوف الرواتب والمكتبة الرقمية وحقيبة المدرس'
             ];
-            const defaultNewsHTML = defaultNewsItems.map(txt => `<span class="news-ticker-item-text">${txt}</span>`).join(newsSeparatorHTML);
+            const defaultNewsHTML = defaultNewsItems
+                .map(txt => `<span class="news-ticker-item-text">${escapeNewsHtml(txt)}</span>`)
+                .join(newsSeparatorHTML);
+
+            const applyTickerHtml = (htmlContent) => {
+                tickerBar.style.display = 'flex';
+                tickerText.innerHTML = htmlContent;
+                // إعادة تشغيل حركة الشريط بسلاسة ليظهر الخبر المضاف فوراً
+                tickerText.style.animation = 'none';
+                void tickerText.offsetWidth;
+                tickerText.style.animation = '';
+            };
 
             try {
+                if (typeof client === 'undefined' || !client) {
+                    applyTickerHtml(defaultNewsHTML);
+                    return;
+                }
+
                 const { data, error } = await client
                     .from('news_ticker')
-                    .select('*')
+                    .select('id, content, is_active, created_at')
                     .order('created_at', { ascending: false });
 
-                if (!error && data && data.length > 0) {
-                    const activeNews = data.filter(n => n.is_active !== false);
+                if (!error && Array.isArray(data) && data.length > 0) {
+                    const activeNews = data
+                        .filter(n => n && n.is_active !== false && String(n.content || '').trim())
+                        .map(item => `<span class="news-ticker-item-text">${escapeNewsHtml(String(item.content).trim())}</span>`);
+
                     if (activeNews.length > 0) {
-                        tickerBar.style.display = 'flex';
-                        tickerText.innerHTML = activeNews.map(item => {
-                            const txt = item.content || item.title || item.news_text || '';
-                            return `<span class="news-ticker-item-text">${txt}</span>`;
-                        }).join(newsSeparatorHTML);
+                        applyTickerHtml(activeNews.join(newsSeparatorHTML));
                         return;
                     }
                 }
-                
-                tickerBar.style.display = 'flex';
-                tickerText.innerHTML = defaultNewsHTML;
-                
+
+                applyTickerHtml(defaultNewsHTML);
             } catch (e) {
                 console.warn('شريط الأخبار:', e);
-                tickerBar.style.display = 'flex';
-                tickerText.innerHTML = defaultNewsHTML;
+                applyTickerHtml(defaultNewsHTML);
             }
         }
 
@@ -4408,111 +4508,278 @@
 
         // نشر خبر جديد بواسطة المنسق
         async function publishCoordinatorNews() {
-            const pin = (document.getElementById('news-admin-pin').value || document.getElementById('coord-secret-input').value || '').trim();
-            const tag = (document.getElementById('news-tag-input').value.trim()) || 'بيان رسمي';
-            const title = document.getElementById('news-title-input').value.trim();
-            const desc = document.getElementById('news-desc-input').value.trim();
-            const msg = document.getElementById('news-admin-msg');
-
-            msg.style.display = 'none';
-            if (pin !== ADMIN_GATE_HASH) {
-                msg.style.color = '#dc2626';
-                msg.innerText = 'رمز إدارة الأخبار غير صحيح! يرجى إدخال الرمز السري المعتمد للمنسق.';
-                msg.style.display = 'block';
-                return;
-            }
-            if (!title) {
-                msg.style.color = '#dc2626';
-                msg.innerText = 'يرجى كتابة عنوان أو نص الخبر أولاً.';
-                msg.style.display = 'block';
-                return;
-            }
-
-            msg.style.color = '#0284c7';
-            msg.innerText = 'جاري نشر الخبر...';
-            msg.style.display = 'block';
+            const publishBtn = document.getElementById('btn-publish-news');
+            const defaultBtnHtml = '<i class="fas fa-paper-plane"></i> نشر الخبر فوراً';
 
             try {
-                const fullContent = desc ? `${title} — ${desc}` : title;
+                const pin = getNewsAdminPinValue();
+                const tagInput = document.getElementById('news-tag-input');
+                const titleInput = document.getElementById('news-title-input');
+                const descInput = document.getElementById('news-desc-input');
+
+                const rawTag = tagInput ? tagInput.value.trim() : '';
+                const title = titleInput ? titleInput.value.trim() : '';
+                const desc = descInput ? descInput.value.trim() : '';
+
+                setNewsAdminFeedback('info', '');
+
+                if (!pin) {
+                    setNewsAdminFeedback('error', 'يرجى إدخال رمز إدارة الأخبار السري أولاً قبل النشر.');
+                    return;
+                }
+                if (!title) {
+                    setNewsAdminFeedback('error', 'يرجى كتابة عنوان أو نص الخبر أولاً.');
+                    if (titleInput) titleInput.focus();
+                    return;
+                }
+                if (typeof navigator !== 'undefined' && navigator.onLine === false) {
+                    setNewsAdminFeedback('error', 'لا يوجد اتصال بالإنترنت حالياً. يرجى التحقق من الشبكة ثم إعادة المحاولة.');
+                    return;
+                }
+                if (typeof client === 'undefined' || !client) {
+                    setNewsAdminFeedback('error', 'تعذر تهيئة الاتصال بقاعدة البيانات داخل المتصفح. يرجى تحديث الصفحة والمحاولة مجدداً.');
+                    return;
+                }
+
+                if (publishBtn) {
+                    publishBtn.disabled = true;
+                    publishBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري النشر...';
+                }
+                setNewsAdminFeedback('info', 'جاري حفظ الخبر في قاعدة البيانات وتحديث الشريط الإخباري...');
+
+                const baseContent = desc ? `${title} — ${desc}` : title;
+                const fullContent = rawTag ? `[${rawTag}] ${baseContent}` : baseContent;
+
+                // 1. المحاولة الأساسية عبر دالة Supabase المعتمدة admin_manage_news(action_type, admin_secret, news_content, target_id)
+                let saved = false;
+                let lastError = null;
+
                 const { data: rpcData, error: rpcErr } = await client.rpc('admin_manage_news', {
                     admin_secret: pin,
                     action_type: 'add',
                     news_content: fullContent,
-                    news_id: null
+                    target_id: null
                 });
 
-                if (rpcErr) {
-                    await client.from('news_ticker').insert([{ content: fullContent, title: title, description: desc, category: tag, is_active: true }]);
+                if (!rpcErr && (!rpcData || rpcData.success !== false)) {
+                    saved = true;
+                } else {
+                    lastError = rpcErr || { message: (rpcData && rpcData.message) || 'رفض الخادم حفظ الخبر.' };
+
+                    // إذا رفض الخادم الرمز السري صراحةً ولم يكن مطابقاً للرمز المحلي، نُظهر الخطأ مباشرة
+                    if (isNewsAuthError(lastError) && pin !== ADMIN_GATE_HASH) {
+                        setNewsAdminFeedback('error', 'فشل حفظ الخبر: الرمز السري لإدارة الأخبار غير صحيح! يرجى إدخال الرمز السري المعتمد للمنسق.');
+                        return;
+                    }
+
+                    // 2. محاولة احتياطية بالإدراج المباشر بالأعمدة الفعلية لجدول news_ticker فقط (content, is_active)
+                    const { data: insertedRows, error: insertErr } = await client
+                        .from('news_ticker')
+                        .insert([{ content: fullContent, is_active: true }])
+                        .select('id');
+
+                    if (!insertErr && Array.isArray(insertedRows) && insertedRows.length > 0) {
+                        saved = true;
+                    } else if (!insertErr) {
+                        saved = true;
+                    } else {
+                        // في حال فشل المسارين، نعرض السبب الأدق (خطأ الرمز السري من RPC أو خطأ قاعدة البيانات)
+                        lastError = isNewsAuthError(lastError) ? lastError : insertErr;
+                    }
                 }
 
-                msg.style.color = '#15803d';
-                msg.innerText = 'تم نشر الخبر بنجاح في شريط الأخبار المتحرك أعلى الصفحة!';
-                document.getElementById('news-title-input').value = '';
-                document.getElementById('news-desc-input').value = '';
-                loadLiveNewsTicker();
-                loadCoordinatorNewsList();
+                if (!saved) {
+                    console.error('publishCoordinatorNews failed:', lastError);
+                    setNewsAdminFeedback('error', formatNewsErrorReason(lastError, 'تعذر حفظ الخبر في قاعدة البيانات'));
+                    return;
+                }
+
+                if (tagInput) tagInput.value = '';
+                if (titleInput) titleInput.value = '';
+                if (descInput) descInput.value = '';
+
+                await loadLiveNewsTicker();
+                await loadCoordinatorNewsList(true);
+                setNewsAdminFeedback('success', 'تم نشر الخبر بنجاح وتحديث الشريط الإخباري المتحرك أعلى الصفحة!');
             } catch (err) {
-                msg.style.color = '#dc2626';
-                msg.innerText = 'تعذر نشر الخبر، تحقق من الاتصال.';
+                console.error('publishCoordinatorNews exception:', err);
+                setNewsAdminFeedback('error', formatNewsErrorReason(err, 'حدث خطأ غير متوقع أثناء نشر الخبر'));
+            } finally {
+                if (publishBtn) {
+                    publishBtn.disabled = false;
+                    publishBtn.innerHTML = defaultBtnHtml;
+                }
             }
         }
 
         // استعراض وحذف الأخبار للمنسق
-        async function loadCoordinatorNewsList() {
-            const pin = (document.getElementById('news-admin-pin').value || document.getElementById('coord-secret-input').value || '').trim();
+        async function loadCoordinatorNewsList(preserveMsg = false) {
             const listEl = document.getElementById('coord-news-manage-list');
-            const msg = document.getElementById('news-admin-msg');
+            const listBtn = document.getElementById('btn-list-news');
+            const defaultListBtnHtml = '<i class="fas fa-list"></i> استعراض وحذف';
 
-            if (pin !== ADMIN_GATE_HASH) {
-                msg.style.color = '#dc2626';
-                msg.innerText = 'يرجى إدخال رمز إدارة الأخبار السري أولاً لاستعراض الأخبار وحذفها.';
-                msg.style.display = 'block';
-                return;
-            }
-            msg.style.display = 'none';
-            listEl.innerHTML = '<div style="text-align:center; font-size:12px; padding:10px;">جاري تحميل الأخبار...</div>';
+            if (!listEl) return;
 
             try {
-                const { data, error } = await client
-                    .from('news_ticker')
-                    .select('*')
-                    .order('created_at', { ascending: false });
-
-                if (error || !data || data.length === 0) {
-                    listEl.innerHTML = '<div style="text-align:center; font-size:12px; color:#64748b; padding:10px;">لا توجد أخبار منشورة حالياً.</div>';
+                const pin = getNewsAdminPinValue();
+                if (!pin) {
+                    setNewsAdminFeedback('error', 'يرجى إدخال رمز إدارة الأخبار السري أولاً لاستعراض الأخبار وحذفها.');
+                    return;
+                }
+                if (typeof navigator !== 'undefined' && navigator.onLine === false) {
+                    setNewsAdminFeedback('error', 'لا يوجد اتصال بالإنترنت حالياً لجلب قائمة الأخبار.');
+                    return;
+                }
+                if (typeof client === 'undefined' || !client) {
+                    setNewsAdminFeedback('error', 'تعذر الاتصال بقاعدة البيانات داخل المتصفح. يرجى تحديث الصفحة.');
                     return;
                 }
 
-                listEl.innerHTML = data.map(item => `
-                    <div style="display:flex; justify-content:space-between; align-items:center; background:#f8fafc; border:1px solid #cbd5e1; border-radius:6px; padding:8px; margin-bottom:6px; font-size:12px;">
-                        <div style="flex:1; font-weight:bold; color:#1e293b; padding-left:8px;">${item.content || item.title || ''}</div>
-                        <button class="btn" style="background:#ef4444; padding:4px 10px; font-size:11px;" onclick="deleteCoordinatorNews('${item.id}')">
-                            <i class="fas fa-trash"></i> حذف
-                        </button>
-                    </div>
-                `).join('');
+                if (!preserveMsg) {
+                    setNewsAdminFeedback('info', '');
+                }
+                if (listBtn) {
+                    listBtn.disabled = true;
+                    listBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري الجلب...';
+                }
+                listEl.innerHTML = '<div style="text-align:center; font-size:12px; color:#475569; padding:12px;"><i class="fas fa-spinner fa-spin" style="margin-left:5px;"></i>جاري تحميل الأخبار المنشورة...</div>';
+
+                const { data, error } = await client
+                    .from('news_ticker')
+                    .select('id, content, is_active, created_at')
+                    .order('created_at', { ascending: false });
+
+                if (error) {
+                    console.error('loadCoordinatorNewsList error:', error);
+                    const errMsg = formatNewsErrorReason(error, 'تعذر جلب قائمة الأخبار من قاعدة البيانات');
+                    listEl.innerHTML = `<div style="background:#fef2f2; border:1px solid #fecaca; color:#b91c1c; border-radius:8px; padding:10px; font-size:12px; text-align:center; font-weight:bold;">${escapeNewsHtml(errMsg)}</div>`;
+                    if (!preserveMsg) setNewsAdminFeedback('error', errMsg);
+                    return;
+                }
+
+                if (!Array.isArray(data) || data.length === 0) {
+                    listEl.innerHTML = '<div style="text-align:center; font-size:12px; color:#64748b; background:#f8fafc; border:1px dashed #cbd5e1; border-radius:8px; padding:12px;">لا توجد أخبار منشورة حالياً في الشريط الإخباري.</div>';
+                    return;
+                }
+
+                const headerHtml = `<div style="font-size:11.5px; color:#475569; font-weight:bold; margin-bottom:6px; display:flex; justify-content:space-between; align-items:center;"><span><i class="fas fa-newspaper" style="margin-left:4px; color:#0284c7;"></i>الأخبار المنشورة حالياً (${data.length})</span></div>`;
+                const itemsHtml = data.map(item => {
+                    const safeId = escapeNewsHtml(String(item.id));
+                    const safeText = escapeNewsHtml(String(item.content || '').trim() || '(خبر بدون نص)');
+                    const dateStr = formatNewsTimestamp(item.created_at);
+                    const inactiveBadge = item.is_active === false
+                        ? '<span style="display:inline-block; margin-right:6px; background:#fef3c7; color:#92400e; border-radius:4px; padding:1px 6px; font-size:10px;">مخفي</span>'
+                        : '';
+                    return `
+                        <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; background:#f8fafc; border:1px solid #cbd5e1; border-radius:8px; padding:9px 10px; margin-bottom:6px; font-size:12px;">
+                            <div style="flex:1; min-width:0;">
+                                <div style="font-weight:bold; color:#1e293b; word-break:break-word; line-height:1.45;">${safeText}${inactiveBadge}</div>
+                                ${dateStr ? `<div style="font-size:10.5px; color:#64748b; margin-top:3px;"><i class="far fa-clock" style="margin-left:3px;"></i>${escapeNewsHtml(dateStr)}</div>` : ''}
+                            </div>
+                            <button type="button" class="btn" style="background:#ef4444; padding:5px 10px; font-size:11px; flex-shrink:0;" onclick="deleteCoordinatorNews('${safeId}', this)">
+                                <i class="fas fa-trash"></i> حذف
+                            </button>
+                        </div>
+                    `;
+                }).join('');
+
+                listEl.innerHTML = headerHtml + itemsHtml;
             } catch (e) {
-                listEl.innerHTML = '<div style="color:red; font-size:12px; text-align:center;">تعذر جلب القائمة.</div>';
+                console.error('loadCoordinatorNewsList exception:', e);
+                const errMsg = formatNewsErrorReason(e, 'تعذر جلب قائمة الأخبار');
+                listEl.innerHTML = `<div style="background:#fef2f2; border:1px solid #fecaca; color:#b91c1c; border-radius:8px; padding:10px; font-size:12px; text-align:center; font-weight:bold;">${escapeNewsHtml(errMsg)}</div>`;
+                if (!preserveMsg) setNewsAdminFeedback('error', errMsg);
+            } finally {
+                if (listBtn) {
+                    listBtn.disabled = false;
+                    listBtn.innerHTML = defaultListBtnHtml;
+                }
             }
         }
 
-        async function deleteCoordinatorNews(newsId) {
-            const pin = (document.getElementById('news-admin-pin').value || document.getElementById('coord-secret-input').value || '').trim();
-            if (pin !== ADMIN_GATE_HASH) return;
+        async function deleteCoordinatorNews(newsId, btnEl) {
+            const defaultBtnHtml = '<i class="fas fa-trash"></i> حذف';
             try {
-                const { error: rpcErr } = await client.rpc('admin_manage_news', {
+                const pin = getNewsAdminPinValue();
+                if (!pin) {
+                    setNewsAdminFeedback('error', 'يرجى إدخال رمز إدارة الأخبار السري أولاً لحذف الخبر.');
+                    return;
+                }
+                if (newsId === undefined || newsId === null || String(newsId).trim() === '') {
+                    setNewsAdminFeedback('error', 'تعذر تحديد معرّف الخبر المطلوب حذفه.');
+                    return;
+                }
+                if (typeof navigator !== 'undefined' && navigator.onLine === false) {
+                    setNewsAdminFeedback('error', 'لا يوجد اتصال بالإنترنت حالياً لحذف الخبر.');
+                    return;
+                }
+                if (typeof client === 'undefined' || !client) {
+                    setNewsAdminFeedback('error', 'تعذر الاتصال بقاعدة البيانات داخل المتصفح.');
+                    return;
+                }
+
+                if (btnEl) {
+                    btnEl.disabled = true;
+                    btnEl.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+                }
+                setNewsAdminFeedback('info', 'جاري حذف الخبر وتحديث الشريط الإخباري...');
+
+                const parsedId = /^\d+$/.test(String(newsId).trim()) ? Number(String(newsId).trim()) : String(newsId).trim();
+
+                let deleted = false;
+                let lastError = null;
+
+                // 1. الحذف عبر دالة Supabase المعتمدة admin_manage_news مع المعامل الصحيح target_id
+                const { data: rpcData, error: rpcErr } = await client.rpc('admin_manage_news', {
                     admin_secret: pin,
                     action_type: 'delete',
                     news_content: '',
-                    news_id: newsId
+                    target_id: parsedId
                 });
-                if (rpcErr) {
-                    await client.from('news_ticker').delete().eq('id', newsId);
+
+                if (!rpcErr && (!rpcData || rpcData.success !== false)) {
+                    deleted = true;
+                } else {
+                    lastError = rpcErr || { message: (rpcData && rpcData.message) || 'رفض الخادم حذف الخبر.' };
+
+                    if (isNewsAuthError(lastError) && pin !== ADMIN_GATE_HASH) {
+                        setNewsAdminFeedback('error', 'فشل حذف الخبر: الرمز السري لإدارة الأخبار غير صحيح! يرجى التحقق من الرمز السري المعتمد للمنسق.');
+                        return;
+                    }
+
+                    // 2. محاولة احتياطية عبر الحذف المباشر من news_ticker مع التحقق من حذف الصف فعلياً
+                    const { data: deletedRows, error: deleteErr } = await client
+                        .from('news_ticker')
+                        .delete()
+                        .eq('id', parsedId)
+                        .select('id');
+
+                    if (!deleteErr && Array.isArray(deletedRows) && deletedRows.length > 0) {
+                        deleted = true;
+                    } else {
+                        lastError = isNewsAuthError(lastError)
+                            ? lastError
+                            : (deleteErr || { message: 'لم يتم حذف السجل من قاعدة البيانات (تحقق من الصلاحيات أو الرمز السري).' });
+                    }
                 }
-                loadLiveNewsTicker();
-                loadCoordinatorNewsList();
+
+                if (!deleted) {
+                    console.error('deleteCoordinatorNews failed:', lastError);
+                    setNewsAdminFeedback('error', formatNewsErrorReason(lastError, 'تعذر حذف الخبر من قاعدة البيانات'));
+                    return;
+                }
+
+                await loadLiveNewsTicker();
+                await loadCoordinatorNewsList(true);
+                setNewsAdminFeedback('success', 'تم حذف الخبر وتحديث الشريط الإخباري بنجاح.');
             } catch (e) {
-                alert('تعذر حذف الخبر.');
+                console.error('deleteCoordinatorNews exception:', e);
+                setNewsAdminFeedback('error', formatNewsErrorReason(e, 'حدث خطأ غير متوقع أثناء حذف الخبر'));
+            } finally {
+                if (btnEl && btnEl.isConnected) {
+                    btnEl.disabled = false;
+                    btnEl.innerHTML = defaultBtnHtml;
+                }
             }
         }
 
