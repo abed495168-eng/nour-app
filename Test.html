@@ -980,15 +980,29 @@
             overflow: hidden;
             white-space: nowrap;
             position: relative;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: pan-y;
+            cursor: pointer;
         }
         .news-ticker-track {
             display: inline-block;
             white-space: nowrap;
             color: var(--primary-dark);
-            animation: tickerMove 30s linear infinite;
+            will-change: transform;
+            animation-name: tickerMove;
+            animation-duration: var(--ticker-duration, 42s);
+            animation-timing-function: linear;
+            animation-iteration-count: infinite;
+            animation-play-state: running;
         }
-        .news-ticker-track:hover {
-            animation-play-state: paused;
+        @media (hover: hover) and (pointer: fine) {
+            .news-ticker-bar:hover .news-ticker-track {
+                animation-play-state: paused;
+            }
+        }
+        .news-ticker-bar.is-paused .news-ticker-track {
+            animation-play-state: paused !important;
         }
         .news-ticker-item-text {
             color: var(--primary-dark);
@@ -1015,8 +1029,8 @@
             font-size: 10px;
         }
         @keyframes tickerMove {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
+            0% { transform: translateX(var(--ticker-start, -100%)); }
+            100% { transform: translateX(var(--ticker-end, 100%)); }
         }
         /* تبويبات بوابة المنسق العام */
         .coord-tabs {
@@ -4448,11 +4462,81 @@
             }
         }
 
+        // ضبط سرعة شريط الأخبار لتكون بطيئة وثابتة ومريحة للقراءة حسب طول النص الفعلي
+        let newsTickerResizeTimer = null;
+
+        function updateNewsTickerMotion(restartAnimation = false) {
+            const tickerBar = document.getElementById('top-news-ticker');
+            const tickerText = document.getElementById('top-news-ticker-text');
+            if (!tickerBar || !tickerText) return;
+
+            const wrapEl = tickerText.parentElement;
+            const wrapWidth = wrapEl ? wrapEl.clientWidth : 0;
+            const trackWidth = tickerText.scrollWidth || tickerText.offsetWidth || 0;
+
+            // سرعة تمرير بطيئة ومريحة للقراءة (~28 بكسل/ثانية) مع حد أدنى لا يقل عن 36 ثانية للدورة
+            const READING_SPEED_PX_PER_SEC = 28;
+            const MIN_DURATION_SEC = 36;
+            let durationSec = 42;
+
+            if (wrapWidth > 0 && trackWidth > 0) {
+                const totalDistancePx = wrapWidth + trackWidth;
+                durationSec = Math.max(MIN_DURATION_SEC, Math.round((totalDistancePx / READING_SPEED_PX_PER_SEC) * 10) / 10);
+                tickerText.style.setProperty('--ticker-start', `${-wrapWidth}px`);
+                tickerText.style.setProperty('--ticker-end', `${trackWidth}px`);
+            } else {
+                const charCount = (tickerText.textContent || '').trim().length;
+                durationSec = Math.max(38, Math.round(charCount * 0.32));
+                tickerText.style.setProperty('--ticker-start', '-100%');
+                tickerText.style.setProperty('--ticker-end', '100%');
+            }
+
+            tickerText.style.setProperty('--ticker-duration', `${durationSec}s`);
+
+            if (restartAnimation) {
+                tickerText.style.animationName = 'none';
+                void tickerText.offsetWidth;
+                tickerText.style.animationName = '';
+            }
+        }
+
+        // تفعيل الإيقاف المؤقت عند اللمس بالإصبع على الهاتف أو وضع المؤشر واستئناف الحركة عند رفع الإصبع
+        function initNewsTickerInteractions() {
+            const tickerBar = document.getElementById('top-news-ticker');
+            if (!tickerBar || tickerBar.dataset.pauseBound === '1') return;
+            tickerBar.dataset.pauseBound = '1';
+
+            const pauseTicker = () => tickerBar.classList.add('is-paused');
+            const resumeTicker = () => tickerBar.classList.remove('is-paused');
+
+            tickerBar.addEventListener('touchstart', pauseTicker, { passive: true });
+            tickerBar.addEventListener('touchend', resumeTicker, { passive: true });
+            tickerBar.addEventListener('touchcancel', resumeTicker, { passive: true });
+
+            tickerBar.addEventListener('pointerdown', (e) => {
+                if (e.pointerType !== 'mouse') pauseTicker();
+            }, { passive: true });
+            tickerBar.addEventListener('pointerup', resumeTicker, { passive: true });
+            tickerBar.addEventListener('pointercancel', resumeTicker, { passive: true });
+            tickerBar.addEventListener('mouseleave', resumeTicker, { passive: true });
+
+            window.addEventListener('resize', () => {
+                clearTimeout(newsTickerResizeTimer);
+                newsTickerResizeTimer = setTimeout(() => updateNewsTickerMotion(false), 180);
+            }, { passive: true });
+
+            if (document.fonts && document.fonts.ready) {
+                document.fonts.ready.then(() => updateNewsTickerMotion(false)).catch(() => {});
+            }
+        }
+
         // جلب وعرض شريط الأخبار النقابي الحي المتحرك أعلى الصفحة من جدول news_ticker
         async function loadLiveNewsTicker() {
             const tickerBar = document.getElementById('top-news-ticker');
             const tickerText = document.getElementById('top-news-ticker-text');
             if (!tickerBar || !tickerText) return;
+
+            initNewsTickerInteractions();
 
             const newsSeparatorHTML = '<span class="ticker-sep-word"><span class="ticker-sep-diamond">◆</span><span class="ticker-sep-pill">الأخبار</span><span class="ticker-sep-diamond">◆</span></span>';
             const defaultNewsItems = [
@@ -4466,10 +4550,8 @@
             const applyTickerHtml = (htmlContent) => {
                 tickerBar.style.display = 'flex';
                 tickerText.innerHTML = htmlContent;
-                // إعادة تشغيل حركة الشريط بسلاسة ليظهر الخبر المضاف فوراً
-                tickerText.style.animation = 'none';
-                void tickerText.offsetWidth;
-                tickerText.style.animation = '';
+                // حساب المدة المناسبة لطول النص ثم إعادة تشغيل الحركة بسلاسة ليظهر الخبر فوراً
+                requestAnimationFrame(() => updateNewsTickerMotion(true));
             };
 
             try {
