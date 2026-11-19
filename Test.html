@@ -977,6 +977,8 @@
         }
         .news-ticker-track-wrap {
             flex: 1;
+            min-height: 28px;
+            height: 28px;
             overflow: hidden;
             white-space: nowrap;
             position: relative;
@@ -986,12 +988,15 @@
             cursor: pointer;
         }
         .news-ticker-track {
-            display: inline-block;
+            position: absolute;
+            top: 50%;
+            right: 0;
+            width: max-content;
             white-space: nowrap;
             color: var(--primary-dark);
             will-change: transform;
             animation-name: tickerMove;
-            animation-duration: var(--ticker-duration, 42s);
+            animation-duration: var(--ticker-duration, 22s);
             animation-timing-function: linear;
             animation-iteration-count: infinite;
             animation-play-state: running;
@@ -1029,8 +1034,8 @@
             font-size: 10px;
         }
         @keyframes tickerMove {
-            0% { transform: translateX(var(--ticker-start, -100%)); }
-            100% { transform: translateX(var(--ticker-end, 100%)); }
+            0% { transform: translate3d(var(--ticker-start, -340px), -50%, 0); }
+            100% { transform: translate3d(var(--ticker-end, 100%), -50%, 0); }
         }
         /* تبويبات بوابة المنسق العام */
         .coord-tabs {
@@ -1349,10 +1354,10 @@
     </header>
 
     <!-- شريط الأخبار النقابي الحي المتحرك -->
-    <div id="top-news-ticker" class="news-ticker-bar" style="display: none;">
+    <div id="top-news-ticker" class="news-ticker-bar">
         <span class="news-ticker-badge"><i class="fas fa-bullhorn"></i> الأخبار</span>
         <div class="news-ticker-track-wrap">
-            <div class="news-ticker-track" id="top-news-ticker-text"></div>
+            <div class="news-ticker-track" id="top-news-ticker-text"><span class="news-ticker-item-text">إطلاق المنصة الرقمية المحدثة للنقابة الوطنية للمدرسين (نور)</span><span class="ticker-sep-word"><span class="ticker-sep-diamond">◆</span><span class="ticker-sep-pill">الأخبار</span><span class="ticker-sep-diamond">◆</span></span><span class="news-ticker-item-text">إتاحة الولوج المباشر لمنصة «موظف» لكشوف الرواتب والمكتبة الرقمية وحقيبة المدرس</span></div>
         </div>
     </div>
 
@@ -4462,8 +4467,38 @@
             }
         }
 
-        // ضبط سرعة شريط الأخبار لتكون بطيئة وثابتة ومريحة للقراءة حسب طول النص الفعلي
+        // ضبط سرعة شريط الأخبار لتكون متوسطة ومتوازنة مثل القنوات الإخبارية مع ظهور فوري دون تأخير
+        const LOCAL_NEWS_TICKER_CACHE_KEY = 'nour_live_news_ticker_cache_v1';
+        const NEWS_TICKER_SEPARATOR_HTML = '<span class="ticker-sep-word"><span class="ticker-sep-diamond">◆</span><span class="ticker-sep-pill">الأخبار</span><span class="ticker-sep-diamond">◆</span></span>';
+        const DEFAULT_NEWS_TICKER_ITEMS = [
+            'إطلاق المنصة الرقمية المحدثة للنقابة الوطنية للمدرسين (نور)',
+            'إتاحة الولوج المباشر لمنصة «موظف» لكشوف الرواتب والمكتبة الرقمية وحقيبة المدرس'
+        ];
         let newsTickerResizeTimer = null;
+        let lastRenderedTickerSignature = '';
+
+        function getCachedNewsTickerItems() {
+            try {
+                const raw = localStorage.getItem(LOCAL_NEWS_TICKER_CACHE_KEY);
+                if (!raw) return null;
+                const parsed = JSON.parse(raw);
+                if (Array.isArray(parsed)) {
+                    const cleaned = parsed.map(t => String(t || '').trim()).filter(Boolean);
+                    return cleaned.length > 0 ? cleaned : null;
+                }
+            } catch (e) {}
+            return null;
+        }
+
+        function saveCachedNewsTickerItems(items) {
+            try {
+                if (Array.isArray(items) && items.length > 0) {
+                    localStorage.setItem(LOCAL_NEWS_TICKER_CACHE_KEY, JSON.stringify(items));
+                } else {
+                    localStorage.removeItem(LOCAL_NEWS_TICKER_CACHE_KEY);
+                }
+            } catch (e) {}
+        }
 
         function updateNewsTickerMotion(restartAnimation = false) {
             const tickerBar = document.getElementById('top-news-ticker');
@@ -4474,20 +4509,21 @@
             const wrapWidth = wrapEl ? wrapEl.clientWidth : 0;
             const trackWidth = tickerText.scrollWidth || tickerText.offsetWidth || 0;
 
-            // سرعة تمرير بطيئة ومريحة للقراءة (~28 بكسل/ثانية) مع حد أدنى لا يقل عن 36 ثانية للدورة
-            const READING_SPEED_PX_PER_SEC = 28;
-            const MIN_DURATION_SEC = 36;
-            let durationSec = 42;
+            // سرعة متوسطة ومتوازنة مثل شريط القنوات الإخبارية (~56 بكسل/ثانية -> ~18 إلى 25 ثانية للنصوص المتوسطة)
+            const TV_NEWS_SPEED_PX_PER_SEC = 56;
+            const MIN_DURATION_SEC = 16;
+            let durationSec = 22;
 
             if (wrapWidth > 0 && trackWidth > 0) {
                 const totalDistancePx = wrapWidth + trackWidth;
-                durationSec = Math.max(MIN_DURATION_SEC, Math.round((totalDistancePx / READING_SPEED_PX_PER_SEC) * 10) / 10);
+                durationSec = Math.max(MIN_DURATION_SEC, Math.round((totalDistancePx / TV_NEWS_SPEED_PX_PER_SEC) * 10) / 10);
+                // يبدأ النص مباشرة عند الحافة اليسرى للعرض دون أي فراغ أو تأخير، ويغادر بسلاسة من الحافة اليمنى
                 tickerText.style.setProperty('--ticker-start', `${-wrapWidth}px`);
                 tickerText.style.setProperty('--ticker-end', `${trackWidth}px`);
             } else {
                 const charCount = (tickerText.textContent || '').trim().length;
-                durationSec = Math.max(38, Math.round(charCount * 0.32));
-                tickerText.style.setProperty('--ticker-start', '-100%');
+                durationSec = Math.max(18, Math.round(charCount * 0.16));
+                tickerText.style.setProperty('--ticker-start', '-340px');
                 tickerText.style.setProperty('--ticker-end', '100%');
             }
 
@@ -4498,6 +4534,32 @@
                 void tickerText.offsetWidth;
                 tickerText.style.animationName = '';
             }
+        }
+
+        function renderNewsTickerItems(items, forceRestart = false) {
+            const tickerBar = document.getElementById('top-news-ticker');
+            const tickerText = document.getElementById('top-news-ticker-text');
+            if (!tickerBar || !tickerText) return;
+
+            const safeItems = (Array.isArray(items) && items.length > 0 ? items : DEFAULT_NEWS_TICKER_ITEMS)
+                .map(t => String(t || '').trim())
+                .filter(Boolean);
+            const finalItems = safeItems.length > 0 ? safeItems : DEFAULT_NEWS_TICKER_ITEMS;
+            const signature = finalItems.join(' || ');
+
+            tickerBar.style.display = 'flex';
+            if (signature === lastRenderedTickerSignature && !forceRestart) {
+                updateNewsTickerMotion(false);
+                return;
+            }
+
+            lastRenderedTickerSignature = signature;
+            tickerText.innerHTML = finalItems
+                .map(txt => `<span class="news-ticker-item-text">${escapeNewsHtml(txt)}</span>`)
+                .join(NEWS_TICKER_SEPARATOR_HTML);
+
+            updateNewsTickerMotion(true);
+            requestAnimationFrame(() => updateNewsTickerMotion(false));
         }
 
         // تفعيل الإيقاف المؤقت عند اللمس بالإصبع على الهاتف أو وضع المؤشر واستئناف الحركة عند رفع الإصبع
@@ -4530,33 +4592,27 @@
             }
         }
 
-        // جلب وعرض شريط الأخبار النقابي الحي المتحرك أعلى الصفحة من جدول news_ticker
-        async function loadLiveNewsTicker() {
+        // التشغيل الفوري للشريط الإخباري عند فتح الصفحة دون انتظار الشبكة
+        function startNewsTickerImmediately() {
+            initNewsTickerInteractions();
+            const cachedItems = getCachedNewsTickerItems();
+            renderNewsTickerItems(cachedItems || DEFAULT_NEWS_TICKER_ITEMS, true);
+        }
+
+        // جلب وتحديث شريط الأخبار النقابي الحي المتحرك أعلى الصفحة من جدول news_ticker في الخلفية
+        async function loadLiveNewsTicker(forceRestart = false) {
             const tickerBar = document.getElementById('top-news-ticker');
             const tickerText = document.getElementById('top-news-ticker-text');
             if (!tickerBar || !tickerText) return;
 
             initNewsTickerInteractions();
-
-            const newsSeparatorHTML = '<span class="ticker-sep-word"><span class="ticker-sep-diamond">◆</span><span class="ticker-sep-pill">الأخبار</span><span class="ticker-sep-diamond">◆</span></span>';
-            const defaultNewsItems = [
-                'إطلاق المنصة الرقمية المحدثة للنقابة الوطنية للمدرسين (نور)',
-                'إتاحة الولوج المباشر لمنصة «موظف» لكشوف الرواتب والمكتبة الرقمية وحقيبة المدرس'
-            ];
-            const defaultNewsHTML = defaultNewsItems
-                .map(txt => `<span class="news-ticker-item-text">${escapeNewsHtml(txt)}</span>`)
-                .join(newsSeparatorHTML);
-
-            const applyTickerHtml = (htmlContent) => {
-                tickerBar.style.display = 'flex';
-                tickerText.innerHTML = htmlContent;
-                // حساب المدة المناسبة لطول النص ثم إعادة تشغيل الحركة بسلاسة ليظهر الخبر فوراً
-                requestAnimationFrame(() => updateNewsTickerMotion(true));
-            };
+            if (!lastRenderedTickerSignature) {
+                const cachedItems = getCachedNewsTickerItems();
+                renderNewsTickerItems(cachedItems || DEFAULT_NEWS_TICKER_ITEMS, true);
+            }
 
             try {
                 if (typeof client === 'undefined' || !client) {
-                    applyTickerHtml(defaultNewsHTML);
                     return;
                 }
 
@@ -4565,25 +4621,29 @@
                     .select('id, content, is_active, created_at')
                     .order('created_at', { ascending: false });
 
-                if (!error && Array.isArray(data) && data.length > 0) {
+                if (!error && Array.isArray(data)) {
                     const activeNews = data
                         .filter(n => n && n.is_active !== false && String(n.content || '').trim())
-                        .map(item => `<span class="news-ticker-item-text">${escapeNewsHtml(String(item.content).trim())}</span>`);
+                        .map(item => String(item.content).trim());
 
                     if (activeNews.length > 0) {
-                        applyTickerHtml(activeNews.join(newsSeparatorHTML));
+                        saveCachedNewsTickerItems(activeNews);
+                        renderNewsTickerItems(activeNews, forceRestart);
+                        return;
+                    } else {
+                        saveCachedNewsTickerItems([]);
+                        renderNewsTickerItems(DEFAULT_NEWS_TICKER_ITEMS, forceRestart);
                         return;
                     }
                 }
-
-                applyTickerHtml(defaultNewsHTML);
             } catch (e) {
                 console.warn('شريط الأخبار:', e);
-                applyTickerHtml(defaultNewsHTML);
             }
         }
 
-        document.addEventListener('DOMContentLoaded', loadLiveNewsTicker);
+        // بدء التشغيل الفوري بمجرد قراءة السكربت ثم المزامنة الهادئة مع قاعدة البيانات
+        startNewsTickerImmediately();
+        loadLiveNewsTicker(false);
 
         // التحقق من رمز الإدارة السري (دون إظهاره في الواجهة)
         const ADMIN_GATE_HASH = '100' + '14';
