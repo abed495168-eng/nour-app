@@ -1021,39 +1021,274 @@
         /* تبويبات بوابة المنسق العام */
         .coord-tabs {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 6px;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 5px;
             margin-bottom: 16px;
             background: #f8fafc;
             padding: 5px;
             border-radius: 10px;
             border: 1px solid #e2e8f0;
         }
+        @media (max-width: 420px) {
+            .coord-tabs {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
         .coord-tab-btn {
-            padding: 8px 6px;
+            padding: 8px 5px;
             border-radius: 8px;
             border: none;
             background: transparent;
             color: #475569;
             font-weight: 800;
-            font-size: 12px;
+            font-size: 11.5px;
             cursor: pointer;
             transition: all 0.2s;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 5px;
+            gap: 4px;
+            position: relative;
         }
         .coord-tab-btn.active {
             background: var(--primary);
             color: #ffffff;
             box-shadow: 0 2px 6px rgba(17, 104, 53, 0.25);
         }
+        .coord-pending-badge {
+            background: #dc2626;
+            color: #ffffff;
+            font-size: 10px;
+            font-weight: 800;
+            padding: 1px 5px;
+            border-radius: 999px;
+            line-height: 1.3;
+        }
         .coord-panel {
             display: none;
         }
         .coord-panel.active {
             display: block;
+        }
+
+        /* تنسيقات نظام الشكاوى والتظلمات المؤرخ والإحصائيات الرسمية */
+        .grv-stats-card {
+            background: linear-gradient(135deg, #f8fafc 0%, #f0fdf4 100%);
+            border: 1.5px solid #bbf7d0;
+            border-top: 3px solid var(--primary);
+            border-radius: 12px;
+            padding: 13px;
+            margin-bottom: 14px;
+            box-shadow: 0 3px 10px rgba(17, 104, 53, 0.08);
+        }
+        .grv-stats-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 10px;
+            padding-bottom: 8px;
+            border-bottom: 1px dashed #cbd5e1;
+        }
+        .grv-stats-title {
+            font-size: 13px;
+            font-weight: 800;
+            color: var(--primary-dark);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .grv-filter-controls {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+        .grv-filter-select {
+            padding: 4px 8px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            color: #1e293b;
+            background: #ffffff;
+            outline: none;
+            cursor: pointer;
+        }
+        .grv-filter-select:focus {
+            border-color: var(--primary);
+        }
+        .grv-official-statement {
+            background: linear-gradient(135deg, #0b4824, #116835);
+            color: #ffffff;
+            border: 1.5px solid var(--gold);
+            border-radius: 9px;
+            padding: 10px 12px;
+            font-size: 12.5px;
+            font-weight: 800;
+            line-height: 1.7;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .grv-official-statement .grv-highlight {
+            color: #fde047;
+            font-size: 13.5px;
+        }
+        .grv-counters-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+            margin-bottom: 10px;
+        }
+        @media (max-width: 420px) {
+            .grv-counters-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        .grv-counter-box {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 7px 5px;
+            text-align: center;
+        }
+        .grv-counter-label {
+            font-size: 10px;
+            font-weight: 700;
+            color: #64748b;
+            margin-bottom: 3px;
+            line-height: 1.3;
+        }
+        .grv-counter-val {
+            font-size: 16px;
+            font-weight: 800;
+            color: var(--primary-dark);
+        }
+        .grv-progress-wrap {
+            background: #e2e8f0;
+            height: 9px;
+            border-radius: 999px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+        .grv-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #16a34a, #15803d, #d4af37);
+            border-radius: 999px;
+            transition: width 0.35s ease;
+        }
+        .grv-stats-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 6px;
+            font-size: 10.5px;
+            color: #475569;
+            font-weight: 600;
+        }
+        .grv-subtabs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 14px;
+            background: #f1f5f9;
+            padding: 5px;
+            border-radius: 10px;
+            border: 1px solid #e2e8f0;
+        }
+        .grv-subtab-btn {
+            padding: 9px 10px;
+            border-radius: 8px;
+            border: none;
+            background: transparent;
+            color: #475569;
+            font-weight: 800;
+            font-size: 12.5px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .grv-subtab-btn.active {
+            background: linear-gradient(135deg, #be123c, #881337);
+            color: #ffffff;
+            box-shadow: 0 2px 6px rgba(190, 18, 60, 0.25);
+        }
+        .grv-status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 800;
+        }
+        .grv-status-pending {
+            background: #fef3c7;
+            color: #92400e;
+            border: 1px solid #f59e0b;
+        }
+        .grv-status-in-progress {
+            background: #ffedd5;
+            color: #9a3412;
+            border: 1px solid #fb923c;
+        }
+        .grv-status-resolved {
+            background: #dcfce7;
+            color: #166534;
+            border: 1px solid #4ade80;
+        }
+        .grv-item-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-right: 4px solid #f59e0b;
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 10px;
+            text-align: right;
+            box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04);
+        }
+        .grv-item-card.is-resolved {
+            border-right-color: #16a34a;
+        }
+        .grv-item-card.is-in-progress {
+            border-right-color: #ea580c;
+        }
+        .grv-reply-box {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 8px;
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-right: 3px solid #16a34a;
+            font-size: 12.5px;
+            line-height: 1.65;
+            color: #14532d;
+        }
+        .grv-coord-filter-bar {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+            margin: 10px 0;
+        }
+        .grv-coord-filter-btn {
+            padding: 5px 9px;
+            border-radius: 6px;
+            border: 1px solid #cbd5e1;
+            background: #f8fafc;
+            color: #475569;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .grv-coord-filter-btn.active {
+            background: var(--primary);
+            color: #ffffff;
+            border-color: var(--primary);
         }
 
     </style>
@@ -1207,7 +1442,7 @@
 
             <!-- زر بوابة المنسق العام -->
             <button class="btn btn-block" style="background: linear-gradient(135deg, #1e293b, #0f172a); color: white; border: 1.5px solid var(--gold);" onclick="openCoordinatorPinModal()">
-                <i class="fas fa-user-shield" style="color: var(--gold);"></i> بوابة المنسق العام (إدارة الأعضاء، الأخبار، والكتب)
+                <i class="fas fa-user-shield" style="color: var(--gold);"></i> بوابة المنسق العام (الأعضاء، الأخبار، الكتب، والشكاوى)
                 <i class="fas fa-key" style="font-size: 11px; color: var(--gold); margin-right: auto;"></i>
             </button>
         </div>
@@ -1340,11 +1575,6 @@
                     <div class="news-title">إطلاق المنصة الرقمية للنقابة</div>
                     <div class="news-desc">تم بحمد الله إطلاق البوابة الرقمية المحدثة للنقابة الوطنية للمدرسين (نور) لخدمة المعلمين والأساتذة.</div>
                 </div>
-                <div class="news-item">
-                    <span class="news-tag">نشاط داخلي</span>
-                    <div class="news-title">اجتماع المكتب الوطني</div>
-                    <div class="news-desc">يعقد المكتب الوطني اجتماعه الدوري لمناقشة خطة العمل للفصل القادم ومتابعة الملفات المطلبية.</div>
-                </div>
             </div>
         </div>
 
@@ -1356,17 +1586,12 @@
         <div style="margin-bottom: 10px; font-size: 12px; color: #cbd5e1;">
             بوابة الخدمات التربوية والنقابية الرقمية | الجمهورية الإسلامية الموريتانية
         </div>
-        <div style="display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; margin-bottom: 10px; font-size: 12px;">
-            <a href="https://bulletin.education.gov.mr/index.php" target="_blank" rel="noopener noreferrer" style="color: #fde047; text-decoration: none; font-weight: 700;">
-                <i class="fas fa-file-invoice-dollar"></i> منصة «موظف» لكشوف الرواتب
-            </a>
-            <span style="color: #64748b;">|</span>
-            <a href="javascript:void(0)" onclick="openBooksModal()" style="color: #e2e8f0; text-decoration: none; font-weight: 700;">
-                <i class="fas fa-book-reader"></i> المكتبة الرقمية
-            </a>
-            <span style="color: #64748b;">|</span>
-            <a href="javascript:void(0)" onclick="openAboutModal()" style="color: #e2e8f0; text-decoration: none; font-weight: 700;">
-                <i class="fas fa-info-circle"></i> عن النقابة
+        <div style="display: flex; justify-content: center; align-items: center; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; font-size: 12.5px;">
+            <span style="color: #e2e8f0; font-weight: 700;">
+                <i class="fas fa-envelope" style="color: var(--gold); margin-left: 4px;"></i> البريد الرسمي للنقابة:
+            </span>
+            <a href="mailto:nourdec2023@gmail.com" style="color: #fde047; text-decoration: none; font-weight: 800; direction: ltr; unicode-bidi: embed;">
+                nourdec2023@gmail.com
             </a>
         </div>
         <div style="font-size: 11px; color: #94a3b8;">
@@ -1374,88 +1599,129 @@
         </div>
     </footer>
 
-    <!-- نافذة تقديم شكوى أو تظلم رسمي -->
+    <!-- نافذة تقديم ومتابعة شكوى أو تظلم رسمي للقيادة -->
     <div id="grievance-modal" class="modal">
-        <div class="modal-content" style="max-width: 520px;">
+        <div class="modal-content" style="max-width: 560px;">
             <button class="close-btn" onclick="closeModal('grievance-modal')">&times;</button>
             <div style="text-align: center; border-bottom: 2px solid var(--gold); padding-bottom: 10px; margin-bottom: 14px;">
                 <img src="IM9.jpg" style="width: 52px; height: 52px; border-radius: 50%; border: 2px solid var(--primary);" onerror="this.style.display='none'">
-                <h3 style="color: var(--primary-dark); margin-top: 6px;">استمارة تظلم / شكوى نقابية رسمية</h3>
-                <p style="font-size: 11.5px; color: #64748b;">تُرفع مباشرة إلى المكتب الوطني ولجنة المتابعة والدفاع عن المدرس</p>
+                <h3 style="color: var(--primary-dark); margin-top: 6px;">استمارة ومتابعة الشكاوى والتظلمات الرسمية</h3>
+                <p style="font-size: 11.5px; color: #64748b;">تُرفع بسرية تامة إلى المكتب الوطني ولجنة المتابعة والدفاع عن المدرس</p>
             </div>
 
-            <div id="grievance-form-box">
-                <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px;">
-                    <div>
-                        <label style="font-size: 12px; font-weight: bold; color: #334155; display: block; margin-bottom: 3px;">الاسم الكامل للمدرس(ة):</label>
-                        <input type="text" id="grv-name" placeholder="الاسم الكامل كما في السجل" style="width: 100%; text-align: right;">
-                    </div>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                        <div>
-                            <label style="font-size: 12px; font-weight: bold; color: #334155; display: block; margin-bottom: 3px;">الدليل المالي / NNI:</label>
-                            <input type="text" id="grv-id" placeholder="الدليل المالي أو الرقم الوطني" style="width: 100%;">
-                        </div>
-                        <div>
-                            <label style="font-size: 12px; font-weight: bold; color: #334155; display: block; margin-bottom: 3px;">رقم الهاتف (واتساب):</label>
-                            <input type="tel" id="grv-phone" placeholder="مثال: 49496272" style="width: 100%;">
-                        </div>
-                    </div>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                        <div>
-                            <label style="font-size: 12px; font-weight: bold; color: #334155; display: block; margin-bottom: 3px;">الولاية والمقاطعة:</label>
-                            <input type="text" id="grv-wilaya" placeholder="الولاية / المقاطعة" style="width: 100%; text-align: right;">
-                        </div>
-                        <div>
-                            <label style="font-size: 12px; font-weight: bold; color: #334155; display: block; margin-bottom: 3px;">المؤسسة التعليمية:</label>
-                            <input type="text" id="grv-school" placeholder="اسم المدرسة أو الثانوية" style="width: 100%; text-align: right;">
-                        </div>
-                    </div>
-                    <div>
-                        <label style="font-size: 12px; font-weight: bold; color: #334155; display: block; margin-bottom: 3px;">موضوع الشكوى / التظلم:</label>
-                        <input type="text" id="grv-subject" placeholder="مثال: تظلم بخصوص تحويل تعسفي / تأخر علاوة..." style="width: 100%; text-align: right;">
-                    </div>
-                    <div>
-                        <label style="font-size: 12px; font-weight: bold; color: #334155; display: block; margin-bottom: 3px;">تفاصيل الشكوى والطلبات:</label>
-                        <textarea id="grv-details" rows="4" placeholder="اشرح تفاصيل الموضوع بدقة مع ذكر التاريخ والجهة المعنية..." style="width: 100%; padding: 10px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 13.5px; font-weight: bold; outline: none;"></textarea>
-                    </div>
-                </div>
-                <button class="btn btn-block" style="background: #be123c;" onclick="submitOfficialGrievance()">
-                    <i class="fas fa-stamp"></i> اعتماد الشكوى الرسمية وإصدار وصل الاستلام
+            <!-- ملخص الأداء الإحصائي المؤرخ الرسمي للشكاوى -->
+            <div id="grv-stats-summary-public"></div>
+
+            <!-- تبويبات نافذة الأستاذ الخاصة -->
+            <div class="grv-subtabs">
+                <button type="button" class="grv-subtab-btn active" id="grv-tab-submit" onclick="switchGrievanceTab('submit')">
+                    <i class="fas fa-paper-plane"></i> إرسال شكوى جديدة
+                </button>
+                <button type="button" class="grv-subtab-btn" id="grv-tab-track" onclick="switchGrievanceTab('track')">
+                    <i class="fas fa-user-lock"></i> متابعة شكواي الخاصة
                 </button>
             </div>
 
-            <!-- وثيقة الشكوى الرسمية بعد التقديم (في انتظار الرد) -->
-            <div id="grievance-receipt-box" style="display: none; border: 2px solid var(--gold); border-radius: 10px; padding: 15px; background: #fffcf5;">
-                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--primary); padding-bottom: 8px; margin-bottom: 10px;">
-                    <div style="font-size: 11.5px; font-weight: 800; color: var(--primary-dark);">
-                        النقابة الوطنية للمدرسين (نور)<br>
-                        لجنة العرائض والتظلمات المهنية
+            <!-- التبويب (1): إرسال شكوى جديدة -->
+            <div id="grv-panel-submit">
+                <div id="grievance-form-box">
+                    <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px;">
+                        <div>
+                            <label style="font-size: 12px; font-weight: bold; color: #334155; display: block; margin-bottom: 3px;">الاسم الكامل للمدرس(ة):</label>
+                            <input type="text" id="grv-name" placeholder="الاسم الكامل كما في السجل" style="width: 100%; text-align: right;">
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                            <div>
+                                <label style="font-size: 12px; font-weight: bold; color: #334155; display: block; margin-bottom: 3px;">الدليل المالي / NNI:</label>
+                                <input type="text" id="grv-id" placeholder="الدليل المالي أو الرقم الوطني" style="width: 100%;">
+                            </div>
+                            <div>
+                                <label style="font-size: 12px; font-weight: bold; color: #334155; display: block; margin-bottom: 3px;">رقم الهاتف (واتساب):</label>
+                                <input type="tel" id="grv-phone" placeholder="مثال: 49496272" style="width: 100%;">
+                            </div>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                            <div>
+                                <label style="font-size: 12px; font-weight: bold; color: #334155; display: block; margin-bottom: 3px;">الولاية والمقاطعة:</label>
+                                <input type="text" id="grv-wilaya" placeholder="الولاية / المقاطعة" style="width: 100%; text-align: right;">
+                            </div>
+                            <div>
+                                <label style="font-size: 12px; font-weight: bold; color: #334155; display: block; margin-bottom: 3px;">المؤسسة التعليمية:</label>
+                                <input type="text" id="grv-school" placeholder="اسم المدرسة أو الثانوية" style="width: 100%; text-align: right;">
+                            </div>
+                        </div>
+                        <div>
+                            <label style="font-size: 12px; font-weight: bold; color: #334155; display: block; margin-bottom: 3px;">موضوع الشكوى / التظلم:</label>
+                            <input type="text" id="grv-subject" placeholder="مثال: تظلم بخصوص تحويل تعسفي / تأخر علاوة..." style="width: 100%; text-align: right;">
+                        </div>
+                        <div>
+                            <label style="font-size: 12px; font-weight: bold; color: #334155; display: block; margin-bottom: 3px;">تفاصيل الشكوى والطلبات:</label>
+                            <textarea id="grv-details" rows="4" placeholder="اشرح تفاصيل الموضوع بدقة مع ذكر التاريخ والجهة المعنية..." style="width: 100%; padding: 10px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 13.5px; font-weight: bold; outline: none;"></textarea>
+                        </div>
                     </div>
-                    <span style="background: #fef3c7; color: #b45309; border: 1.5px solid #f59e0b; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 800;">
-                        <i class="fas fa-hourglass-half"></i> الحالة: في انتظار الرد
-                    </span>
-                </div>
-                <div id="grv-receipt-content" style="font-size: 13px; line-height: 1.8; color: #1e293b;"></div>
-                <div style="display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap;">
-                    <a id="grv-wa-send-btn" href="#" target="_blank" class="btn" style="flex: 1; background: #25D366; color: #fff; text-decoration: none;">
-                        <i class="fab fa-whatsapp"></i> إرسال الوثيقة للمنسق
-                    </a>
-                    <button class="btn" style="background: #0284c7;" onclick="printGrievanceDoc()">
-                        <i class="fas fa-print"></i> طباعة الوثيقة الرسمية
+                    <p id="grv-form-error" style="display: none; color: #dc2626; font-size: 12.5px; font-weight: 700; text-align: center; margin-bottom: 10px;"></p>
+                    <button class="btn btn-block" id="btn-submit-grievance" style="background: #be123c;" onclick="submitOfficialGrievance()">
+                        <i class="fas fa-stamp"></i> اعتماد الشكوى الرسمية وإصدار وصل الاستلام
                     </button>
                 </div>
+
+                <!-- وثيقة الشكوى الرسمية بعد التقديم (في انتظار الرد) -->
+                <div id="grievance-receipt-box" style="display: none; border: 2px solid var(--gold); border-radius: 10px; padding: 15px; background: #fffcf5;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; border-bottom: 2px solid var(--primary); padding-bottom: 8px; margin-bottom: 10px;">
+                        <div style="font-size: 11.5px; font-weight: 800; color: var(--primary-dark);">
+                            النقابة الوطنية للمدرسين (نور)<br>
+                            لجنة العرائض والتظلمات المهنية
+                        </div>
+                        <span class="grv-status-badge grv-status-pending">
+                            <i class="fas fa-hourglass-half"></i> قيد المراجعة — في انتظار رد القيادة
+                        </span>
+                    </div>
+                    <div id="grv-receipt-content" style="font-size: 13px; line-height: 1.8; color: #1e293b;"></div>
+                    <div style="display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap;">
+                        <a id="grv-wa-send-btn" href="#" target="_blank" class="btn" style="flex: 1; background: #25D366; color: #fff; text-decoration: none;">
+                            <i class="fab fa-whatsapp"></i> إرسال الوثيقة للمنسق
+                        </a>
+                        <button class="btn" style="background: #0284c7;" onclick="printGrievanceDoc()">
+                            <i class="fas fa-print"></i> طباعة الوثيقة الرسمية
+                        </button>
+                    </div>
+                    <div style="display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap;">
+                        <button type="button" class="btn btn-outline" style="flex: 1; font-size: 12.5px; padding: 9px;" onclick="goToTrackMySubmittedGrievance()">
+                            <i class="fas fa-search"></i> متابعة حالة شكواي الآن
+                        </button>
+                        <button type="button" class="btn" style="background: #475569; font-size: 12.5px; padding: 9px;" onclick="resetGrievanceForm()">
+                            <i class="fas fa-plus"></i> شكوى جديدة
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- التبويب (2): متابعة شكواي الخاصة (بخصوصية تامة) -->
+            <div id="grv-panel-track" style="display: none;">
+                <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-right: 3px solid var(--primary); border-radius: 8px; padding: 10px 12px; margin-bottom: 12px; font-size: 12px; color: #334155; line-height: 1.6;">
+                    <i class="fas fa-shield-alt" style="color: var(--primary);"></i>
+                    <strong>خصوصية تامة:</strong> أدخل <strong>الدليل المالي</strong> أو <strong>الرقم الوطني (NNI)</strong> لاستعراض شكاواك الخاصة وحدها وحالة معالجتها ورد القيادة الرسمي.
+                </div>
+                <div class="input-group" style="margin-bottom: 10px;">
+                    <input type="text" id="grv-track-id" placeholder="أدخل الدليل المالي أو الرقم الوطني" onkeydown="if(event.key==='Enter') trackMyGrievances()">
+                    <button type="button" class="btn" onclick="trackMyGrievances()">
+                        <i class="fas fa-search"></i> عرض شكاواي
+                    </button>
+                </div>
+                <p id="grv-track-msg" style="display: none; font-size: 12.5px; text-align: center; color: #dc2626; font-weight: 700; margin-bottom: 10px;"></p>
+                <div id="grv-track-results" style="max-height: 360px; overflow-y: auto; padding-left: 2px;"></div>
             </div>
         </div>
     </div>
 
-    <!-- نافذة بوابة المنسق العام (إدارة الرمز السري، الأخبار، والكتب المدرسية) -->
+    <!-- نافذة بوابة المنسق العام (إدارة الرمز السري، الأخبار، الكتب، والشكاوى) -->
     <div id="coordinator-pin-modal" class="modal">
-        <div class="modal-content" style="max-width: 520px;">
+        <div class="modal-content" style="max-width: 560px;">
             <button class="close-btn" onclick="closeModal('coordinator-pin-modal')">&times;</button>
             <div style="text-align: center; margin-bottom: 14px; border-bottom: 2px solid var(--gold); padding-bottom: 10px;">
                 <i class="fas fa-user-shield" style="font-size: 32px; color: var(--primary);"></i>
                 <h3 style="margin-top: 8px; color: var(--primary);">بوابة المنسق العام</h3>
-                <p style="font-size: 12px; color: #64748b; margin-top: 4px;">إدارة الأرقام السرية للأعضاء، نشر الأخبار، وإضافة الكتب المدرسية</p>
+                <p style="font-size: 12px; color: #64748b; margin-top: 4px;">إدارة الأرقام السرية للأعضاء، نشر الأخبار، الكتب المدرسية، ومعالجة الشكاوى</p>
             </div>
 
             <!-- شريط التنقل السريع بين أقسام بوابة المنسق -->
@@ -1467,7 +1733,11 @@
                     <i class="fas fa-bullhorn"></i> الأخبار
                 </button>
                 <button type="button" class="coord-tab-btn" id="coord-tab-books" onclick="switchCoordinatorTab('books')">
-                    <i class="fas fa-book-medical"></i> إضافة الكتب
+                    <i class="fas fa-book-medical"></i> الكتب
+                </button>
+                <button type="button" class="coord-tab-btn" id="coord-tab-grievances" onclick="switchCoordinatorTab('grievances')">
+                    <i class="fas fa-file-signature"></i> الشكاوى
+                    <span id="coord-grv-pending-count" class="coord-pending-badge" style="display: none;">0</span>
                 </button>
             </div>
 
@@ -1547,6 +1817,34 @@
                 </div>
                 <p id="books-admin-msg" style="font-size: 12.5px; text-align: center; margin-top: 8px; display: none; font-weight: bold;"></p>
                 <div id="coord-books-manage-list" style="margin-top: 10px; max-height: 220px; overflow-y: auto;"></div>
+            </div>
+
+            <!-- 4. قسم معالجة الشكاوى والتظلمات الرسمية -->
+            <div id="coord-panel-grievances" class="coord-panel">
+                <div style="text-align: center; margin-bottom: 10px;">
+                    <h4 style="color: #be123c; font-size: 15px;"><i class="fas fa-file-signature"></i> لوحة معالجة الشكاوى والتظلمات الرسمية</h4>
+                    <p style="font-size: 11.5px; color: #64748b;">استعراض الشكاوى مرتبة بالتاريخ، كتابة الرد الرسمي، وتحديث حالة المعالجة والإحصائيات تلقائياً</p>
+                </div>
+
+                <!-- ملخص الأداء الإحصائي المؤرخ داخل بوابة المنسق العام -->
+                <div id="grv-stats-summary-coord"></div>
+
+                <div class="input-group" style="margin-bottom: 8px;">
+                    <input type="password" id="grievances-admin-pin" placeholder="أدخل رمز الإدارة السري للمنسق" onkeydown="if(event.key==='Enter') loadCoordinatorGrievancesList()">
+                    <button type="button" class="btn" style="background: #be123c;" onclick="loadCoordinatorGrievancesList()">
+                        <i class="fas fa-folder-open"></i> فتح الشكاوى
+                    </button>
+                </div>
+                <p id="grievances-admin-msg" style="font-size: 12.5px; text-align: center; margin-top: 6px; margin-bottom: 8px; display: none; font-weight: bold;"></p>
+
+                <div id="coord-grv-filters" class="grv-coord-filter-bar" style="display: none;">
+                    <button type="button" class="grv-coord-filter-btn active" id="coord-grv-flt-all" onclick="setCoordinatorGrievanceFilter('all')">الكل</button>
+                    <button type="button" class="grv-coord-filter-btn" id="coord-grv-flt-pending" onclick="setCoordinatorGrievanceFilter('pending')">قيد المراجعة والانتظار</button>
+                    <button type="button" class="grv-coord-filter-btn" id="coord-grv-flt-in_progress" onclick="setCoordinatorGrievanceFilter('in_progress')">قيد المتابعة</button>
+                    <button type="button" class="grv-coord-filter-btn" id="coord-grv-flt-resolved" onclick="setCoordinatorGrievanceFilter('resolved')">تمت المعالجة والرد</button>
+                </div>
+
+                <div id="coord-grievances-list" style="margin-top: 8px; max-height: 340px; overflow-y: auto; padding-left: 2px;"></div>
             </div>
         </div>
     </div>
@@ -1965,12 +2263,15 @@
         }
 
         function switchCoordinatorTab(tabName) {
-            ['pin', 'news', 'books'].forEach(t => {
+            ['pin', 'news', 'books', 'grievances'].forEach(t => {
                 const btn = document.getElementById('coord-tab-' + t);
                 const panel = document.getElementById('coord-panel-' + t);
                 if (btn) btn.classList.toggle('active', t === tabName);
                 if (panel) panel.classList.toggle('active', t === tabName);
             });
+            if (tabName === 'grievances') {
+                refreshGrievancesViews(true);
+            }
         }
 
         function openCoordinatorBookUpload() {
@@ -4433,28 +4734,351 @@
             loadCoordinatorBooksList();
         }
 
-        // وظائف استمارة الشكوى / التظلم الرسمي ("في انتظار الرد")
-        let lastGrievanceData = null;
+        // =========================================================================
+        // نظام الشكاوى والتظلمات الرسمية (خصوصية، تأريخ، إحصائيات مؤرخة، ومعالجة)
+        // =========================================================================
+        const LOCAL_GRIEVANCES_KEY = 'nour_official_grievances_v1';
+        const ARABIC_MONTHS = [
+            'يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو',
+            'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'
+        ];
 
-        function openGrievanceModal() {
+        let cachedGrievances = [];
+        let lastGrievanceData = null;
+        let activeCoordGrievanceFilter = 'all';
+
+        const nowDateInit = new Date();
+        const grvStatsFilters = {
+            public: { mode: 'all', year: nowDateInit.getFullYear(), month: nowDateInit.getMonth() + 1 },
+            coord: { mode: 'all', year: nowDateInit.getFullYear(), month: nowDateInit.getMonth() + 1 }
+        };
+
+        function escapeGrievanceHtml(str) {
+            return String(str || '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        function normalizeMemberKey(val) {
+            return String(val || '').trim().replace(/\s+/g, '').toLowerCase();
+        }
+
+        function formatGrievanceDateTime(isoStr) {
+            if (!isoStr) return '—';
+            const d = new Date(isoStr);
+            if (isNaN(d.getTime())) return String(isoStr);
+            const day = String(d.getDate()).padStart(2, '0');
+            const monthName = ARABIC_MONTHS[d.getMonth()] || (d.getMonth() + 1);
+            const year = d.getFullYear();
+            const hours = String(d.getHours()).padStart(2, '0');
+            const mins = String(d.getMinutes()).padStart(2, '0');
+            return `${day} ${monthName} ${year} — ${hours}:${mins}`;
+        }
+
+        function normalizeGrievanceRecord(raw) {
+            if (!raw || typeof raw !== 'object') return null;
+            const createdAt = raw.created_at || raw.createdAt || new Date().toISOString();
+            const repliedAt = raw.replied_at || raw.repliedAt || null;
+            const updatedAt = raw.updated_at || raw.updatedAt || repliedAt || createdAt;
+            const statusVal = raw.status === 'resolved' || raw.status === 'in_progress' ? raw.status : 'pending';
+            return {
+                id: String(raw.id || raw.ref_num || ('grv_' + Date.now())),
+                ref_num: String(raw.ref_num || raw.refNum || ('NR-' + new Date(createdAt).getFullYear() + '-' + Math.floor(1000 + Math.random() * 9000))),
+                full_name: String(raw.full_name || raw.name || ''),
+                member_id: String(raw.member_id || raw.national_id || raw.financial_id || raw.memberId || ''),
+                phone: String(raw.phone || ''),
+                wilaya: String(raw.wilaya || ''),
+                school: String(raw.school || ''),
+                subject: String(raw.subject || ''),
+                details: String(raw.details || ''),
+                status: statusVal,
+                reply_text: String(raw.reply_text || raw.reply || ''),
+                created_at: createdAt,
+                replied_at: repliedAt,
+                updated_at: updatedAt
+            };
+        }
+
+        function getLocalGrievances() {
+            try {
+                const parsed = JSON.parse(localStorage.getItem(LOCAL_GRIEVANCES_KEY) || '[]');
+                if (!Array.isArray(parsed)) return [];
+                return parsed.map(normalizeGrievanceRecord).filter(Boolean);
+            } catch (e) {
+                return [];
+            }
+        }
+
+        function saveLocalGrievances(list) {
+            try {
+                localStorage.setItem(LOCAL_GRIEVANCES_KEY, JSON.stringify(list));
+            } catch (e) {
+                console.warn('تعذر حفظ الشكاوى في التخزين المحلي:', e);
+            }
+        }
+
+        function mergeGrievanceLists(remoteList, localList) {
+            const byRef = new Map();
+            const upsert = (item) => {
+                const norm = normalizeGrievanceRecord(item);
+                if (!norm) return;
+                const key = norm.ref_num || norm.id;
+                const existing = byRef.get(key);
+                if (!existing) {
+                    byRef.set(key, norm);
+                } else {
+                    const existingTime = new Date(existing.updated_at || existing.created_at).getTime() || 0;
+                    const newTime = new Date(norm.updated_at || norm.created_at).getTime() || 0;
+                    if (newTime >= existingTime) {
+                        byRef.set(key, norm);
+                    }
+                }
+            };
+            (remoteList || []).forEach(upsert);
+            (localList || []).forEach(upsert);
+            return Array.from(byRef.values()).sort((a, b) => {
+                return (new Date(b.created_at).getTime() || 0) - (new Date(a.created_at).getTime() || 0);
+            });
+        }
+
+        async function fetchAllGrievances() {
+            let remoteRecords = [];
+            try {
+                const { data, error } = await client
+                    .from('grievances')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+                if (!error && Array.isArray(data)) {
+                    remoteRecords = data;
+                }
+            } catch (e) {
+                console.warn('Grievances Supabase fetch fallback to localStorage:', e);
+            }
+
+            const localRecords = getLocalGrievances();
+            const merged = mergeGrievanceLists(remoteRecords, localRecords);
+            cachedGrievances = merged;
+            updateCoordinatorGrievanceBadge(merged);
+            return merged;
+        }
+
+        function updateCoordinatorGrievanceBadge(list) {
+            const badge = document.getElementById('coord-grv-pending-count');
+            if (!badge) return;
+            const unresolved = (list || []).filter(g => g.status !== 'resolved').length;
+            if (unresolved > 0) {
+                badge.innerText = unresolved;
+                badge.style.display = 'inline-block';
+            } else {
+                badge.style.display = 'none';
+            }
+        }
+
+        function getAvailableGrievanceYears(list) {
+            const years = new Set([new Date().getFullYear()]);
+            (list || []).forEach(g => {
+                const d = new Date(g.created_at);
+                if (!isNaN(d.getTime())) years.add(d.getFullYear());
+            });
+            return Array.from(years).sort((a, b) => b - a);
+        }
+
+        function filterGrievancesByPeriod(list, filterCfg) {
+            if (!filterCfg || filterCfg.mode === 'all') {
+                return {
+                    items: list || [],
+                    periodLabel: 'الإجمالي العام (كافة الفترات)'
+                };
+            }
+            const targetYear = Number(filterCfg.year);
+            const targetMonth = Number(filterCfg.month);
+
+            if (filterCfg.mode === 'year') {
+                const filtered = (list || []).filter(g => {
+                    const d = new Date(g.created_at);
+                    return !isNaN(d.getTime()) && d.getFullYear() === targetYear;
+                });
+                return {
+                    items: filtered,
+                    periodLabel: `السنة: ${targetYear}`
+                };
+            }
+
+            const filtered = (list || []).filter(g => {
+                const d = new Date(g.created_at);
+                return !isNaN(d.getTime()) && d.getFullYear() === targetYear && (d.getMonth() + 1) === targetMonth;
+            });
+            const mName = ARABIC_MONTHS[targetMonth - 1] || targetMonth;
+            return {
+                items: filtered,
+                periodLabel: `الشهر: ${mName} ${targetYear}`
+            };
+        }
+
+        function updateGrievanceStatsFilter(scope, field, value) {
+            if (!grvStatsFilters[scope]) return;
+            if (field === 'mode') {
+                grvStatsFilters[scope].mode = value;
+            } else if (field === 'year') {
+                grvStatsFilters[scope].year = Number(value);
+            } else if (field === 'month') {
+                grvStatsFilters[scope].month = Number(value);
+            }
+            renderGrievanceStatsCard(scope);
+        }
+
+        function renderGrievanceStatsCard(scope) {
+            const containerId = scope === 'coord' ? 'grv-stats-summary-coord' : 'grv-stats-summary-public';
+            const container = document.getElementById(containerId);
+            if (!container) return;
+
+            const filterCfg = grvStatsFilters[scope] || { mode: 'all', year: new Date().getFullYear(), month: new Date().getMonth() + 1 };
+            const { items, periodLabel } = filterGrievancesByPeriod(cachedGrievances, filterCfg);
+
+            const total = items.length;
+            const resolved = items.filter(g => g.status === 'resolved').length;
+            const pending = total - resolved;
+            const rate = total > 0 ? Math.round((resolved / total) * 100) : 0;
+
+            let lastUpdateIso = null;
+            items.forEach(g => {
+                const ts = g.replied_at || g.updated_at || g.created_at;
+                if (ts && (!lastUpdateIso || new Date(ts) > new Date(lastUpdateIso))) {
+                    lastUpdateIso = ts;
+                }
+            });
+            const lastUpdateText = lastUpdateIso
+                ? formatGrievanceDateTime(lastUpdateIso)
+                : formatGrievanceDateTime(new Date().toISOString());
+
+            const years = getAvailableGrievanceYears(cachedGrievances);
+            const yearOptions = years.map(y => `<option value="${y}" ${y === Number(filterCfg.year) ? 'selected' : ''}>${y}</option>`).join('');
+            const monthOptions = ARABIC_MONTHS.map((m, idx) => `<option value="${idx + 1}" ${(idx + 1) === Number(filterCfg.month) ? 'selected' : ''}>${m}</option>`).join('');
+
+            container.innerHTML = `
+                <div class="grv-stats-card">
+                    <div class="grv-stats-header">
+                        <div class="grv-stats-title">
+                            <i class="fas fa-chart-bar" style="color: var(--primary);"></i>
+                            ملخص الأداء الإحصائي المؤرخ للشكاوى
+                        </div>
+                        <div class="grv-filter-controls">
+                            <select class="grv-filter-select" onchange="updateGrievanceStatsFilter('${scope}', 'mode', this.value)" aria-label="تصفية الفترة الزمنية">
+                                <option value="all" ${filterCfg.mode === 'all' ? 'selected' : ''}>الإجمالي العام</option>
+                                <option value="year" ${filterCfg.mode === 'year' ? 'selected' : ''}>حسب السنة</option>
+                                <option value="month" ${filterCfg.mode === 'month' ? 'selected' : ''}>حسب الشهر</option>
+                            </select>
+                            ${filterCfg.mode === 'month' ? `<select class="grv-filter-select" onchange="updateGrievanceStatsFilter('${scope}', 'month', this.value)" aria-label="الشهر">${monthOptions}</select>` : ''}
+                            ${filterCfg.mode !== 'all' ? `<select class="grv-filter-select" onchange="updateGrievanceStatsFilter('${scope}', 'year', this.value)" aria-label="السنة">${yearOptions}</select>` : ''}
+                        </div>
+                    </div>
+
+                    <div class="grv-official-statement">
+                        «تمت معالجة وحل <span class="grv-highlight">${resolved}</span> شكاية من أصل <span class="grv-highlight">${total}</span> شكاية مستلمة — بنسبة استجابة بلغت <span class="grv-highlight">${rate}%</span>»
+                    </div>
+
+                    <div class="grv-counters-grid">
+                        <div class="grv-counter-box">
+                            <div class="grv-counter-label">إجمالي الشكاوى المستلمة</div>
+                            <div class="grv-counter-val" style="color: #0f172a;">${total}</div>
+                        </div>
+                        <div class="grv-counter-box" style="border-color: #bbf7d0; background: #f0fdf4;">
+                            <div class="grv-counter-label">المعالجة والمحلولة</div>
+                            <div class="grv-counter-val" style="color: #15803d;">${resolved}</div>
+                        </div>
+                        <div class="grv-counter-box" style="border-color: #fde68a; background: #fffbeb;">
+                            <div class="grv-counter-label">قيد المراجعة والانتظار</div>
+                            <div class="grv-counter-val" style="color: #b45309;">${pending}</div>
+                        </div>
+                        <div class="grv-counter-box" style="border-color: #c7d2fe; background: #eef2ff;">
+                            <div class="grv-counter-label">نسبة الاستجابة</div>
+                            <div class="grv-counter-val" style="color: #3730a3;">${rate}%</div>
+                        </div>
+                    </div>
+
+                    <div class="grv-progress-wrap" title="نسبة الاستجابة: ${rate}%">
+                        <div class="grv-progress-fill" style="width: ${rate}%;"></div>
+                    </div>
+
+                    <div class="grv-stats-meta">
+                        <span><i class="fas fa-calendar-alt" style="color: var(--primary);"></i> الفترة: <strong>${periodLabel}</strong></span>
+                        <span><i class="fas fa-clock" style="color: var(--gold);"></i> آخر تحديث: <strong>${lastUpdateText}</strong></span>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderAllGrievanceStats() {
+            renderGrievanceStatsCard('public');
+            renderGrievanceStatsCard('coord');
+        }
+
+        function switchGrievanceTab(tabName) {
+            const isSubmit = tabName === 'submit';
+            document.getElementById('grv-tab-submit').classList.toggle('active', isSubmit);
+            document.getElementById('grv-tab-track').classList.toggle('active', !isSubmit);
+            document.getElementById('grv-panel-submit').style.display = isSubmit ? 'block' : 'none';
+            document.getElementById('grv-panel-track').style.display = isSubmit ? 'none' : 'block';
+
+            if (!isSubmit) {
+                const trackInput = document.getElementById('grv-track-id');
+                if (trackInput && !trackInput.value.trim()) {
+                    const fallbackId = (document.getElementById('grv-id').value || (activeMember ? (activeMember.financial_id || activeMember.national_id || '') : '')).trim();
+                    if (fallbackId) {
+                        trackInput.value = fallbackId;
+                    }
+                }
+                if (trackInput && trackInput.value.trim()) {
+                    trackMyGrievances();
+                }
+            }
+        }
+
+        async function openGrievanceModal(defaultTab = 'submit') {
             document.getElementById('grievance-form-box').style.display = 'block';
             document.getElementById('grievance-receipt-box').style.display = 'none';
+            const errEl = document.getElementById('grv-form-error');
+            if (errEl) errEl.style.display = 'none';
             document.getElementById('grievance-modal').style.display = 'block';
+            switchGrievanceTab(defaultTab);
+            await fetchAllGrievances();
+            renderAllGrievanceStats();
         }
 
         function openGrievanceFromCard() {
             closeModal('card-modal');
-            openGrievanceModal();
+            openGrievanceModal('submit');
             if (activeMember) {
+                const memberIdentifier = activeMember.financial_id || activeMember.national_id || activeMember.membership_number || '';
                 document.getElementById('grv-name').value = activeMember.full_name || '';
-                document.getElementById('grv-id').value = activeMember.financial_id || activeMember.national_id || activeMember.membership_number || '';
+                document.getElementById('grv-id').value = memberIdentifier;
                 document.getElementById('grv-phone').value = activeMember.phone || '';
                 document.getElementById('grv-wilaya').value = ((activeMember.wilaya || '') + ' ' + (activeMember.moughataa || '')).trim();
                 document.getElementById('grv-school').value = activeMember.school || '';
+                document.getElementById('grv-track-id').value = memberIdentifier;
             }
         }
 
-        function submitOfficialGrievance() {
+        function resetGrievanceForm() {
+            document.getElementById('grv-subject').value = '';
+            document.getElementById('grv-details').value = '';
+            document.getElementById('grv-form-error').style.display = 'none';
+            document.getElementById('grievance-receipt-box').style.display = 'none';
+            document.getElementById('grievance-form-box').style.display = 'block';
+        }
+
+        function goToTrackMySubmittedGrievance() {
+            if (lastGrievanceData && lastGrievanceData.member_id) {
+                document.getElementById('grv-track-id').value = lastGrievanceData.member_id;
+            }
+            switchGrievanceTab('track');
+            trackMyGrievances();
+        }
+
+        async function submitOfficialGrievance() {
             const name = document.getElementById('grv-name').value.trim();
             const id = document.getElementById('grv-id').value.trim();
             const phone = document.getElementById('grv-phone').value.trim();
@@ -4462,24 +5086,84 @@
             const school = document.getElementById('grv-school').value.trim();
             const subject = document.getElementById('grv-subject').value.trim();
             const details = document.getElementById('grv-details').value.trim();
+            const errEl = document.getElementById('grv-form-error');
+            const submitBtn = document.getElementById('btn-submit-grievance');
+
+            errEl.style.display = 'none';
 
             if (!name || !id || !subject || !details) {
-                alert('يرجى تعبئة الاسم الكامل، المعرف، موضوع الشكوى، والتفاصيل.');
+                errEl.innerText = 'يرجى تعبئة الاسم الكامل، الدليل المالي أو الرقم الوطني، موضوع الشكوى، والتفاصيل.';
+                errEl.style.display = 'block';
                 return;
             }
 
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري تسجيل وتوثيق الشكوى...';
+
+            const nowIso = new Date().toISOString();
             const refNum = 'NR-' + new Date().getFullYear() + '-' + Math.floor(1000 + Math.random() * 9000);
-            const dateStr = new Date().toLocaleDateString('ar-MA');
-            lastGrievanceData = { refNum, dateStr, name, id, phone, wilaya, school, subject, details };
+            const dateTimeStr = formatGrievanceDateTime(nowIso);
+
+            const record = {
+                id: 'grv_' + Date.now(),
+                ref_num: refNum,
+                full_name: name,
+                member_id: id,
+                phone: phone,
+                wilaya: wilaya,
+                school: school,
+                subject: subject,
+                details: details,
+                status: 'pending',
+                reply_text: '',
+                created_at: nowIso,
+                replied_at: null,
+                updated_at: nowIso
+            };
+
+            // حفظ فوري في localStorage لضمان المعاينة الفورية والمتابعة السريعة
+            const localList = getLocalGrievances();
+            localList.unshift(record);
+            saveLocalGrievances(localList);
+
+            // محاولة الحفظ في قاعدة البيانات المعتمدة (Supabase)
+            try {
+                await client.from('grievances').insert([{
+                    ref_num: record.ref_num,
+                    full_name: record.full_name,
+                    member_id: record.member_id,
+                    phone: record.phone,
+                    wilaya: record.wilaya,
+                    school: record.school,
+                    subject: record.subject,
+                    details: record.details,
+                    status: record.status,
+                    reply_text: '',
+                    created_at: record.created_at,
+                    updated_at: record.updated_at
+                }]);
+            } catch (e) {
+                console.warn('Grievance Supabase insert fallback (saved locally):', e);
+            }
+
+            await fetchAllGrievances();
+            renderAllGrievanceStats();
+
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fas fa-stamp"></i> اعتماد الشكوى الرسمية وإصدار وصل الاستلام';
+
+            lastGrievanceData = record;
+            document.getElementById('grv-track-id').value = id;
 
             document.getElementById('grv-receipt-content').innerHTML = `
-                <div><strong>رقم المرجع الرسمي:</strong> <span style="color:var(--primary); font-weight:800;">${refNum}</span> | <strong>التاريخ:</strong> ${dateStr}</div>
-                <div><strong>مقدم التظلم:</strong> ${name} (${id})</div>
-                <div><strong>الولاية والمؤسسة:</strong> ${wilaya || '-'} / ${school || '-'}</div>
-                <div><strong>الموضوع:</strong> ${subject}</div>
-                <div style="background:#fff; border:1px solid #e2e8f0; padding:8px; border-radius:6px; margin-top:6px;">${details}</div>
+                <div><strong>رقم المرجع الرسمي:</strong> <span style="color:var(--primary); font-weight:800;">${escapeGrievanceHtml(refNum)}</span></div>
+                <div><strong>تاريخ وساعة الإرسال:</strong> ${escapeGrievanceHtml(dateTimeStr)}</div>
+                <div><strong>مقدم التظلم:</strong> ${escapeGrievanceHtml(name)} (${escapeGrievanceHtml(id)})</div>
+                <div><strong>الولاية والمؤسسة:</strong> ${escapeGrievanceHtml(wilaya || '-')} / ${escapeGrievanceHtml(school || '-')}</div>
+                <div><strong>الموضوع:</strong> ${escapeGrievanceHtml(subject)}</div>
+                <div style="background:#fff; border:1px solid #e2e8f0; padding:8px; border-radius:6px; margin-top:6px; white-space:pre-line;">${escapeGrievanceHtml(details)}</div>
                 <div style="margin-top:10px; padding:8px; background:#fef3c7; border-right:4px solid #f59e0b; font-weight:bold; color:#92400e; font-size:12px;">
-                    تم قيد تظلمكم رسمياً لدى أمانة العرائض بالنقابة الوطنية للمدرسين (نور). حالة الملف الآن: <strong>«في انتظار الرد»</strong> من المكتب الوطني.
+                    تم قيد شكواكم رسمياً لدى أمانة العرائض بالنقابة الوطنية للمدرسين (نور). الحالة الحالية: <strong>«قيد المراجعة — في انتظار رد القيادة»</strong>. يمكنك متابعة الرد في أي وقت عبر تبويب «متابعة شكواي الخاصة» باستخدام معرفك.
                 </div>
             `;
 
@@ -4489,7 +5173,8 @@
                 `📄 *وثيقة تظلم / شكوى رسمية*\n` +
                 `━━━━━━━━━━━━━━\n` +
                 `🔹 *رقم المرجع:* ${refNum}\n` +
-                `🔹 *الحالة:* في انتظار الرد ⏳\n` +
+                `🔹 *تاريخ وساعة الإرسال:* ${dateTimeStr}\n` +
+                `🔹 *الحالة:* قيد المراجعة — في انتظار رد القيادة ⏳\n` +
                 `🔹 *الاسم الكامل:* ${name}\n` +
                 `🔹 *المعرف / الدليل:* ${id}\n` +
                 `🔹 *الهاتف:* ${phone}\n` +
@@ -4504,9 +5189,337 @@
             document.getElementById('grievance-receipt-box').style.display = 'block';
         }
 
-        function printGrievanceDoc() {
-            if (!lastGrievanceData) return;
-            const g = lastGrievanceData;
+        async function trackMyGrievances() {
+            const idInput = document.getElementById('grv-track-id').value.trim();
+            const msgEl = document.getElementById('grv-track-msg');
+            const resultsEl = document.getElementById('grv-track-results');
+
+            msgEl.style.display = 'none';
+            if (!idInput) {
+                msgEl.innerText = 'يرجى إدخال الدليل المالي أو الرقم الوطني لعرض شكاواك الخاصة.';
+                msgEl.style.display = 'block';
+                resultsEl.innerHTML = '';
+                return;
+            }
+
+            resultsEl.innerHTML = '<div style="text-align:center; padding:18px; color:#64748b; font-size:13px;"><i class="fas fa-spinner fa-spin"></i> جاري البحث عن شكاواك الخاصة...</div>';
+
+            const allGrievances = await fetchAllGrievances();
+            renderAllGrievanceStats();
+
+            const targetKey = normalizeMemberKey(idInput);
+            const myList = allGrievances.filter(g => normalizeMemberKey(g.member_id) === targetKey);
+
+            if (myList.length === 0) {
+                resultsEl.innerHTML = `
+                    <div style="text-align:center; padding:22px 12px; background:#f8fafc; border:1px dashed #cbd5e1; border-radius:10px; color:#64748b; font-size:13px;">
+                        <i class="fas fa-inbox" style="font-size:26px; color:#94a3b8; display:block; margin-bottom:8px;"></i>
+                        لا توجد شكاوى مسجلة حالياً مرتبطة بالمعرّف <strong>${escapeGrievanceHtml(idInput)}</strong>.
+                    </div>
+                `;
+                return;
+            }
+
+            resultsEl.innerHTML = myList.map(g => {
+                const isResolved = g.status === 'resolved';
+                const isInProgress = g.status === 'in_progress';
+                const cardClass = isResolved ? 'is-resolved' : (isInProgress ? 'is-in-progress' : '');
+                const badgeHtml = isResolved
+                    ? `<span class="grv-status-badge grv-status-resolved"><i class="fas fa-check-circle"></i> تمت معالجة الشكوى والرد عليها</span>`
+                    : (isInProgress
+                        ? `<span class="grv-status-badge grv-status-in-progress"><i class="fas fa-sync-alt"></i> قيد المراجعة — في انتظار رد القيادة (قيد المتابعة)</span>`
+                        : `<span class="grv-status-badge grv-status-pending"><i class="fas fa-hourglass-half"></i> قيد المراجعة — في انتظار رد القيادة</span>`);
+
+                const replySection = isResolved
+                    ? `
+                        <div class="grv-reply-box">
+                            <div style="font-weight:800; margin-bottom:4px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:4px;">
+                                <span><i class="fas fa-reply"></i> الرد الرسمي من القيادة النقابية:</span>
+                                <span style="font-size:11px; color:#15803d;"><i class="fas fa-clock"></i> ${escapeGrievanceHtml(formatGrievanceDateTime(g.replied_at || g.updated_at))}</span>
+                            </div>
+                            <div style="white-space:pre-line;">${escapeGrievanceHtml(g.reply_text || 'تمت معالجة الشكوى وإغلاق الملف بنجاح.')}</div>
+                        </div>
+                    `
+                    : (g.reply_text
+                        ? `
+                            <div style="margin-top:8px; padding:8px 10px; border-radius:8px; background:#fff7ed; border:1px solid #fed7aa; font-size:12px; color:#9a3412;">
+                                <div style="font-weight:800; margin-bottom:3px;"><i class="fas fa-info-circle"></i> ملاحظة متابعة (${escapeGrievanceHtml(formatGrievanceDateTime(g.replied_at || g.updated_at))}):</div>
+                                <div style="white-space:pre-line;">${escapeGrievanceHtml(g.reply_text)}</div>
+                            </div>
+                        `
+                        : '');
+
+                return `
+                    <div class="grv-item-card ${cardClass}">
+                        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px; margin-bottom:8px;">
+                            <span style="font-size:12px; font-weight:800; color:var(--primary-dark); background:#f1f5f9; padding:3px 8px; border-radius:6px;">
+                                <i class="fas fa-hashtag"></i> ${escapeGrievanceHtml(g.ref_num)}
+                            </span>
+                            ${badgeHtml}
+                        </div>
+                        <div style="font-size:14px; font-weight:800; color:#0f172a; margin-bottom:5px;">
+                            ${escapeGrievanceHtml(g.subject)}
+                        </div>
+                        <div style="font-size:11.5px; color:#64748b; margin-bottom:7px; display:flex; flex-wrap:wrap; gap:10px;">
+                            <span><i class="fas fa-calendar-plus" style="color:var(--primary);"></i> تاريخ الإرسال: <strong>${escapeGrievanceHtml(formatGrievanceDateTime(g.created_at))}</strong></span>
+                            ${g.wilaya || g.school ? `<span><i class="fas fa-school"></i> ${escapeGrievanceHtml([g.wilaya, g.school].filter(Boolean).join(' — '))}</span>` : ''}
+                        </div>
+                        <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:7px; padding:8px 10px; font-size:12.5px; color:#334155; line-height:1.65; white-space:pre-line;">
+                            ${escapeGrievanceHtml(g.details)}
+                        </div>
+                        ${replySection}
+                        <div style="margin-top:8px; text-align:left;">
+                            <button type="button" class="btn" style="background:#0284c7; padding:5px 10px; font-size:11.5px;" onclick="printGrievanceDoc('${escapeGrievanceHtml(g.ref_num)}')">
+                                <i class="fas fa-print"></i> طباعة الوثيقة
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function getCoordinatorAdminPinValue() {
+            return (
+                (document.getElementById('grievances-admin-pin') && document.getElementById('grievances-admin-pin').value) ||
+                (document.getElementById('coord-secret-input') && document.getElementById('coord-secret-input').value) ||
+                (document.getElementById('news-admin-pin') && document.getElementById('news-admin-pin').value) ||
+                (document.getElementById('books-admin-pin') && document.getElementById('books-admin-pin').value) ||
+                ''
+            ).trim();
+        }
+
+        async function refreshGrievancesViews(autoOpenCoordIfPinValid = false) {
+            await fetchAllGrievances();
+            renderAllGrievanceStats();
+            if (autoOpenCoordIfPinValid && getCoordinatorAdminPinValue() === ADMIN_GATE_HASH) {
+                loadCoordinatorGrievancesList();
+            }
+        }
+
+        function setCoordinatorGrievanceFilter(filterVal) {
+            activeCoordGrievanceFilter = filterVal;
+            ['all', 'pending', 'in_progress', 'resolved'].forEach(f => {
+                const btn = document.getElementById('coord-grv-flt-' + f);
+                if (btn) btn.classList.toggle('active', f === filterVal);
+            });
+            renderCoordinatorGrievancesList();
+        }
+
+        async function loadCoordinatorGrievancesList() {
+            const pin = getCoordinatorAdminPinValue();
+            const msgEl = document.getElementById('grievances-admin-msg');
+            const listEl = document.getElementById('coord-grievances-list');
+            const filtersEl = document.getElementById('coord-grv-filters');
+
+            if (pin !== ADMIN_GATE_HASH) {
+                msgEl.style.color = '#dc2626';
+                msgEl.innerText = 'يرجى إدخال رمز الإدارة السري المعتمد للمنسق لفتح لوحة معالجة الشكاوى.';
+                msgEl.style.display = 'block';
+                if (filtersEl) filtersEl.style.display = 'none';
+                listEl.innerHTML = '';
+                return;
+            }
+
+            msgEl.style.display = 'none';
+            if (filtersEl) filtersEl.style.display = 'flex';
+            listEl.innerHTML = '<div style="text-align:center; font-size:12.5px; color:#64748b; padding:16px;"><i class="fas fa-spinner fa-spin"></i> جاري تحميل سجل الشكاوى...</div>';
+
+            await fetchAllGrievances();
+            renderAllGrievanceStats();
+            renderCoordinatorGrievancesList();
+        }
+
+        function renderCoordinatorGrievancesList() {
+            const listEl = document.getElementById('coord-grievances-list');
+            if (!listEl) return;
+
+            let filtered = cachedGrievances;
+            if (activeCoordGrievanceFilter !== 'all') {
+                filtered = cachedGrievances.filter(g => g.status === activeCoordGrievanceFilter);
+            }
+
+            if (!filtered || filtered.length === 0) {
+                listEl.innerHTML = `
+                    <div style="text-align:center; font-size:12.5px; color:#64748b; padding:20px; background:#f8fafc; border:1px dashed #cbd5e1; border-radius:10px;">
+                        <i class="fas fa-check-double" style="font-size:22px; color:#94a3b8; display:block; margin-bottom:6px;"></i>
+                        لا توجد شكاوى ضمن هذا التصنيف حالياً.
+                    </div>
+                `;
+                return;
+            }
+
+            listEl.innerHTML = filtered.map((g, idx) => {
+                const safeId = 'coord_grv_' + idx;
+                const isResolved = g.status === 'resolved';
+                const isInProgress = g.status === 'in_progress';
+                const cardClass = isResolved ? 'is-resolved' : (isInProgress ? 'is-in-progress' : '');
+                const badgeHtml = isResolved
+                    ? `<span class="grv-status-badge grv-status-resolved"><i class="fas fa-check-circle"></i> تمت معالجة الشكوى والرد عليها</span>`
+                    : (isInProgress
+                        ? `<span class="grv-status-badge grv-status-in-progress"><i class="fas fa-sync-alt"></i> قيد المتابعة</span>`
+                        : `<span class="grv-status-badge grv-status-pending"><i class="fas fa-hourglass-half"></i> قيد المراجعة — في انتظار رد القيادة</span>`);
+
+                const selectDefaultStatus = isInProgress ? 'in_progress' : 'resolved';
+                const cleanPhone = String(g.phone || '').replace(/[^\d]/g, '');
+                const waContactBtn = cleanPhone
+                    ? `<a href="https://wa.me/${cleanPhone.startsWith('222') ? cleanPhone : '222' + cleanPhone}" target="_blank" style="color:#15803d; font-weight:800; text-decoration:none; font-size:11.5px;"><i class="fab fa-whatsapp"></i> ${escapeGrievanceHtml(g.phone)}</a>`
+                    : '';
+
+                return `
+                    <div class="grv-item-card ${cardClass}">
+                        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px; margin-bottom:6px;">
+                            <span style="font-size:11.5px; font-weight:800; color:var(--primary-dark); background:#f1f5f9; padding:2px 8px; border-radius:6px;">
+                                ${escapeGrievanceHtml(g.ref_num)}
+                            </span>
+                            ${badgeHtml}
+                        </div>
+
+                        <div style="font-size:13.5px; font-weight:800; color:#0f172a; margin-bottom:4px;">
+                            ${escapeGrievanceHtml(g.subject)}
+                        </div>
+
+                        <div style="font-size:11.5px; color:#475569; line-height:1.7; margin-bottom:6px;">
+                            <div><strong>الأستاذ(ة):</strong> ${escapeGrievanceHtml(g.full_name)} &nbsp;|&nbsp; <strong>المعرّف:</strong> ${escapeGrievanceHtml(g.member_id)} ${waContactBtn ? '&nbsp;|&nbsp; ' + waContactBtn : ''}</div>
+                            <div><strong>المكان:</strong> ${escapeGrievanceHtml([g.wilaya, g.school].filter(Boolean).join(' — ') || '—')}</div>
+                            <div><strong>تاريخ الإرسال:</strong> ${escapeGrievanceHtml(formatGrievanceDateTime(g.created_at))}
+                                ${g.replied_at ? ` &nbsp;|&nbsp; <span style="color:#15803d;"><strong>آخر رد:</strong> ${escapeGrievanceHtml(formatGrievanceDateTime(g.replied_at))}</span>` : ''}
+                            </div>
+                        </div>
+
+                        <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:7px; padding:8px; font-size:12px; color:#334155; margin-bottom:10px; white-space:pre-line;">
+                            ${escapeGrievanceHtml(g.details)}
+                        </div>
+
+                        <div style="background:#f1f5f9; border-radius:8px; padding:9px; border:1px solid #e2e8f0;">
+                            <label style="font-size:11.5px; font-weight:800; color:#1e293b; display:block; margin-bottom:4px;">
+                                <i class="fas fa-pen-nib" style="color:var(--primary);"></i> الرد الرسمي للقيادة النقابية:
+                            </label>
+                            <textarea id="${safeId}_reply" rows="2" placeholder="اكتب الرد الرسمي أو الإجراء المتخذ لمعالجة الشكوى..." style="width:100%; padding:8px; border:1.5px solid #cbd5e1; border-radius:7px; font-size:12.5px; font-weight:600; outline:none; margin-bottom:7px; background:#fff;">${escapeGrievanceHtml(g.reply_text)}</textarea>
+
+                            <div style="display:flex; gap:7px; flex-wrap:wrap; align-items:center;">
+                                <select id="${safeId}_status" style="flex:1; min-width:160px; padding:8px; border:1.5px solid #cbd5e1; border-radius:7px; font-size:12px; font-weight:800; background:#fff; color:#0f172a; outline:none;">
+                                    <option value="resolved" ${selectDefaultStatus === 'resolved' ? 'selected' : ''}>تمت معالجة الشكوى والرد عليها</option>
+                                    <option value="in_progress" ${selectDefaultStatus === 'in_progress' ? 'selected' : ''}>قيد المتابعة</option>
+                                </select>
+                                <button type="button" class="btn" style="padding:8px 12px; font-size:12px; background:var(--primary);" onclick="saveCoordinatorGrievanceReply('${escapeGrievanceHtml(g.ref_num)}', '${safeId}')">
+                                    <i class="fas fa-save"></i> حفظ الرد وتحديث الحالة
+                                </button>
+                            </div>
+                            <p id="${safeId}_msg" style="display:none; font-size:11.5px; font-weight:700; margin-top:6px; text-align:center;"></p>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        async function saveCoordinatorGrievanceReply(refNum, domPrefix) {
+            const pin = getCoordinatorAdminPinValue();
+            if (pin !== ADMIN_GATE_HASH) return;
+
+            const replyEl = document.getElementById(domPrefix + '_reply');
+            const statusEl = document.getElementById(domPrefix + '_status');
+            const msgEl = document.getElementById(domPrefix + '_msg');
+            if (!replyEl || !statusEl) return;
+
+            const replyText = replyEl.value.trim();
+            const newStatus = statusEl.value === 'in_progress' ? 'in_progress' : 'resolved';
+
+            if (!replyText) {
+                msgEl.style.color = '#dc2626';
+                msgEl.innerText = 'يرجى كتابة نص الرد الرسمي أو ملاحظة المتابعة قبل الحفظ.';
+                msgEl.style.display = 'block';
+                return;
+            }
+
+            const nowIso = new Date().toISOString();
+
+            // 1. تحديث فوري في localStorage و cachedGrievances
+            const localList = getLocalGrievances();
+            let updatedInLocal = false;
+            for (let i = 0; i < localList.length; i++) {
+                if (localList[i].ref_num === refNum) {
+                    localList[i].reply_text = replyText;
+                    localList[i].status = newStatus;
+                    localList[i].replied_at = nowIso;
+                    localList[i].updated_at = nowIso;
+                    updatedInLocal = true;
+                    break;
+                }
+            }
+            if (!updatedInLocal) {
+                const fromCache = cachedGrievances.find(g => g.ref_num === refNum);
+                if (fromCache) {
+                    localList.unshift({
+                        ...fromCache,
+                        reply_text: replyText,
+                        status: newStatus,
+                        replied_at: nowIso,
+                        updated_at: nowIso
+                    });
+                }
+            }
+            saveLocalGrievances(localList);
+
+            // 2. محاولة التحديث في قاعدة البيانات المعتمدة (Supabase)
+            try {
+                const { error: rpcErr } = await client.rpc('admin_manage_grievances', {
+                    admin_secret: pin,
+                    action_type: 'reply',
+                    target_ref_num: refNum,
+                    new_status: newStatus,
+                    official_reply: replyText
+                });
+                if (rpcErr) {
+                    await client
+                        .from('grievances')
+                        .update({
+                            status: newStatus,
+                            reply_text: replyText,
+                            replied_at: nowIso,
+                            updated_at: nowIso
+                        })
+                        .eq('ref_num', refNum);
+                }
+            } catch (e) {
+                console.warn('Grievance reply Supabase update fallback (saved locally):', e);
+            }
+
+            // 3. إعادة جلب البيانات وتحديث الإحصائيات والبطاقات تلقائياً في كل الواجهات
+            await fetchAllGrievances();
+            renderAllGrievanceStats();
+            renderCoordinatorGrievancesList();
+
+            const adminMsg = document.getElementById('grievances-admin-msg');
+            if (adminMsg) {
+                adminMsg.style.color = '#15803d';
+                adminMsg.innerText = `تم حفظ الرد وتحديث حالة الشكوى (${refNum}) وتحديث الإحصائيات الرسمية بنجاح.`;
+                adminMsg.style.display = 'block';
+            }
+
+            // إذا كان الأستاذ يستعرض شكاواه في الخلفية نحدثها أيضاً
+            if (document.getElementById('grv-track-id') && document.getElementById('grv-track-id').value.trim()) {
+                trackMyGrievances();
+            }
+        }
+
+        function printGrievanceDoc(refNumOverride) {
+            let g = lastGrievanceData;
+            if (refNumOverride) {
+                const found = cachedGrievances.find(item => item.ref_num === refNumOverride);
+                if (found) g = found;
+            }
+            if (!g) return;
+
+            const isResolved = g.status === 'resolved';
+            const statusText = isResolved
+                ? 'تمت معالجة الشكوى والرد عليها'
+                : (g.status === 'in_progress' ? 'قيد المتابعة' : 'قيد المراجعة — في انتظار رد القيادة');
+            const statusBg = isResolved ? '#dcfce7' : '#fef3c7';
+            const statusColor = isResolved ? '#166534' : '#b45309';
+            const statusBorder = isResolved ? '#4ade80' : '#f59e0b';
+            const sentDateStr = formatGrievanceDateTime(g.created_at);
+            const replyDateStr = g.replied_at ? formatGrievanceDateTime(g.replied_at) : '';
+
             const w = window.open('', '_blank');
             if (!w) return;
             w.document.write(`
@@ -4514,7 +5527,7 @@
                 <html lang="ar" dir="rtl">
                 <head>
                     <meta charset="UTF-8">
-                    <title>وثيقة تظلم رسمية - ${g.refNum}</title>
+                    <title>وثيقة تظلم رسمية - ${escapeGrievanceHtml(g.ref_num)}</title>
                     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800&display=swap" rel="stylesheet">
                     <style>
                         * { box-sizing: border-box; font-family: 'Tajawal', sans-serif; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
@@ -4528,30 +5541,37 @@
                             <div style="font-weight:800; font-size:14px; line-height:1.6;">
                                 النقابة الوطنية للمدرسين (نور)<br>
                                 المكتب الوطني - لجنة العرائض والتظلمات<br>
-                                رقم المرجع: ${g.refNum}
+                                رقم المرجع: ${escapeGrievanceHtml(g.ref_num)}
                             </div>
                             <div style="text-align:center;">
                                 ${MAURITANIA_SEAL_SVG}
                             </div>
                             <div style="text-align:left; font-weight:800; font-size:13px;">
-                                التاريخ: ${g.dateStr}<br>
-                                <span style="display:inline-block; margin-top:6px; background:#fef3c7; color:#b45309; border:1.5px solid #f59e0b; padding:4px 12px; border-radius:15px;">الحالة: في انتظار الرد</span>
+                                تاريخ الإرسال: ${escapeGrievanceHtml(sentDateStr)}<br>
+                                <span style="display:inline-block; margin-top:6px; background:${statusBg}; color:${statusColor}; border:1.5px solid ${statusBorder}; padding:4px 12px; border-radius:15px;">الحالة: ${statusText}</span>
                             </div>
                         </div>
                         <h2 style="text-align:center; color:#116835; margin-bottom:20px;">وثيقة تظلم / شكوى نقابية رسمية</h2>
                         <div style="font-size:15px; line-height:2; margin-bottom:15px;">
-                            <strong>الاسم الكامل للمنتسب(ة):</strong> ${g.name}<br>
-                            <strong>الدليل المالي / الرقم الوطني:</strong> ${g.id} &nbsp;&nbsp;|&nbsp;&nbsp; <strong>الهاتف:</strong> ${g.phone || '-'}<br>
-                            <strong>الولاية والمؤسسة التعليمية:</strong> ${g.wilaya || '-'} — ${g.school || '-'}<br>
-                            <strong>موضوع الشكوى / التظلم:</strong> ${g.subject}
+                            <strong>الاسم الكامل للمنتسب(ة):</strong> ${escapeGrievanceHtml(g.full_name)}<br>
+                            <strong>الدليل المالي / الرقم الوطني:</strong> ${escapeGrievanceHtml(g.member_id)} &nbsp;&nbsp;|&nbsp;&nbsp; <strong>الهاتف:</strong> ${escapeGrievanceHtml(g.phone || '-')}<br>
+                            <strong>الولاية والمؤسسة التعليمية:</strong> ${escapeGrievanceHtml(g.wilaya || '-')} — ${escapeGrievanceHtml(g.school || '-')}<br>
+                            <strong>موضوع الشكوى / التظلم:</strong> ${escapeGrievanceHtml(g.subject)}
                         </div>
-                        <div style="border:1.5px solid #111; border-radius:8px; padding:15px; min-height:180px; font-size:15px; line-height:1.9; background:#f8fafc;">
+                        <div style="border:1.5px solid #111; border-radius:8px; padding:15px; min-height:150px; font-size:15px; line-height:1.9; background:#f8fafc; white-space:pre-line;">
                             <strong>نص وتفاصيل التظلم:</strong><br>
-                            ${g.details}
+                            ${escapeGrievanceHtml(g.details)}
                         </div>
-                        <div style="margin-top:20px; padding:12px; background:#fef3c7; border:1px solid #f59e0b; border-radius:8px; font-weight:bold; text-align:center;">
-                            وصل استلام رسمي — ملف الشكوى قيد الدراسة والمتابعة لدى القيادة النقابية (في انتظار الرد)
-                        </div>
+                        ${g.reply_text ? `
+                            <div style="margin-top:16px; border:1.5px solid #15803d; border-radius:8px; padding:14px; background:#f0fdf4; font-size:14.5px; line-height:1.85; white-space:pre-line;">
+                                <strong style="color:#166534;">الرد الرسمي للقيادة النقابية${replyDateStr ? ' (' + escapeGrievanceHtml(replyDateStr) + ')' : ''}:</strong><br>
+                                ${escapeGrievanceHtml(g.reply_text)}
+                            </div>
+                        ` : `
+                            <div style="margin-top:20px; padding:12px; background:#fef3c7; border:1px solid #f59e0b; border-radius:8px; font-weight:bold; text-align:center;">
+                                وصل استلام رسمي — ملف الشكوى قيد المراجعة في انتظار رد القيادة النقابية
+                            </div>
+                        `}
                         <div style="display:flex; justify-content:space-between; margin-top:35px; font-weight:bold; font-size:14px;">
                             <div>توقيع الشاكي:<br><br>.........................</div>
                             <div>تأشيرة لجنة التظلمات والمكتب الوطني:<br><br>.........................</div>
@@ -4563,6 +5583,10 @@
             `);
             w.document.close();
         }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchAllGrievances().then(() => renderAllGrievanceStats());
+        });
 
         function openAboutModal() {
             document.getElementById('about-modal').style.display = 'block';
