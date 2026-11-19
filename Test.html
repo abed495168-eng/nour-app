@@ -995,9 +995,12 @@
             white-space: nowrap;
             color: var(--primary-dark);
             will-change: transform;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            transition: none !important;
             animation-name: tickerMove;
-            animation-duration: var(--ticker-duration, 22s);
-            animation-timing-function: linear;
+            animation-duration: var(--ticker-duration, 20s);
+            animation-timing-function: linear !important;
             animation-iteration-count: infinite;
             animation-play-state: running;
         }
@@ -4471,15 +4474,16 @@
             }
         }
 
-        // ضبط سرعة شريط الأخبار لتكون متوسطة ومتوازنة مثل القنوات الإخبارية مع ظهور فوري دون تأخير
+        // ضبط سرعة شريط الأخبار لتكون خطية وثابتة تماماً (~50 بكسل/ثانية) على جميع الهواتف دون تذبذب
         const LOCAL_NEWS_TICKER_CACHE_KEY = 'nour_live_news_ticker_cache_v1';
         const NEWS_TICKER_SEPARATOR_HTML = '<span class="ticker-sep-word"><span class="ticker-sep-diamond">◆</span><span class="ticker-sep-pill">الأخبار</span><span class="ticker-sep-diamond">◆</span></span>';
         const DEFAULT_NEWS_TICKER_ITEMS = [
             'إطلاق المنصة الرقمية المحدثة للنقابة الوطنية للمدرسين (نور)',
             'إتاحة الولوج المباشر لمنصة «موظف» لكشوف الرواتب والمكتبة الرقمية وحقيبة المدرس'
         ];
-        let newsTickerResizeTimer = null;
+        const TICKER_CONSTANT_SPEED_PX_PER_SEC = 50;
         let lastRenderedTickerSignature = '';
+        let lastAppliedTickerWidth = 0;
 
         function getCachedNewsTickerItems() {
             try {
@@ -4504,7 +4508,7 @@
             } catch (e) {}
         }
 
-        function updateNewsTickerMotion(restartAnimation = false) {
+        function applyNewsTickerAnimation(restartAnimation = true) {
             const tickerBar = document.getElementById('top-news-ticker');
             const tickerText = document.getElementById('top-news-ticker-text');
             if (!tickerBar || !tickerText) return;
@@ -4513,24 +4517,23 @@
             const wrapWidth = wrapEl ? wrapEl.clientWidth : 0;
             const trackWidth = tickerText.scrollWidth || tickerText.offsetWidth || 0;
 
-            // سرعة متوسطة ومتوازنة مثل شريط القنوات الإخبارية (~56 بكسل/ثانية -> ~18 إلى 25 ثانية للنصوص المتوسطة)
-            const TV_NEWS_SPEED_PX_PER_SEC = 56;
-            const MIN_DURATION_SEC = 16;
-            let durationSec = 22;
+            let durationSec = 20;
 
             if (wrapWidth > 0 && trackWidth > 0) {
-                const totalDistancePx = wrapWidth + trackWidth;
-                durationSec = Math.max(MIN_DURATION_SEC, Math.round((totalDistancePx / TV_NEWS_SPEED_PX_PER_SEC) * 10) / 10);
-                // يبدأ النص مباشرة عند الحافة اليسرى للعرض دون أي فراغ أو تأخير، ويغادر بسلاسة من الحافة اليمنى
+                // المسافة الكاملة = عرض النص الفعلي (scrollWidth) + عرض الشريط المرئي، مقسومة على سرعة ثابتة 50 بكسل/ثانية
+                const totalDistancePx = trackWidth + wrapWidth;
+                durationSec = Math.max(6, Math.round((totalDistancePx / TICKER_CONSTANT_SPEED_PX_PER_SEC) * 100) / 100);
                 tickerText.style.setProperty('--ticker-start', `${-wrapWidth}px`);
                 tickerText.style.setProperty('--ticker-end', `${trackWidth}px`);
+                lastAppliedTickerWidth = trackWidth;
             } else {
                 const charCount = (tickerText.textContent || '').trim().length;
-                durationSec = Math.max(18, Math.round(charCount * 0.16));
+                durationSec = Math.max(8, Math.round((charCount * 9 / TICKER_CONSTANT_SPEED_PX_PER_SEC) * 100) / 100);
                 tickerText.style.setProperty('--ticker-start', '-340px');
                 tickerText.style.setProperty('--ticker-end', '100%');
             }
 
+            tickerText.style.animationTimingFunction = 'linear';
             tickerText.style.setProperty('--ticker-duration', `${durationSec}s`);
 
             if (restartAnimation) {
@@ -4552,8 +4555,8 @@
             const signature = finalItems.join(' || ');
 
             tickerBar.style.display = 'flex';
+            // لا يتم تحديث أو إعادة تشغيل الأنيميشن إلا إذا تغير نص الأخبار فعلياً
             if (signature === lastRenderedTickerSignature && !forceRestart) {
-                updateNewsTickerMotion(false);
                 return;
             }
 
@@ -4562,8 +4565,7 @@
                 .map(txt => `<span class="news-ticker-item-text">${escapeNewsHtml(txt)}</span>`)
                 .join(NEWS_TICKER_SEPARATOR_HTML);
 
-            updateNewsTickerMotion(true);
-            requestAnimationFrame(() => updateNewsTickerMotion(false));
+            applyNewsTickerAnimation(true);
         }
 
         // تفعيل الإيقاف المؤقت عند اللمس بالإصبع على الهاتف أو وضع المؤشر واستئناف الحركة عند رفع الإصبع
@@ -4586,13 +4588,16 @@
             tickerBar.addEventListener('pointercancel', resumeTicker, { passive: true });
             tickerBar.addEventListener('mouseleave', resumeTicker, { passive: true });
 
-            window.addEventListener('resize', () => {
-                clearTimeout(newsTickerResizeTimer);
-                newsTickerResizeTimer = setTimeout(() => updateNewsTickerMotion(false), 180);
-            }, { passive: true });
-
+            // معايرة وحيدة عند اكتمال تحميل الخط إذا تغير العرض الفعلي للنص بشكل ملحوظ فقط
             if (document.fonts && document.fonts.ready) {
-                document.fonts.ready.then(() => updateNewsTickerMotion(false)).catch(() => {});
+                document.fonts.ready.then(() => {
+                    const tickerText = document.getElementById('top-news-ticker-text');
+                    if (!tickerText) return;
+                    const currentWidth = tickerText.scrollWidth || tickerText.offsetWidth || 0;
+                    if (currentWidth > 0 && Math.abs(currentWidth - lastAppliedTickerWidth) > 30) {
+                        applyNewsTickerAnimation(true);
+                    }
+                }).catch(() => {});
             }
         }
 
@@ -4816,85 +4821,38 @@
                 const baseContent = desc ? `${title} — ${desc}` : title;
                 const fullContent = rawTag ? `[${rawTag}] ${baseContent}` : baseContent;
 
-                // وضع التعديل: تحديث نفس السجل حسب المعرّف id دون إنشاء خبر مكرر
+                // وضع التعديل: استدعاء دالة Supabase RPC admin_manage_news بالمعاملات المعتمدة تماماً
                 if (isEditMode) {
-                    const parsedId = /^\d+$/.test(String(editingNewsId).trim())
-                        ? Number(String(editingNewsId).trim())
-                        : String(editingNewsId).trim();
-
-                    let updated = false;
-                    let lastError = null;
-
-                    const verifyUpdatedInDb = async () => {
-                        const { data: verifyRow, error: verifyErr } = await client
-                            .from('news_ticker')
-                            .select('id, content')
-                            .eq('id', parsedId)
-                            .maybeSingle();
-                        return !verifyErr && verifyRow && String(verifyRow.content || '').trim() === fullContent;
-                    };
-
-                    // 1. المحاولة عبر دالة Supabase admin_manage_news (بدعم action_type = 'update' أو 'edit')
-                    for (const actionName of ['update', 'edit']) {
-                        const { data: rpcData, error: rpcErr } = await client.rpc('admin_manage_news', {
-                            admin_secret: pin,
-                            action_type: actionName,
-                            news_content: fullContent,
-                            target_id: parsedId
-                        });
-
-                        if (rpcErr) {
-                            lastError = rpcErr;
-                            if (isNewsAuthError(rpcErr) && pin !== ADMIN_GATE_HASH) {
-                                setNewsAdminFeedback('error', 'فشل حفظ التعديلات: الرمز السري لإدارة الأخبار غير صحيح! يرجى التحقق من الرمز السري المعتمد للمنسق.');
-                                return;
-                            }
-                            continue;
-                        }
-
-                        if (rpcData && rpcData.success === false) {
-                            lastError = { message: rpcData.message || 'رفض الخادم تحديث الخبر.' };
-                            if (isNewsAuthError(lastError) && pin !== ADMIN_GATE_HASH) {
-                                setNewsAdminFeedback('error', 'فشل حفظ التعديلات: الرمز السري لإدارة الأخبار غير صحيح! يرجى التحقق من الرمز السري المعتمد للمنسق.');
-                                return;
-                            }
-                            continue;
-                        }
-
-                        if (await verifyUpdatedInDb()) {
-                            updated = true;
-                            break;
-                        }
+                    const rawTargetId = String(editingNewsId).trim();
+                    const numericTargetId = Number(rawTargetId);
+                    if (!Number.isFinite(numericTargetId)) {
+                        setNewsAdminFeedback('error', 'تعذر تحديد المعرّف الرقمي للخبر المطلوب تعديله.');
+                        return;
                     }
 
-                    // 2. المحاولة عبر التحديث المباشر في جدول news_ticker بنفس المعرف id
-                    if (!updated) {
-                        const { data: updatedRows, error: updateErr } = await client
-                            .from('news_ticker')
-                            .update({ content: fullContent })
-                            .eq('id', parsedId)
-                            .select('id, content');
+                    const { data: rpcData, error: rpcErr } = await client.rpc('admin_manage_news', {
+                        admin_secret: pin,
+                        action_type: 'update',
+                        news_content: fullContent,
+                        target_id: numericTargetId
+                    });
 
-                        if (!updateErr && Array.isArray(updatedRows) && updatedRows.length > 0 && String(updatedRows[0].content || '').trim() === fullContent) {
-                            updated = true;
-                        } else if (!updateErr && await verifyUpdatedInDb()) {
-                            updated = true;
-                        } else {
-                            lastError = isNewsAuthError(lastError)
-                                ? lastError
-                                : (updateErr || { message: 'تعذر تحديث السجل مباشرة في جدول news_ticker (يرجى التحقق من صلاحيات التحديث أو دعم action_type = update في دالة admin_manage_news).' });
-                        }
+                    if (rpcErr) {
+                        console.error('publishCoordinatorNews (update RPC) error:', rpcErr);
+                        setNewsAdminFeedback('error', formatNewsErrorReason(rpcErr, 'تعذر حفظ تعديلات الخبر في قاعدة البيانات'));
+                        return;
                     }
 
-                    if (!updated) {
-                        console.error('publishCoordinatorNews (edit) failed:', lastError);
-                        setNewsAdminFeedback('error', formatNewsErrorReason(lastError, 'تعذر حفظ تعديلات الخبر في قاعدة البيانات'));
+                    if (rpcData && rpcData.success === false) {
+                        const rpcFailErr = { message: rpcData.message || 'رفض الخادم تحديث الخبر.' };
+                        console.error('publishCoordinatorNews (update RPC) rejected:', rpcFailErr);
+                        setNewsAdminFeedback('error', formatNewsErrorReason(rpcFailErr, 'تعذر حفظ تعديلات الخبر في قاعدة البيانات'));
                         return;
                     }
 
                     cancelEditCoordinatorNews(false);
-                    await loadLiveNewsTicker(true);
                     await loadCoordinatorNewsList(true);
+                    await loadLiveNewsTicker(true);
                     setNewsAdminFeedback('success', 'تم حفظ تعديلات الخبر بنجاح وتحديث القائمة والشريط الإخباري المتحرك!');
                     return;
                 }
