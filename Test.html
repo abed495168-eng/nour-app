@@ -5592,8 +5592,8 @@
                                     <option value="resolved" ${selectDefaultStatus === 'resolved' ? 'selected' : ''}>تمت معالجة الشكوى والرد عليها</option>
                                     <option value="in_progress" ${selectDefaultStatus === 'in_progress' ? 'selected' : ''}>قيد المتابعة</option>
                                 </select>
-                                <button type="button" class="btn" style="padding:8px 12px; font-size:12px; background:var(--primary);" onclick="saveCoordinatorGrievanceReply('${escapeGrievanceHtml(g.id)}', '${escapeGrievanceHtml(g.tracking_code)}', '${safeId}')">
-                                    <i class="fas fa-save"></i> حفظ الرد وتحديث الحالة
+                                <button type="button" class="btn" title="Valider et envoyer la réponse" style="padding:8px 12px; font-size:12px; background:var(--primary);" onclick="saveCoordinatorGrievanceReply('${escapeGrievanceHtml(g.id)}', '${escapeGrievanceHtml(g.tracking_code)}', '${safeId}')">
+                                    <i class="fas fa-paper-plane"></i> اعتماد وإرسال الرد
                                 </button>
                             </div>
                             <p id="${safeId}_msg" style="display:none; font-size:11.5px; font-weight:700; margin-top:6px; text-align:center;"></p>
