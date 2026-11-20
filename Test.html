@@ -2699,6 +2699,41 @@
             </div>
         `;
 
+        // دوال مساعدة لعرض الختم الرسمي للجمهورية الإسلامية الموريتانية (mauritania-seal.png.jpg) بوضوح في المعاينة والطباعة A4 / PDF
+        const MAURITANIA_SEAL_FULL_URL = 'https://abed495168-eng.github.io/nour-app/mauritania-seal.png.jpg';
+
+        function getPrintBaseHref() {
+            try {
+                return new URL('.', window.location.href).href;
+            } catch (e) {
+                return '';
+            }
+        }
+
+        function getMauritaniaSealUrl() {
+            return MAURITANIA_SEAL_FULL_URL;
+        }
+
+        function buildMauritaniaSealImgHtml(sizePx = 62) {
+            const sealUrl = getMauritaniaSealUrl();
+            return `
+                <div class="rim-seal-frame" style="width: ${sizePx}px; height: ${sizePx}px; border-radius: 50%; border: 2px solid #d4af37; background: #ffffff; padding: 2px; box-shadow: 0 1px 4px rgba(0,0,0,0.16); display: inline-flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;">
+                    <img src="${sealUrl}" onerror="this.onerror=null;this.src='mauritania-seal.png.jpg';" alt="الختم الرسمي للجمهورية الإسلامية الموريتانية" loading="eager" decoding="sync" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: block; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;" />
+                </div>
+            `;
+        }
+
+        function buildMauritaniaRibbonSealCenter(widthStyle = '28%', sizePx = 62) {
+            return `
+                <div class="rim-ribbon-center" style="width: ${widthStyle}; min-width: ${sizePx + 40}px; position: relative; display: flex; align-items: center; justify-content: center;">
+                    <div class="rim-flag-ribbon" style="position: absolute; left: 0; right: 0; height: 14px; background: linear-gradient(to bottom, #D01C1F 0%, #D01C1F 22%, #006233 22%, #006233 78%, #F7D117 78%, #F7D117 100%); border-top: 1px solid #991b1b; border-bottom: 1px solid #ca8a04; z-index: 1; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;"></div>
+                    <div style="position: relative; z-index: 2; background: #ffffff; border-radius: 50%; padding: 2px; display: inline-flex; align-items: center; justify-content: center; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;">
+                        ${buildMauritaniaSealImgHtml(sizePx)}
+                    </div>
+                </div>
+            `;
+        }
+
         // توليد استمارات حقيبة المدير
         function generateAndPrintDirectorDoc(docId, docTitle) {
             const editWindow = window.open('', '_blank');
@@ -2707,21 +2742,19 @@
                 return;
             }
 
+            const printBaseHref = getPrintBaseHref();
             let docHtml = '';
             const topHeader = `
-                <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #0f766e; padding-bottom: 8px; margin-bottom: 12px; font-size: 11px; line-height: 1.4; font-weight: bold;">
-                    <div>
+                <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; border-bottom: 2px solid #0f766e; padding-bottom: 8px; margin-bottom: 12px; font-size: 11px; line-height: 1.45; font-weight: bold;">
+                    <div style="width: 37%; text-align: right;">
                         الجمهورية الإسلامية الموريتانية<br>
                         وزارة التربية وإصلاح النظام التعليمي<br>
                         الإدارة الجهوية للتربية بـ: <span contenteditable="true">...................</span><br>
                         مفتشية التعليم الأساسي بـ: <span contenteditable="true">...................</span><br>
                         مدرسة: <span contenteditable="true">...................</span>
                     </div>
-                    <div style="text-align: center;">
-                        <div style="width: 44px; height: 44px; border-radius: 50%; border: 2px solid #0f766e; margin: 0 auto 3px; display: flex; align-items: center; justify-content: center; font-size: 18px; color: #d4af37;">★</div>
-                        <div style="font-size: 11px; font-weight: 800; color: #0f766e;">★ RIM ★</div>
-                    </div>
-                    <div style="text-align: left;" dir="ltr">
+                    ${buildMauritaniaRibbonSealCenter('26%', 60)}
+                    <div style="width: 37%; text-align: left;" dir="ltr">
                         République Islamique de Mauritanie<br>
                         Ministère de l'Éducation et de la Réforme du Système d'Enseignement<br>
                         D.R.E.N: <span contenteditable="true">...................</span><br>
@@ -2801,20 +2834,20 @@
                 `;
             } else if (docId === 'dir_passation') {
                 docHtml = `
-                    <div style="border-bottom: 2px solid #0f766e; padding-bottom: 8px; margin-bottom: 12px; font-size: 11px; line-height: 1.5; font-weight: bold; display: flex; justify-content: space-between;">
-                        <div>
+                    <div style="border-bottom: 2px solid #0f766e; padding-bottom: 8px; margin-bottom: 12px; font-size: 11px; line-height: 1.5; font-weight: bold; display: flex; justify-content: space-between; align-items: center; gap: 8px;">
+                        <div style="width: 35%;">
                             شرف - إخاء - عدالة<br>
                             السنة الدراسية / Année Scolaire: <span contenteditable="true">2025 - 2026</span><br>
                             الفصل الدراسي / Trimestre: <span contenteditable="true">...................</span><br>
                             المدرسة / Ecole: <span contenteditable="true">...................</span><br>
                             دليل المدرسة / Code école: <span contenteditable="true">...................</span>
                         </div>
-                        <div style="text-align: center;">
-                            <div style="width: 44px; height: 44px; border-radius: 50%; border: 2px solid #0f766e; margin: 0 auto 3px; display: flex; align-items: center; justify-content: center; font-size: 18px; color: #d4af37;">★</div>
-                            <h2 style="margin: 0; color: #0f766e; font-size: 17px;">محضر تبادل مهام</h2>
+                        <div style="width: 30%; text-align: center;">
+                            ${buildMauritaniaRibbonSealCenter('100%', 58)}
+                            <h2 style="margin: 4px 0 0; color: #0f766e; font-size: 17px;">محضر تبادل مهام</h2>
                             <span style="font-size: 12px; color: #475569;">P.V de Passation de Service</span>
                         </div>
-                        <div style="text-align: left;">
+                        <div style="width: 35%; text-align: left;">
                             الجمهورية الإسلامية الموريتانية<br>
                             وزارة التربية وإصلاح النظام التعليمي<br>
                             الإدارة العامة للتربية وإصلاح النظام التعليمي<br>
@@ -2984,10 +3017,11 @@
                 <html lang="ar" dir="rtl">
                 <head>
                     <meta charset="UTF-8">
+                    ${printBaseHref ? `<base href="${printBaseHref}">` : ''}
                     <title>${docTitle}</title>
                     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;600;700;800&display=swap" rel="stylesheet">
                     <style>
-                        * { box-sizing: border-box; font-family: 'Tajawal', sans-serif; }
+                        * { box-sizing: border-box; font-family: 'Tajawal', sans-serif; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
                         body { margin: 15px; color: #111; direction: rtl; background-color: #f8fafc; }
                         .paper-container { max-width: 950px; margin: 0 auto; background: #fff; padding: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-radius: 8px; }
                         .no-print-bar {
@@ -3004,10 +3038,13 @@
                         [contenteditable="true"] { outline: none; }
                         [contenteditable="true"]:hover { background-color: #f0fdf4; }
                         [contenteditable="true"]:focus { background-color: #e8f5e9; box-shadow: inset 0 0 0 1px #0f766e; }
+                        @page { size: A4 portrait; margin: 8mm; }
                         @media print {
+                            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
                             body { background: #fff; margin: 0; padding: 0; }
                             .paper-container { box-shadow: none; padding: 0; margin: 0; max-width: 100%; border-radius: 0; }
                             .no-print-bar { display: none !important; }
+                            img, .rim-seal-frame, .rim-flag-ribbon { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
                         }
                     </style>
                 </head>
@@ -3065,59 +3102,9 @@
             editWindow.document.close();
         }
 
-        // الشعار الرسمي للجمهورية الإسلامية الموريتانية (SVG عالي الدقة مطابق للشعار الوطني يعمل بدون إنترنت)
-        const MAURITANIA_SEAL_SVG = `
-            <svg viewBox="0 0 220 220" width="78" height="78" xmlns="http://www.w3.org/2000/svg" style="display:block; margin:0 auto;">
-                <defs>
-                    <!-- مسار النص العربي العلوي المنحني -->
-                    <path id=" rimArcTop " d="M 24,110 A 86,86 0 1,1 196,110" />
-                    <!-- مسار النص الفرنسي السفلي المنحني -->
-                    <path id=" rimArcBottom " d="M 198,110 A 88,88 0 1,1 22,110" />
-                </defs>
-                <!-- الإطار الذهبي الخارجي والطوق الأحمر -->
-                <circle cx="110" cy="110" r="106" fill="#D01C1F" stroke="#F7D117" stroke-width="5"/>
-                <!-- الدائرة الخضراء الوسطى محاطة بطوق ذهبي -->
-                <circle cx="110" cy="110" r="74" fill="#006233" stroke="#F7D117" stroke-width="4"/>
-                <!-- الهلال الذهبي الرسمي -->
-                <path d="M 52,102 A 58,58 0 1,0 168,102 A 50,53 0 1,1 52,102 Z" fill="#F7D117"/>
-                <!-- النجمة الخماسية الذهبية -->
-                <polygon points="110,42 117,64 140,64 121,77 128,99 110,85 92,99 99,77 80,64 103,64" fill="#F7D117"/>
-                <!-- النخلة الموريتانية (يسار) وسنبلة الدخن/الذرة (يمين) -->
-                <g stroke="#F7D117" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                    <!-- جذع وسعف النخلة -->
-                    <path d="M 96,178 C 95,148 90,122 82,102" stroke-width="4"/>
-                    <path d="M 82,102 C 68,96 56,102 48,114" stroke-width="2.5"/>
-                    <path d="M 82,102 C 66,88 52,90 44,98" stroke-width="2.5"/>
-                    <path d="M 82,102 C 74,82 62,78 52,82" stroke-width="2.5"/>
-                    <path d="M 82,102 C 88,82 98,78 106,84" stroke-width="2.5"/>
-                    <path d="M 82,102 C 94,92 104,94 110,104" stroke-width="2.5"/>
-                    <!-- ساق وأوراق وسنبلة الدخن -->
-                    <path d="M 118,178 C 122,148 128,120 136,96" stroke-width="3.5"/>
-                    <ellipse cx="141" cy="88" rx="6" ry="14" transform="rotate(22 141 88)" fill="#F7D117"/>
-                    <path d="M 125,138 C 138,130 148,134 154,144" stroke-width="2.5"/>
-                    <path d="M 128,120 C 142,112 152,116 158,126" stroke-width="2.5"/>
-                    <path d="M 122,145 C 110,136 102,140 98,150" stroke-width="2.5"/>
-                </g>
-                <!-- النص العربي الرسمي المنحني أعلى الطوق الأحمر -->
-                <text fill="#F7D117" font-size="13.5" font-weight="800" font-family="'Tajawal', sans-serif">
-                    <textPath href="# rimArcTop " startOffset="50%" text-anchor="middle">الجمهورية الإسلامية الموريتانية</textPath>
-                </text>
-                <!-- النص الفرنسي الرسمي المنحني أسفل الطوق الأحمر -->
-                <text fill="#F7D117" font-size="10.2" font-weight="800" font-family="sans-serif" letter-spacing="0.6">
-                    <textPath href="# rimArcBottom " startOffset="50%" text-anchor="middle">RÉPUBLIQUE ISLAMIQUE DE MAURITANIE</textPath>
-                </text>
-            </svg>
-        `;
-
+        // ترويسة الوثائق الرسمية بالشعار الموريتاني الرسمي (mauritania-seal.png.jpg) مع الخطوط الثلاثية الملونة
         function buildOfficialPrimaryHeader(bilingual = false) {
-            const flagRibbonCenter = `
-                <div style="width: 28%; position: relative; display: flex; align-items: center; justify-content: center;">
-                    <div style="position: absolute; left: 0; right: 0; height: 14px; background: linear-gradient(to bottom, #D01C1F 0%, #D01C1F 22%, #006233 22%, #006233 78%, #F7D117 78%, #F7D117 100%); border-top: 1px solid #991b1b; border-bottom: 1px solid #ca8a04; z-index: 1;"></div>
-                    <div style="position: relative; z-index: 2; background: #fff; border-radius: 50%; padding: 2px; box-shadow: 0 1px 4px rgba(0,0,0,0.15);">
-                        ${MAURITANIA_SEAL_SVG}
-                    </div>
-                </div>
-            `;
+            const flagRibbonCenter = buildMauritaniaRibbonSealCenter('28%', 62);
 
             if (bilingual) {
                 return `
@@ -3807,19 +3794,19 @@
 
                 customHeaderHtml = `
                     <div style="border-bottom: 2px solid #111; padding-bottom: 10px; margin-bottom: 10px;">
-                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                            <div style="font-size: 11px; line-height: 1.4; font-weight: bold; text-align: right;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px;">
+                            <div style="width: 35%; font-size: 11px; line-height: 1.4; font-weight: bold; text-align: right;">
                                 الجمهورية الإسلامية الموريتانية<br>
                                 شرف - إخاء - عدل<br>
                                 وزارة التربية وإصلاح النظام التعليمي<br>
                                 مديرية التعليم الثانوي<br>
                                 مصلحة الشؤون المدرسية
                             </div>
-                            <div style="text-align: center;">
-                                ${MAURITANIA_SEAL_SVG}
-                                <h2 style="margin: 4px 0 0; font-size: 15px; font-weight: 800;">${sectionTitle}</h2>
+                            <div style="width: 30%; text-align: center;">
+                                ${buildMauritaniaRibbonSealCenter('100%', 60)}
+                                <h2 style="margin: 5px 0 0; font-size: 15px; font-weight: 800;">${sectionTitle}</h2>
                             </div>
-                            <div style="font-size: 11px; line-height: 1.4; font-weight: bold; text-align: left;" dir="ltr">
+                            <div style="width: 35%; font-size: 11px; line-height: 1.4; font-weight: bold; text-align: left;" dir="ltr">
                                 République Islamique de Mauritanie<br>
                                 Honneur - Fraternité - Justice<br>
                                 Ministère de l'Éducation et de la Réforme du Système d'Enseignement<br>
@@ -3948,6 +3935,7 @@
                 <html lang="ar" dir="rtl">
                 <head>
                     <meta charset="UTF-8">
+                    ${getPrintBaseHref() ? `<base href="${getPrintBaseHref()}">` : ''}
                     <title>${docTitle} - تعديل وطباعة</title>
                     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;600;700;800&display=swap" rel="stylesheet">
                     <style>
@@ -3974,9 +3962,11 @@
                         .no-break { page-break-inside: avoid; }
                         @page { size: A4 ${isLandscape ? 'landscape' : 'portrait'}; margin: 8mm; }
                         @media print {
+                            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
                             body { background: #fff; margin: 0; padding: 0; }
                             .paper-container { box-shadow: none; padding: 0; margin: 0; max-width: 100%; width: 100%; border-radius: 0; }
                             .no-print-bar { display: none !important; }
+                            img, .rim-seal-frame, .rim-flag-ribbon { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
                         }
                     </style>
                 </head>
@@ -6278,26 +6268,31 @@
                 <html lang="ar" dir="rtl">
                 <head>
                     <meta charset="UTF-8">
+                    ${getPrintBaseHref() ? `<base href="${getPrintBaseHref()}">` : ''}
                     <title>وثيقة تظلم رسمية - ${escapeGrievanceHtml(g.tracking_code)}</title>
                     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800&display=swap" rel="stylesheet">
                     <style>
                         * { box-sizing: border-box; font-family: 'Tajawal', sans-serif; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
                         body { padding: 25px; background: #fff; color: #111; }
                         .doc-box { border: 3px double #116835; padding: 25px; border-radius: 10px; max-width: 800px; margin: 0 auto; }
+                        @page { size: A4 portrait; margin: 10mm; }
+                        @media print {
+                            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+                            body { padding: 0; background: #fff; }
+                            img, .rim-seal-frame, .rim-flag-ribbon { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+                        }
                     </style>
                 </head>
                 <body onload="window.print()">
                     <div class="doc-box">
-                        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid #116835; padding-bottom:12px; margin-bottom:18px;">
-                            <div style="font-weight:800; font-size:14px; line-height:1.6;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; gap: 10px; border-bottom:2px solid #116835; padding-bottom:12px; margin-bottom:18px;">
+                            <div style="width:36%; font-weight:800; font-size:14px; line-height:1.6;">
                                 النقابة الوطنية للمدرسين (نور)<br>
                                 المكتب الوطني - لجنة العرائض والتظلمات<br>
                                 رمز المتابعة: ${escapeGrievanceHtml(g.tracking_code)}
                             </div>
-                            <div style="text-align:center;">
-                                ${MAURITANIA_SEAL_SVG}
-                            </div>
-                            <div style="text-align:left; font-weight:800; font-size:13px;">
+                            ${buildMauritaniaRibbonSealCenter('28%', 62)}
+                            <div style="width:36%; text-align:left; font-weight:800; font-size:13px;">
                                 تاريخ الإرسال: ${escapeGrievanceHtml(sentDateStr)}<br>
                                 <span style="display:inline-block; margin-top:6px; background:${statusBg}; color:${statusColor}; border:1.5px solid ${statusBorder}; padding:4px 12px; border-radius:15px;">الحالة: ${statusText}</span>
                             </div>
