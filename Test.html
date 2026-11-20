@@ -1848,6 +1848,7 @@
                 </button>
                 <button type="button" class="coord-tab-btn" id="coord-tab-books" onclick="switchCoordinatorTab('books')">
                     <i class="fas fa-book-medical"></i> الكتب
+                    <span id="coord-books-pending-count" class="coord-pending-badge" style="display: none; background: #d97706;">0</span>
                 </button>
                 <button type="button" class="coord-tab-btn" id="coord-tab-grievances" onclick="switchCoordinatorTab('grievances')">
                     <i class="fas fa-file-signature"></i> الشكاوى
@@ -1933,6 +1934,19 @@
                     </button>
                 </div>
                 <div id="books-admin-msg" role="alert" style="font-size: 12.5px; text-align: center; margin-top: 8px; display: none; font-weight: bold; padding: 9px 12px; border-radius: 8px; line-height: 1.55;"></div>
+                <div id="coord-pending-books-box" style="display: none; margin-top: 10px; background: #fffbeb; border: 1.5px solid #fcd34d; border-right: 4px solid #d97706; border-radius: 10px; padding: 10px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 8px;">
+                        <div style="font-size: 12px; font-weight: 800; color: #92400e;">
+                            <i class="fas fa-clock" style="margin-left: 4px; color: #d97706;"></i>
+                            <span id="coord-pending-books-title">كتب معلقة في انتظار الرفع لقسم «الكتب» (0)</span>
+                        </div>
+                        <button type="button" id="btn-sync-pending-books" class="btn" style="display: none; background: #059669; padding: 5px 10px; font-size: 11.5px;" onclick="syncPendingBooksQueue(true)">
+                            <i class="fas fa-sync-alt"></i> مزامنة الكتب المعلقة الآن
+                        </button>
+                    </div>
+                    <div id="coord-pending-books-hint" style="font-size: 11px; color: #78350f; margin-bottom: 6px;"></div>
+                    <div id="coord-pending-books-list" style="display: flex; flex-direction: column; gap: 6px; max-height: 180px; overflow-y: auto;"></div>
+                </div>
                 <div id="coord-books-manage-list" style="margin-top: 10px; max-height: 240px; overflow-y: auto;"></div>
             </div>
 
@@ -2373,6 +2387,12 @@
             document.getElementById('coord-new-pin').value = '';
             document.getElementById('coord-status-msg').style.display = 'none';
             document.getElementById('coordinator-pin-modal').style.display = 'block';
+            if (typeof renderPendingBooksQueueUI === 'function') {
+                renderPendingBooksQueueUI();
+            }
+            if (typeof syncPendingBooksQueue === 'function' && (typeof navigator === 'undefined' || navigator.onLine !== false)) {
+                syncPendingBooksQueue(false);
+            }
             switchCoordinatorTab(defaultTab);
         }
 
@@ -2391,6 +2411,12 @@
                     loadCoordinatorNewsList(true);
                 }
             } else if (tabName === 'books') {
+                if (typeof renderPendingBooksQueueUI === 'function') {
+                    renderPendingBooksQueueUI();
+                }
+                if (typeof syncPendingBooksQueue === 'function' && (typeof navigator === 'undefined' || navigator.onLine !== false)) {
+                    syncPendingBooksQueue(false);
+                }
                 const existingBooksPin = typeof getBooksAdminPinValue === 'function' ? getBooksAdminPinValue() : '';
                 if (existingBooksPin) {
                     loadCoordinatorBooksList(true);
@@ -5282,7 +5308,9 @@
         // ==========================================
         let cachedLibraryBooks = [];
         let currentLibraryBookFilter = 'ALL';
+        let isSyncingPendingBooks = false;
         const LOCAL_BOOKS_KEY = 'nour_custom_textbooks_v1';
+        const PENDING_BOOKS_QUEUE_KEY = 'nour_pending_books_v1';
         const ALLOWED_BOOK_CATEGORIES = [
             'التعليم الأساسي',
             'التعليم الإعدادي',
@@ -5373,6 +5401,282 @@
             try {
                 localStorage.setItem(LOCAL_BOOKS_KEY, JSON.stringify(Array.isArray(booksArr) ? booksArr : []));
             } catch (e) {}
+        }
+
+        // قائمة انتظار الكتب المعلقة للرفع التلقائي عند عودة الإنترنت (وجهة حصرية: books)
+        function getPendingBooksQueue() {
+            try {
+                const parsed = JSON.parse(localStorage.getItem(PENDING_BOOKS_QUEUE_KEY) || '[]');
+                if (!Array.isArray(parsed)) return [];
+                return parsed.filter(item =>
+                    item &&
+                    item.target === 'books' &&
+                    String(item.title || '').trim() !== '' &&
+                    String(item.url || '').trim() !== ''
+                );
+            } catch (e) {
+                return [];
+            }
+        }
+
+        function savePendingBooksQueue(queueArr) {
+            try {
+                const cleanQueue = (Array.isArray(queueArr) ? queueArr : []).filter(item =>
+                    item && item.target === 'books' && String(item.title || '').trim() !== '' && String(item.url || '').trim() !== ''
+                );
+                localStorage.setItem(PENDING_BOOKS_QUEUE_KEY, JSON.stringify(cleanQueue));
+            } catch (e) {}
+            renderPendingBooksQueueUI();
+        }
+
+        function enqueuePendingBook(bookPayload) {
+            const queue = getPendingBooksQueue();
+            const safeCategory = ALLOWED_BOOK_CATEGORIES.includes(bookPayload.category)
+                ? bookPayload.category
+                : ALLOWED_BOOK_CATEGORIES[0];
+
+            const pendingItem = {
+                id: 'pbook_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7),
+                target: 'books',
+                title: String(bookPayload.title || '').trim(),
+                category: safeCategory,
+                url: String(bookPayload.url || '').trim(),
+                admin_secret: String(bookPayload.admin_secret || '').trim(),
+                created_at: new Date().toISOString()
+            };
+            queue.push(pendingItem);
+            savePendingBooksQueue(queue);
+            return pendingItem;
+        }
+
+        function removePendingBookItem(pendingId) {
+            const queue = getPendingBooksQueue();
+            const targetItem = queue.find(item => String(item.id) === String(pendingId));
+            const nextQueue = queue.filter(item => String(item.id) !== String(pendingId));
+            savePendingBooksQueue(nextQueue);
+            if (targetItem) {
+                setBooksAdminFeedback('info', `تمت إزالة الكتاب المعلق «${targetItem.title}» من قائمة انتظار قسم «الكتب».`);
+            }
+        }
+
+        function renderPendingBooksQueueUI() {
+            const queue = getPendingBooksQueue();
+            const tabBadge = document.getElementById('coord-books-pending-count');
+            const box = document.getElementById('coord-pending-books-box');
+            const titleEl = document.getElementById('coord-pending-books-title');
+            const hintEl = document.getElementById('coord-pending-books-hint');
+            const listEl = document.getElementById('coord-pending-books-list');
+            const syncBtn = document.getElementById('btn-sync-pending-books');
+            const isOnline = typeof navigator === 'undefined' ? true : navigator.onLine !== false;
+
+            if (tabBadge) {
+                if (queue.length > 0) {
+                    tabBadge.textContent = String(queue.length);
+                    tabBadge.style.display = 'inline-block';
+                } else {
+                    tabBadge.textContent = '0';
+                    tabBadge.style.display = 'none';
+                }
+            }
+
+            if (!box || !listEl) return;
+
+            if (queue.length === 0) {
+                box.style.display = 'none';
+                if (syncBtn) syncBtn.style.display = 'none';
+                listEl.innerHTML = '';
+                return;
+            }
+
+            box.style.display = 'block';
+            if (titleEl) {
+                titleEl.textContent = `كتب معلقة في انتظار الرفع لقسم «الكتب» (${queue.length})`;
+            }
+            if (hintEl) {
+                hintEl.textContent = isOnline
+                    ? 'الشبكة متوفرة الآن: يمكنك الضغط على «مزامنة الكتب المعلقة الآن» أو انتظار اكتمال الرفع التلقائي إلى المرحلة المحددة لكل كتاب.'
+                    : 'أنت في وضع عدم الاتصال: ستُرفع هذه الكتب تلقائياً إلى قسم «الكتب» وبنفس المرحلة المحددة فور عودة الإنترنت.';
+            }
+            if (syncBtn) {
+                syncBtn.style.display = isOnline ? 'inline-flex' : 'none';
+                syncBtn.disabled = isSyncingPendingBooks;
+                syncBtn.innerHTML = isSyncingPendingBooks
+                    ? '<i class="fas fa-spinner fa-spin"></i> جاري المزامنة...'
+                    : '<i class="fas fa-sync-alt"></i> مزامنة الكتب المعلقة الآن';
+            }
+
+            listEl.innerHTML = queue.map(item => {
+                const safeId = escapeBooksHtml(item.id);
+                const safeCat = escapeBooksHtml(item.category || ALLOWED_BOOK_CATEGORIES[0]);
+                const safeTitle = escapeBooksHtml(item.title || '');
+                return `
+                    <div data-pending-book-id="${safeId}" style="display:flex; justify-content:space-between; align-items:center; gap:8px; background:#ffffff; border:1px solid #fde68a; border-radius:7px; padding:7px 9px; font-size:11.5px;">
+                        <div style="flex:1; min-width:0; text-align:right;">
+                            <div style="font-weight:800; color:#92400e;">
+                                <span style="background:#eef2ff; color:#3730a3; padding:1px 6px; border-radius:4px; font-size:10px; margin-left:4px;">الكتب ← ${safeCat}</span>
+                                <span style="color:#b45309; font-size:10px;">⏳ في انتظار الرفع</span>
+                            </div>
+                            <div style="font-weight:bold; color:#1e293b; word-break:break-word; margin-top:3px;">${safeTitle}</div>
+                        </div>
+                        <button type="button" class="btn" style="background:#dc2626; padding:4px 8px; font-size:10.5px; flex-shrink:0;" onclick="removePendingBookItem('${safeId}')">
+                            <i class="fas fa-times"></i> حذف
+                        </button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // دالة إرسال كتاب واحد حصراً عبر مسار الكتب الرسمي (admin_manage_books / textbooks) دون أي مساس بالأقسام الأخرى
+        async function uploadSingleBookToServer(bookData) {
+            const pin = String(bookData.admin_secret || getBooksAdminPinValue() || '').trim();
+            const title = String(bookData.title || '').trim();
+            const category = ALLOWED_BOOK_CATEGORIES.includes(bookData.category)
+                ? bookData.category
+                : ALLOWED_BOOK_CATEGORIES[0];
+            const normalizedUrl = normalizeAndValidateBookUrl(bookData.url);
+
+            if (!pin) {
+                return { ok: false, isAuthError: true, error: { message: 'يرجى إدخال رمز الإدارة السري للمنسق لإتمام رفع الكتاب.' } };
+            }
+            if (!title || !normalizedUrl) {
+                return { ok: false, isAuthError: false, error: { message: 'بيانات الكتاب غير مكتملة أو الرابط غير صالح.' } };
+            }
+            if (typeof client === 'undefined' || !client) {
+                return { ok: false, isAuthError: false, error: { message: 'تعذر تهيئة الاتصال بقاعدة البيانات داخل المتصفح.' } };
+            }
+
+            let savedToBooksTable = false;
+            let lastError = null;
+            let authRejected = false;
+
+            const { data: rpcData, error: rpcErr } = await client.rpc('admin_manage_books', {
+                admin_secret: pin,
+                action_type: 'add',
+                book_title: title,
+                book_category: category,
+                book_url: normalizedUrl,
+                book_id: null
+            });
+
+            if (!rpcErr && (!rpcData || rpcData.success !== false)) {
+                savedToBooksTable = true;
+            } else {
+                lastError = rpcErr || { message: (rpcData && rpcData.message) || 'رفض الخادم حفظ الكتاب في قسم الكتب.' };
+                authRejected = typeof isNewsAuthError === 'function' && isNewsAuthError(lastError);
+
+                if (authRejected && pin !== ADMIN_GATE_HASH) {
+                    return { ok: false, isAuthError: true, error: lastError };
+                }
+
+                const { error: insertErr } = await client
+                    .from('textbooks')
+                    .insert([{
+                        title: title,
+                        category: category,
+                        url: normalizedUrl,
+                        is_active: true
+                    }])
+                    .select('id');
+
+                if (!insertErr) {
+                    savedToBooksTable = true;
+                } else {
+                    lastError = authRejected ? lastError : insertErr;
+                }
+            }
+
+            if (savedToBooksTable) {
+                return { ok: true, title, category, url: normalizedUrl };
+            }
+            return { ok: false, isAuthError: authRejected, error: lastError };
+        }
+
+        // مزامنة قائمة الكتب المعلقة تلقائياً أو يدوياً إلى قسم «الكتب» بنفس المرحلة المختارة
+        async function syncPendingBooksQueue(isManual = false) {
+            if (isSyncingPendingBooks) return { uploadedCount: 0, remainingCount: getPendingBooksQueue().length };
+
+            const initialQueue = getPendingBooksQueue();
+            if (initialQueue.length === 0) {
+                renderPendingBooksQueueUI();
+                if (isManual) {
+                    setBooksAdminFeedback('info', 'لا توجد كتب معلقة في قائمة الانتظار حالياً.');
+                }
+                return { uploadedCount: 0, remainingCount: 0 };
+            }
+
+            if (typeof navigator !== 'undefined' && navigator.onLine === false) {
+                renderPendingBooksQueueUI();
+                if (isManual) {
+                    setBooksAdminFeedback('warning', 'ما زلت في وضع عدم الاتصال؛ ستتم مزامنة الكتب المعلقة تلقائياً إلى قسم «الكتب» فور عودة الإنترنت.');
+                }
+                return { uploadedCount: 0, remainingCount: initialQueue.length };
+            }
+
+            if (typeof client === 'undefined' || !client) {
+                return { uploadedCount: 0, remainingCount: initialQueue.length };
+            }
+
+            isSyncingPendingBooks = true;
+            renderPendingBooksQueueUI();
+            if (isManual) {
+                setBooksAdminFeedback('info', `جاري مزامنة ورفع ${initialQueue.length} كتاب معلق إلى قسم «الكتب»...`);
+            }
+
+            const uploadedBooks = [];
+            let firstFailureError = null;
+
+            try {
+                for (let i = 0; i < initialQueue.length; i++) {
+                    const item = initialQueue[i];
+                    if (typeof navigator !== 'undefined' && navigator.onLine === false) {
+                        break;
+                    }
+
+                    const result = await uploadSingleBookToServer(item);
+                    if (result.ok) {
+                        uploadedBooks.push({ title: result.title, category: result.category });
+                        // إزالة الكتاب فور نجاح رفعه لمنع أي تكرار لاحقاً
+                        const currentQueue = getPendingBooksQueue().filter(q => String(q.id) !== String(item.id));
+                        savePendingBooksQueue(currentQueue);
+                    } else {
+                        if (!firstFailureError) firstFailureError = result.error;
+                    }
+                }
+            } catch (err) {
+                console.error('syncPendingBooksQueue exception:', err);
+                if (!firstFailureError) firstFailureError = err;
+            } finally {
+                isSyncingPendingBooks = false;
+                renderPendingBooksQueueUI();
+            }
+
+            const remainingQueue = getPendingBooksQueue();
+
+            if (uploadedBooks.length > 0) {
+                await fetchAllLibraryBooks();
+                refreshOpenBooksViews();
+                const activePin = getBooksAdminPinValue();
+                if (activePin) {
+                    await loadCoordinatorBooksList(true);
+                }
+
+                let confirmText = '';
+                if (uploadedBooks.length === 1) {
+                    const b = uploadedBooks[0];
+                    confirmText = `تمت مزامنة ورفع الكتاب «${b.title}» رسمياً في قسم «الكتب» (${b.category}) وتحديث قائمة الكتب!`;
+                } else {
+                    const summary = uploadedBooks.map(b => `«${b.title}» (${b.category})`).join('، ');
+                    confirmText = `تمت مزامنة ورفع ${uploadedBooks.length} كتب رسمياً في قسم «الكتب»: ${summary} — وتم تحديث قائمة الكتب!`;
+                }
+                if (remainingQueue.length > 0) {
+                    confirmText += ` (بقي ${remainingQueue.length} كتاب في قائمة الانتظار).`;
+                }
+                setBooksAdminFeedback('success', confirmText);
+            } else if (isManual && firstFailureError) {
+                setBooksAdminFeedback('error', formatBooksErrorReason(firstFailureError, 'تعذر مزامنة الكتب المعلقة إلى قسم «الكتب»'));
+            }
+
+            return { uploadedCount: uploadedBooks.length, remainingCount: remainingQueue.length };
         }
 
         async function fetchAllLibraryBooks() {
@@ -5496,18 +5800,12 @@
             container.innerHTML = renderBooksCardsHtml(filtered);
         }
 
-        // رفع وإضافة كتاب جديد حصراً إلى قسم «الكتب» (جدول textbooks عبر admin_manage_books)
+        // رفع وإضافة كتاب جديد حصراً إلى قسم «الكتب» (مع دعم قائمة الانتظار والرفع التلقائي عند انقطاع الإنترنت)
         async function publishCoordinatorBook() {
             const publishBtn = document.getElementById('btn-publish-book');
             const defaultPublishBtnHtml = '<i class="fas fa-cloud-upload-alt"></i> إضافة الكتاب لقسم الكتب';
 
             try {
-                // 1. منع رفع الكتب في وضع عدم الاتصال لضمان وصولها إلى قسم الكتب المخصص
-                if (typeof navigator !== 'undefined' && navigator.onLine === false) {
-                    setBooksAdminFeedback('error', 'وضع عدم الاتصال: رفع الكتب يتطلب اتصالاً بالإنترنت لضمان وصولها إلى قسم «الكتب» المخصص. يرجى المحاولة عند عودة الشبكة.');
-                    return;
-                }
-
                 const pin = getBooksAdminPinValue();
                 const titleInput = document.getElementById('book-title-input');
                 const categoryInput = document.getElementById('book-category-input');
@@ -5542,6 +5840,20 @@
                     return;
                 }
 
+                // 1. في وضع عدم الاتصال: الحفظ في قائمة انتظار قسم «الكتب» (nour_pending_books_v1) للرفع التلقائي فور عودة الشبكة
+                if (typeof navigator !== 'undefined' && navigator.onLine === false) {
+                    enqueuePendingBook({
+                        title: title,
+                        category: category,
+                        url: normalizedUrl,
+                        admin_secret: pin
+                    });
+                    if (titleInput) titleInput.value = '';
+                    if (urlInput) urlInput.value = '';
+                    setBooksAdminFeedback('warning', `تم حفظ الكتاب «${title}» في قائمة الانتظار أثناء عدم الاتصال، وسيُرفع تلقائياً إلى قسم «الكتب» (${category}) فور عودة الإنترنت.`);
+                    return;
+                }
+
                 if (typeof client === 'undefined' || !client) {
                     setBooksAdminFeedback('error', 'تعذر تهيئة الاتصال بقاعدة البيانات داخل المتصفح. يرجى تحديث الصفحة والمحاولة مجدداً.');
                     return;
@@ -5553,63 +5865,48 @@
                 }
                 setBooksAdminFeedback('info', 'جاري رفع وحفظ الكتاب في قسم «الكتب» وتحديث القائمة...');
 
-                let savedToBooksTable = false;
-                let lastError = null;
-
-                // 2. الإرسال الحصري لمسار الكتب فقط: admin_manage_books ثم جدول textbooks (دون أي مساس بالأخبار أو الأقسام الأخرى)
-                const { data: rpcData, error: rpcErr } = await client.rpc('admin_manage_books', {
-                    admin_secret: pin,
-                    action_type: 'add',
-                    book_title: title,
-                    book_category: category,
-                    book_url: normalizedUrl,
-                    book_id: null
+                // 2. عند توفر الإنترنت: الإرسال الحصري لمسار الكتب الرسمي (admin_manage_books / textbooks)
+                const uploadResult = await uploadSingleBookToServer({
+                    title: title,
+                    category: category,
+                    url: normalizedUrl,
+                    admin_secret: pin
                 });
 
-                if (!rpcErr && (!rpcData || rpcData.success !== false)) {
-                    savedToBooksTable = true;
-                } else {
-                    lastError = rpcErr || { message: (rpcData && rpcData.message) || 'رفض الخادم حفظ الكتاب في قسم الكتب.' };
+                if (!uploadResult.ok) {
+                    const errMsgLower = String((uploadResult.error && uploadResult.error.message) || uploadResult.error || '').toLowerCase();
+                    const isNetworkDrop = (typeof navigator !== 'undefined' && navigator.onLine === false) ||
+                        errMsgLower.includes('failed to fetch') ||
+                        errMsgLower.includes('network');
 
-                    const authRejected = typeof isNewsAuthError === 'function' && isNewsAuthError(lastError);
-                    if (authRejected && pin !== ADMIN_GATE_HASH) {
-                        setBooksAdminFeedback('error', 'فشل رفع الكتاب: الرمز السري للإدارة غير صحيح! يرجى إدخال الرمز المعتمد للمنسق.');
-                        return;
-                    }
-
-                    // المحاولة الاحتياطية بالإدراج المباشر في جدول textbooks المخصص للكتب فقط
-                    const { error: insertErr } = await client
-                        .from('textbooks')
-                        .insert([{
+                    if (isNetworkDrop && !uploadResult.isAuthError) {
+                        enqueuePendingBook({
                             title: title,
                             category: category,
                             url: normalizedUrl,
-                            is_active: true
-                        }])
-                        .select('id');
-
-                    if (!insertErr) {
-                        savedToBooksTable = true;
-                    } else {
-                        lastError = authRejected ? lastError : insertErr;
+                            admin_secret: pin
+                        });
+                        if (titleInput) titleInput.value = '';
+                        if (urlInput) urlInput.value = '';
+                        setBooksAdminFeedback('warning', `انقطع الاتصال أثناء الإرسال؛ تم حفظ الكتاب «${title}» في قائمة الانتظار وسيُرفع تلقائياً إلى قسم «الكتب» (${category}) فور استقرار الإنترنت.`);
+                        return;
                     }
-                }
 
-                if (!savedToBooksTable) {
-                    console.error('publishCoordinatorBook failed:', lastError);
-                    setBooksAdminFeedback('error', formatBooksErrorReason(lastError, 'تعذر رفع الكتاب إلى قسم «الكتب» في قاعدة البيانات'));
+                    console.error('publishCoordinatorBook failed:', uploadResult.error);
+                    setBooksAdminFeedback('error', formatBooksErrorReason(uploadResult.error, 'تعذر رفع الكتاب إلى قسم «الكتب» في قاعدة البيانات'));
                     return;
                 }
 
                 if (titleInput) titleInput.value = '';
                 if (urlInput) urlInput.value = '';
 
-                // 3. تحديث قائمة الكتب مباشرة في بوابة المنسق والمكتبة الرقمية وحقيبة المدرس مع إبقاء رسالة النجاح ظاهرة
+                // 3. تحديث قائمة الكتب مباشرة مع إبقاء رسالة النجاح ظاهرة
                 await fetchAllLibraryBooks();
                 refreshOpenBooksViews();
                 await loadCoordinatorBooksList(true);
+                renderPendingBooksQueueUI();
 
-                setBooksAdminFeedback('success', `تمت إضافة الكتاب «${title}» بنجاح في قسم «الكتب» (${category}) وتحديث قائمة الكتب فوراً!`);
+                setBooksAdminFeedback('success', `تمت إضافة الكتاب «${title}» بنجاح رسمياً في قسم «الكتب» (${category}) وتحديث قائمة الكتب فوراً!`);
             } catch (err) {
                 console.error('publishCoordinatorBook exception:', err);
                 setBooksAdminFeedback('error', formatBooksErrorReason(err, 'حدث خطأ غير متوقع أثناء رفع الكتاب إلى قسم «الكتب»'));
@@ -6819,16 +7116,31 @@
 
         window.addEventListener('online', () => {
             updateConnectionStatusUI();
+            if (typeof renderPendingBooksQueueUI === 'function') {
+                renderPendingBooksQueueUI();
+            }
+            if (typeof syncPendingBooksQueue === 'function') {
+                syncPendingBooksQueue(false);
+            }
             loadLiveNewsTicker(false);
             preloadAndCacheMauritaniaSeal();
         });
 
         window.addEventListener('offline', () => {
             updateConnectionStatusUI();
+            if (typeof renderPendingBooksQueueUI === 'function') {
+                renderPendingBooksQueueUI();
+            }
         });
 
         updateConnectionStatusUI();
         preloadAndCacheMauritaniaSeal();
+        if (typeof renderPendingBooksQueueUI === 'function') {
+            renderPendingBooksQueueUI();
+        }
+        if (typeof syncPendingBooksQueue === 'function' && (typeof navigator === 'undefined' || navigator.onLine !== false)) {
+            setTimeout(() => syncPendingBooksQueue(false), 600);
+        }
 
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
