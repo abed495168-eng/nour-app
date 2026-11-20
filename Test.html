@@ -1342,6 +1342,45 @@
             line-height: 1.6;
         }
 
+        /* مؤشر حالة الاتصال بالإنترنت للعمل في المناطق النائية */
+        .connection-status-bar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 6px 14px;
+            font-size: 12px;
+            font-weight: 700;
+            text-align: center;
+            transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+            border-bottom: 1px solid transparent;
+        }
+        .connection-status-bar.is-online {
+            background: #ecfdf5;
+            color: #065f46;
+            border-bottom-color: #a7f3d0;
+        }
+        .connection-status-bar.is-offline {
+            background: #fffbeb;
+            color: #92400e;
+            border-bottom-color: #fcd34d;
+        }
+        .connection-status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            flex-shrink: 0;
+        }
+        .connection-status-bar.is-online .connection-status-dot {
+            background: #10b981;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+        }
+        .connection-status-bar.is-offline .connection-status-dot {
+            background: #f59e0b;
+            box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.25);
+        }
+
     </style>
 </head>
 <body>
@@ -1355,6 +1394,13 @@
             <i class="fas fa-star"></i> وحدة – نضال – حوار <i class="fas fa-star"></i>
         </div>
     </header>
+
+    <!-- مؤشر حالة الاتصال والعمل بدون إنترنت -->
+    <div id="connection-status-bar" class="connection-status-bar is-online" role="status" aria-live="polite">
+        <span class="connection-status-dot" aria-hidden="true"></span>
+        <i id="connection-status-icon" class="fas fa-wifi" aria-hidden="true"></i>
+        <span id="connection-status-text">متصل</span>
+    </div>
 
     <!-- شريط الأخبار النقابي الحي المتحرك -->
     <div id="top-news-ticker" class="news-ticker-bar">
@@ -2699,8 +2745,9 @@
             </div>
         `;
 
-        // دوال مساعدة لعرض الختم الرسمي للجمهورية الإسلامية الموريتانية (mauritania-seal.png.jpg) بوضوح في المعاينة والطباعة A4 / PDF
+        // دوال مساعدة لعرض الختم الرسمي للجمهورية الإسلامية الموريتانية (mauritania-seal.png.jpg) بوضوح في المعاينة والطباعة A4 / PDF وحتى دون اتصال بالإنترنت
         const MAURITANIA_SEAL_FULL_URL = 'https://abed495168-eng.github.io/nour-app/mauritania-seal.png.jpg';
+        const MAURITANIA_SEAL_CACHE_KEY = 'nour_mauritania_seal_dataurl_v1';
 
         function getPrintBaseHref() {
             try {
@@ -2710,7 +2757,51 @@
             }
         }
 
+        function getCachedMauritaniaSealDataUrl() {
+            try {
+                const cached = localStorage.getItem(MAURITANIA_SEAL_CACHE_KEY);
+                if (cached && cached.startsWith('data:image/') && cached.length > 500) {
+                    return cached;
+                }
+            } catch (e) {}
+            return '';
+        }
+
+        async function preloadAndCacheMauritaniaSeal() {
+            if (typeof navigator !== 'undefined' && navigator.onLine === false) {
+                return getCachedMauritaniaSealDataUrl();
+            }
+            const sources = [MAURITANIA_SEAL_FULL_URL, './mauritania-seal.png.jpg'];
+            for (let i = 0; i < sources.length; i++) {
+                try {
+                    const res = await fetch(sources[i], { mode: 'cors', cache: 'default' });
+                    if (!res || !res.ok) continue;
+                    const blob = await res.blob();
+                    if (!blob || blob.size < 500 || (blob.type && !blob.type.startsWith('image/'))) continue;
+                    const dataUrl = await new Promise((resolve, reject) => {
+                        const reader = new FileReader();
+                        reader.onloadend = () => resolve(typeof reader.result === 'string' ? reader.result : '');
+                        reader.onerror = () => reject(new Error('FileReader error'));
+                        reader.readAsDataURL(blob);
+                    });
+                    if (dataUrl && dataUrl.startsWith('data:image/') && dataUrl.length > 500) {
+                        try {
+                            localStorage.setItem(MAURITANIA_SEAL_CACHE_KEY, dataUrl);
+                        } catch (storageErr) {}
+                        return dataUrl;
+                    }
+                } catch (e) {
+                    // الانتقال تلقائياً إلى المصدر الاحتياطي
+                }
+            }
+            return getCachedMauritaniaSealDataUrl();
+        }
+
         function getMauritaniaSealUrl() {
+            const cachedDataUrl = getCachedMauritaniaSealDataUrl();
+            if (cachedDataUrl) {
+                return cachedDataUrl;
+            }
             return MAURITANIA_SEAL_FULL_URL;
         }
 
@@ -2749,17 +2840,17 @@
                     <div style="width: 37%; text-align: right;">
                         الجمهورية الإسلامية الموريتانية<br>
                         وزارة التربية وإصلاح النظام التعليمي<br>
-                        الإدارة الجهوية للتربية بـ: <span contenteditable="true">...................</span><br>
-                        مفتشية التعليم الأساسي بـ: <span contenteditable="true">...................</span><br>
-                        مدرسة: <span contenteditable="true">...................</span>
+                        الإدارة الجهوية للتربية بـ: <span contenteditable="true" data-sync="wilaya">...................</span><br>
+                        مفتشية التعليم الأساسي بـ: <span contenteditable="true" data-sync="moughataa">...................</span><br>
+                        مدرسة: <span contenteditable="true" data-sync="school">...................</span>
                     </div>
                     ${buildMauritaniaRibbonSealCenter('26%', 60)}
                     <div style="width: 37%; text-align: left;" dir="ltr">
                         République Islamique de Mauritanie<br>
                         Ministère de l'Éducation et de la Réforme du Système d'Enseignement<br>
-                        D.R.E.N: <span contenteditable="true">...................</span><br>
-                        Inspection de: <span contenteditable="true">...................</span><br>
-                        Ecole: <span contenteditable="true">...................</span>
+                        D.R.E.N: <span contenteditable="true" data-sync="wilaya_fr">...................</span><br>
+                        Inspection de: <span contenteditable="true" data-sync="moughataa_fr">...................</span><br>
+                        Ecole: <span contenteditable="true" data-sync="school_fr">...................</span>
                     </div>
                 </div>
             `;
@@ -3051,10 +3142,11 @@
                 <body>
                     <div class="no-print-bar">
                         <div style="font-size: 13px;">
-                            ✍️ <strong>حقيبة المدير:</strong> اضغط على أي خانة أو سطر للتحرير المباشر، ثم احفظ في هاتفك أو اطبع المستند.
+                            ✍️ <strong>حقيبة المدير:</strong> جميع التعديلات والترويسة تُحفظ تلقائياً في هاتفك للعمل دون إنترنت.
+                            <span id="dir-autosave-badge" style="display: inline-block; margin-right: 6px; padding: 2px 8px; border-radius: 6px; background: rgba(255,255,255,0.18); font-size: 11px; font-weight: bold;">💾 الحفظ التلقائي مفعل</span>
                         </div>
                         <div style="display: flex; gap: 6px; flex-wrap: wrap;">
-                            <button class="action-btn btn-save" onclick="saveDirectorData()">💾 حفظ في الهاتف</button>
+                            <button class="action-btn btn-save" onclick="saveDirectorData(false)">💾 حفظ في الهاتف</button>
                             <button class="action-btn btn-print" onclick="window.print()">🖨️ طباعة / حفظ كـ PDF</button>
                             <button class="action-btn btn-clear" onclick="clearDirectorData()">🗑️ تفريغ</button>
                         </div>
@@ -3064,27 +3156,77 @@
                     </div>
                     <script>
                         const DIR_STORAGE_KEY = 'nour_dir_doc_' + '${docId}';
+                        const HEADER_SYNC_KEY = 'nour_shared_header_v1';
+                        let dirAutoSaveTimer = null;
 
-                        function saveDirectorData() {
-                            const editables = document.querySelectorAll('[contenteditable="true"]');
-                            const savedVals = [];
-                            editables.forEach(el => savedVals.push(el.innerText));
-                            localStorage.setItem(DIR_STORAGE_KEY, JSON.stringify(savedVals));
-                            alert('تم حفظ بيانات المستند بنجاح في ذاكرة هاتفك!');
+                        function updateDirSaveBadge(msg) {
+                            const badge = document.getElementById('dir-autosave-badge');
+                            if (badge) badge.textContent = msg;
+                        }
+
+                        function syncDirectorHeaderFields() {
+                            let shared = {};
+                            try { shared = JSON.parse(localStorage.getItem(HEADER_SYNC_KEY) || '{}'); } catch(e) {}
+                            document.querySelectorAll('[data-sync]').forEach(el => {
+                                const key = el.getAttribute('data-sync');
+                                if (shared[key]) el.innerText = shared[key];
+                                el.addEventListener('input', () => {
+                                    shared[key] = el.innerText.trim();
+                                    try { localStorage.setItem(HEADER_SYNC_KEY, JSON.stringify(shared)); } catch(e) {}
+                                    document.querySelectorAll('[data-sync="' + key + '"]').forEach(other => {
+                                        if (other !== el) other.innerText = el.innerText;
+                                    });
+                                });
+                            });
+                        }
+
+                        function saveDirectorData(silent = false) {
+                            try {
+                                const editables = document.querySelectorAll('[contenteditable="true"]');
+                                const savedVals = [];
+                                editables.forEach(el => savedVals.push(el.innerText));
+                                localStorage.setItem(DIR_STORAGE_KEY, JSON.stringify(savedVals));
+                                updateDirSaveBadge(silent ? '✓ محفوظ تلقائياً في الجهاز' : '✓ تم الحفظ بنجاح في الجهاز');
+                            } catch (e) {
+                                console.error('خطأ في حفظ بيانات المستند:', e);
+                            }
+                        }
+
+                        function scheduleDirectorAutoSave() {
+                            clearTimeout(dirAutoSaveTimer);
+                            updateDirSaveBadge('⏳ جاري الحفظ...');
+                            dirAutoSaveTimer = setTimeout(() => saveDirectorData(true), 400);
+                        }
+
+                        function bindDirectorAutoSave() {
+                            document.querySelectorAll('[contenteditable="true"]').forEach(el => {
+                                el.addEventListener('input', scheduleDirectorAutoSave);
+                                el.addEventListener('blur', () => saveDirectorData(true));
+                            });
+                            window.addEventListener('beforeunload', () => saveDirectorData(true));
                         }
 
                         function loadDirectorData() {
+                            syncDirectorHeaderFields();
+                            let shared = {};
+                            try { shared = JSON.parse(localStorage.getItem(HEADER_SYNC_KEY) || '{}'); } catch(e) {}
                             const saved = localStorage.getItem(DIR_STORAGE_KEY);
-                            if (!saved) return;
-                            try {
-                                const savedVals = JSON.parse(saved);
-                                const editables = document.querySelectorAll('[contenteditable="true"]');
-                                editables.forEach((el, idx) => {
-                                    if (savedVals[idx] !== undefined) el.innerText = savedVals[idx];
-                                });
-                            } catch(e) {
-                                console.error('خطأ في استرجاع بيانات المستند:', e);
+                            if (saved) {
+                                try {
+                                    const savedVals = JSON.parse(saved);
+                                    const editables = document.querySelectorAll('[contenteditable="true"]');
+                                    editables.forEach((el, idx) => {
+                                        const syncKey = el.getAttribute('data-sync');
+                                        if (syncKey && shared[syncKey]) return;
+                                        if (savedVals[idx] !== undefined && savedVals[idx] !== '') {
+                                            el.innerText = savedVals[idx];
+                                        }
+                                    });
+                                } catch(e) {
+                                    console.error('خطأ في استرجاع بيانات المستند:', e);
+                                }
                             }
+                            bindDirectorAutoSave();
                         }
 
                         function clearDirectorData() {
@@ -3973,10 +4115,11 @@
                 <body>
                     <div class="no-print-bar">
                         <div style="font-size: 13px;">
-                            ✍️ <strong>وضع التحرير والمزامنة الذكية:</strong> أي تعديل في الترويسة (الولاية، المقاطعة، المدرسة، القسم، السنة) يُحفظ تلقائياً وينعكس في جميع الوثائق!
+                            ✍️ <strong>وضع التحرير والمزامنة الذكية:</strong> الترويسة وجميع حقول النموذج تُحفظ تلقائياً في هاتفك للعمل دون إنترنت!
+                            <span id="doc-autosave-badge" style="display: inline-block; margin-right: 6px; padding: 2px 8px; border-radius: 6px; background: rgba(255,255,255,0.18); font-size: 11px; font-weight: bold;">💾 الحفظ التلقائي مفعل</span>
                         </div>
                         <div style="display: flex; gap: 6px; flex-wrap: wrap;">
-                            <button class="action-btn btn-save" onclick="saveToDevice()">💾 حفظ في الهاتف</button>
+                            <button class="action-btn btn-save" onclick="saveToDevice(false)">💾 حفظ في الهاتف</button>
                             <button class="action-btn btn-print" onclick="window.print()">🖨️ طباعة ملونة A4 / PDF</button>
                             <button class="action-btn btn-clear" onclick="clearData()">🗑️ تفريغ</button>
                         </div>
@@ -3991,6 +4134,12 @@
                     <script>
                         const STORAGE_KEY = 'nour_doc_' + '${docId}';
                         const HEADER_SYNC_KEY = 'nour_shared_header_v1';
+                        let docAutoSaveTimer = null;
+
+                        function updateDocSaveBadge(msg) {
+                            const badge = document.getElementById('doc-autosave-badge');
+                            if (badge) badge.textContent = msg;
+                        }
 
                         function syncHeaderFields() {
                             let shared = {};
@@ -4000,7 +4149,7 @@
                                 if (shared[key]) el.innerText = shared[key];
                                 el.addEventListener('input', () => {
                                     shared[key] = el.innerText.trim();
-                                    localStorage.setItem(HEADER_SYNC_KEY, JSON.stringify(shared));
+                                    try { localStorage.setItem(HEADER_SYNC_KEY, JSON.stringify(shared)); } catch(e) {}
                                     document.querySelectorAll('[data-sync="' + key + '"]').forEach(other => {
                                         if (other !== el) other.innerText = el.innerText;
                                     });
@@ -4015,6 +4164,7 @@
                             cell.innerText = next;
                             cell.style.color = (next === '') ? '#111' : (next === 'X' ? '#dc2626' : '#d97706');
                             recalcAttRow(cell.parentElement);
+                            scheduleAutoSaveToDevice();
                         }
 
                         function recalcAttRow(row) {
@@ -4037,30 +4187,58 @@
                             if (pctEl) pctEl.innerText = pct + '%';
                         }
 
-                        function saveToDevice() {
-                            const editables = document.querySelectorAll('[contenteditable="true"], .att-day-cell');
-                            const savedVals = [];
-                            editables.forEach(el => savedVals.push(el.innerText));
-                            localStorage.setItem(STORAGE_KEY, JSON.stringify(savedVals));
-                            alert('تم حفظ الوثيقة بنجاح في ذاكرة هاتفك!');
+                        function saveToDevice(silent = false) {
+                            try {
+                                const editables = document.querySelectorAll('[contenteditable="true"], .att-day-cell');
+                                const savedVals = [];
+                                editables.forEach(el => savedVals.push(el.innerText));
+                                localStorage.setItem(STORAGE_KEY, JSON.stringify(savedVals));
+                                updateDocSaveBadge(silent ? '✓ محفوظ تلقائياً في الجهاز' : '✓ تم حفظ الوثيقة في الجهاز');
+                            } catch (e) {
+                                console.error('خطأ في حفظ الوثيقة:', e);
+                            }
+                        }
+
+                        function scheduleAutoSaveToDevice() {
+                            clearTimeout(docAutoSaveTimer);
+                            updateDocSaveBadge('⏳ جاري الحفظ...');
+                            docAutoSaveTimer = setTimeout(() => saveToDevice(true), 400);
+                        }
+
+                        function bindAutoSaveListeners() {
+                            document.querySelectorAll('[contenteditable="true"]').forEach(el => {
+                                el.addEventListener('input', scheduleAutoSaveToDevice);
+                                el.addEventListener('blur', () => saveToDevice(true));
+                            });
+                            window.addEventListener('beforeunload', () => saveToDevice(true));
                         }
 
                         function loadFromDevice() {
                             syncHeaderFields();
+                            let shared = {};
+                            try { shared = JSON.parse(localStorage.getItem(HEADER_SYNC_KEY) || '{}'); } catch(e) {}
                             const saved = localStorage.getItem(STORAGE_KEY);
-                            if (!saved) return;
-                            try {
-                                const savedVals = JSON.parse(saved);
-                                const editables = document.querySelectorAll('[contenteditable="true"], .att-day-cell');
-                                editables.forEach((el, idx) => {
-                                    if (savedVals[idx] !== undefined && savedVals[idx] !== '') {
-                                        el.innerText = savedVals[idx];
-                                    }
-                                });
-                                document.querySelectorAll('.att-student-row').forEach(r => recalcAttRow(r));
-                            } catch(e) {
-                                console.error('خطأ في استرجاع الوثيقة:', e);
+                            if (saved) {
+                                try {
+                                    const savedVals = JSON.parse(saved);
+                                    const editables = document.querySelectorAll('[contenteditable="true"], .att-day-cell');
+                                    editables.forEach((el, idx) => {
+                                        const syncKey = el.getAttribute('data-sync');
+                                        if (syncKey && shared[syncKey]) return;
+                                        if (savedVals[idx] !== undefined && savedVals[idx] !== '') {
+                                            el.innerText = savedVals[idx];
+                                            if (el.classList.contains('att-day-cell')) {
+                                                const v = String(savedVals[idx]).trim();
+                                                el.style.color = (v === '') ? '#111' : (v === 'X' ? '#dc2626' : '#d97706');
+                                            }
+                                        }
+                                    });
+                                    document.querySelectorAll('.att-student-row').forEach(r => recalcAttRow(r));
+                                } catch(e) {
+                                    console.error('خطأ في استرجاع الوثيقة:', e);
+                                }
                             }
+                            bindAutoSaveListeners();
                         }
 
                         function clearData() {
@@ -4610,6 +4788,10 @@
                 renderNewsTickerItems(cachedItems || DEFAULT_NEWS_TICKER_ITEMS, true);
             }
 
+            if (typeof navigator !== 'undefined' && navigator.onLine === false) {
+                return;
+            }
+
             try {
                 if (typeof client === 'undefined' || !client) {
                     return;
@@ -4790,7 +4972,7 @@
                     return;
                 }
                 if (typeof navigator !== 'undefined' && navigator.onLine === false) {
-                    setNewsAdminFeedback('error', 'لا يوجد اتصال بالإنترنت حالياً. يرجى التحقق من الشبكة ثم إعادة المحاولة.');
+                    setNewsAdminFeedback('error', 'وضع عدم الاتصال: نشر أو تعديل الأخبار يتطلب اتصالاً بالإنترنت. يرجى المحاولة عند عودة الشبكة.');
                     return;
                 }
                 if (typeof client === 'undefined' || !client) {
@@ -4922,7 +5104,7 @@
                     return;
                 }
                 if (typeof navigator !== 'undefined' && navigator.onLine === false) {
-                    setNewsAdminFeedback('error', 'لا يوجد اتصال بالإنترنت حالياً لجلب قائمة الأخبار.');
+                    setNewsAdminFeedback('error', 'وضع عدم الاتصال: استعراض وإدارة الأخبار يتطلب اتصالاً بالإنترنت. يرجى المحاولة عند عودة الشبكة.');
                     return;
                 }
                 if (typeof client === 'undefined' || !client) {
@@ -5013,7 +5195,7 @@
                     return;
                 }
                 if (typeof navigator !== 'undefined' && navigator.onLine === false) {
-                    setNewsAdminFeedback('error', 'لا يوجد اتصال بالإنترنت حالياً لحذف الخبر.');
+                    setNewsAdminFeedback('error', 'وضع عدم الاتصال: حذف الأخبار يتطلب اتصالاً بالإنترنت. يرجى المحاولة عند عودة الشبكة.');
                     return;
                 }
                 if (typeof client === 'undefined' || !client) {
@@ -5481,19 +5663,21 @@
         async function fetchAllGrievances() {
             let remoteRecords = [];
             let remoteSucceeded = false;
-            try {
-                const { data, error } = await client
-                    .from('grievances')
-                    .select(GRIEVANCES_SELECT_COLS)
-                    .order('created_at', { ascending: false });
-                if (!error && Array.isArray(data)) {
-                    remoteRecords = data;
-                    remoteSucceeded = true;
-                } else if (error) {
-                    console.warn('Supabase grievances select warning:', error.message || error);
+            if (typeof navigator === 'undefined' || navigator.onLine !== false) {
+                try {
+                    const { data, error } = await client
+                        .from('grievances')
+                        .select(GRIEVANCES_SELECT_COLS)
+                        .order('created_at', { ascending: false });
+                    if (!error && Array.isArray(data)) {
+                        remoteRecords = data;
+                        remoteSucceeded = true;
+                    } else if (error) {
+                        console.warn('Supabase grievances select warning:', error.message || error);
+                    }
+                } catch (e) {
+                    console.warn('Grievances Supabase fetch fallback to localStorage:', e);
                 }
-            } catch (e) {
-                console.warn('Grievances Supabase fetch fallback to localStorage:', e);
             }
 
             const localRecords = getLocalGrievances();
@@ -5828,6 +6012,12 @@
 
             if (!subject || !message) {
                 errEl.innerText = 'يرجى كتابة موضوع الشكوى وتفاصيل التظلم قبل الإرسال.';
+                errEl.style.display = 'block';
+                return;
+            }
+
+            if (typeof navigator !== 'undefined' && navigator.onLine === false) {
+                errEl.innerText = 'وضع عدم الاتصال: إرسال وتوثيق الشكوى الرسمية يتطلب اتصالاً بالإنترنت. يرجى المحاولة عند عودة الشبكة.';
                 errEl.style.display = 'block';
                 return;
             }
@@ -6171,6 +6361,13 @@
                 return;
             }
 
+            if (typeof navigator !== 'undefined' && navigator.onLine === false) {
+                msgEl.style.color = '#dc2626';
+                msgEl.innerText = 'وضع عدم الاتصال: حفظ وإرسال الرد الرسمي يتطلب اتصالاً بالإنترنت. يرجى المحاولة عند عودة الشبكة.';
+                msgEl.style.display = 'block';
+                return;
+            }
+
             const nowIso = new Date().toISOString();
             const updatePayload = {
                 status: newStatus,
@@ -6354,11 +6551,52 @@
             }
         });
 
+        function updateConnectionStatusUI() {
+            const bar = document.getElementById('connection-status-bar');
+            const textEl = document.getElementById('connection-status-text');
+            const iconEl = document.getElementById('connection-status-icon');
+            if (!bar || !textEl) return;
+
+            const isOnline = typeof navigator === 'undefined' ? true : navigator.onLine !== false;
+            if (isOnline) {
+                bar.classList.remove('is-offline');
+                bar.classList.add('is-online');
+                textEl.textContent = 'متصل';
+                if (iconEl) iconEl.className = 'fas fa-wifi';
+            } else {
+                bar.classList.remove('is-online');
+                bar.classList.add('is-offline');
+                textEl.textContent = 'وضع عدم الاتصال - عرض النسخة المحفوظة';
+                if (iconEl) iconEl.className = 'fas fa-plane-slash';
+            }
+        }
+
+        window.addEventListener('online', () => {
+            updateConnectionStatusUI();
+            loadLiveNewsTicker(false);
+            preloadAndCacheMauritaniaSeal();
+        });
+
+        window.addEventListener('offline', () => {
+            updateConnectionStatusUI();
+        });
+
+        updateConnectionStatusUI();
+        preloadAndCacheMauritaniaSeal();
+
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js')
-                    .then((reg) => console.log('PWA Service Worker Registered Successfully:', reg))
-                    .catch((err) => console.error('PWA Service Worker Registration Failed:', err));
+                try {
+                    navigator.serviceWorker.register('./sw.js')
+                        .then((reg) => {
+                            if (reg && typeof reg.update === 'function' && navigator.onLine !== false) {
+                                reg.update().catch(() => {});
+                            }
+                        })
+                        .catch((err) => console.warn('PWA Service Worker Registration Warning:', err));
+                } catch (err) {
+                    console.warn('PWA Service Worker Init Warning:', err);
+                }
             });
         }
     </script>
