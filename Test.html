@@ -1910,11 +1910,11 @@
             <!-- 3. قسم إدارة المكتبة الرقمية والكتب المدرسية -->
             <div id="coord-panel-books" class="coord-panel">
                 <div style="text-align: center; margin-bottom: 12px;">
-                    <h4 style="color: #4338ca; font-size: 15px;"><i class="fas fa-book-medical"></i> إضافة وإدارة الكتب المدرسية</h4>
-                    <p style="font-size: 11.5px; color: #64748b;">إضافة كتاب مدرسي أو دليل تربوي جديد يدوياً ليظهر في المكتبة الرقمية وحقيبة المدرس</p>
+                    <h4 style="color: #4338ca; font-size: 15px;"><i class="fas fa-book-medical"></i> إضافة وإدارة الكتب المدرسية (قسم الكتب)</h4>
+                    <p style="font-size: 11.5px; color: #64748b;">إضافة كتاب مدرسي أو دليل تربوي مباشرة إلى قسم «الكتب» ليظهر في المكتبة الرقمية وحقيبة المدرس</p>
                 </div>
-                <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px;">
-                    <input type="password" id="books-admin-pin" placeholder="أدخل رمز الإدارة السري للمنسق" style="width: 100%;">
+                <div id="coord-books-form-fields" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px;">
+                    <input type="password" id="books-admin-pin" placeholder="أدخل رمز الإدارة السري للمنسق" style="width: 100%;" onkeydown="if(event.key==='Enter'){ event.preventDefault(); loadCoordinatorBooksList(); }">
                     <input type="text" id="book-title-input" placeholder="عنوان الكتاب (مثلاً: كتاب الرياضيات - السنة الرابعة)" style="width: 100%;">
                     <select id="book-category-input" style="width: 100%; padding: 12px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 13.5px; font-weight: bold; outline: none; background: #fff; text-align: right; direction: rtl;">
                         <option value="التعليم الأساسي">التعليم الأساسي</option>
@@ -1922,18 +1922,18 @@
                         <option value="التعليم الثانوي">التعليم الثانوي</option>
                         <option value="أدلة المعلم والمقررات">أدلة المعلم والمقررات</option>
                     </select>
-                    <input type="text" id="book-url-input" placeholder="رابط تحميل الكتاب (Google Drive أو رابط PDF مباشر)" style="width: 100%; text-align: left; direction: ltr;">
+                    <input type="url" id="book-url-input" placeholder="رابط تحميل الكتاب (Google Drive أو رابط PDF مباشر)" style="width: 100%; text-align: left; direction: ltr;">
                 </div>
-                <div style="display: flex; gap: 8px;">
-                    <button class="btn" style="flex: 1; background: #4338ca;" onclick="publishCoordinatorBook()">
-                        <i class="fas fa-cloud-upload-alt"></i> إضافة الكتاب للمكتبة
+                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                    <button type="button" id="btn-publish-book" class="btn" style="flex: 1; background: #4338ca;" onclick="publishCoordinatorBook()">
+                        <i class="fas fa-cloud-upload-alt"></i> إضافة الكتاب لقسم الكتب
                     </button>
-                    <button class="btn" style="background: #475569;" onclick="loadCoordinatorBooksList()">
+                    <button type="button" id="btn-list-books" class="btn" style="background: #475569;" onclick="loadCoordinatorBooksList()">
                         <i class="fas fa-list"></i> استعراض وحذف
                     </button>
                 </div>
-                <p id="books-admin-msg" style="font-size: 12.5px; text-align: center; margin-top: 8px; display: none; font-weight: bold;"></p>
-                <div id="coord-books-manage-list" style="margin-top: 10px; max-height: 220px; overflow-y: auto;"></div>
+                <div id="books-admin-msg" role="alert" style="font-size: 12.5px; text-align: center; margin-top: 8px; display: none; font-weight: bold; padding: 9px 12px; border-radius: 8px; line-height: 1.55;"></div>
+                <div id="coord-books-manage-list" style="margin-top: 10px; max-height: 240px; overflow-y: auto;"></div>
             </div>
 
             <!-- 4. قسم معالجة الشكاوى والتظلمات الرسمية -->
@@ -2389,6 +2389,11 @@
                 const existingPin = typeof getNewsAdminPinValue === 'function' ? getNewsAdminPinValue() : '';
                 if (existingPin) {
                     loadCoordinatorNewsList(true);
+                }
+            } else if (tabName === 'books') {
+                const existingBooksPin = typeof getBooksAdminPinValue === 'function' ? getBooksAdminPinValue() : '';
+                if (existingBooksPin) {
+                    loadCoordinatorBooksList(true);
                 }
             }
         }
@@ -5273,14 +5278,92 @@
         }
 
         // ==========================================
-        // إدارة وعرض المكتبة الرقمية (الكتب المدرسية)
+        // إدارة وعرض المكتبة الرقمية (قسم الكتب المدرسية — مرتبط حصراً بجدول textbooks ودالة admin_manage_books)
         // ==========================================
         let cachedLibraryBooks = [];
+        let currentLibraryBookFilter = 'ALL';
         const LOCAL_BOOKS_KEY = 'nour_custom_textbooks_v1';
+        const ALLOWED_BOOK_CATEGORIES = [
+            'التعليم الأساسي',
+            'التعليم الإعدادي',
+            'التعليم الثانوي',
+            'أدلة المعلم والمقررات'
+        ];
+
+        function escapeBooksHtml(str) {
+            return String(str == null ? '' : str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        function getBooksAdminPinValue() {
+            const ids = ['books-admin-pin', 'coord-secret-input', 'news-admin-pin', 'grievances-admin-pin'];
+            for (const id of ids) {
+                const el = document.getElementById(id);
+                if (el && el.value.trim()) return el.value.trim();
+            }
+            return '';
+        }
+
+        function setBooksAdminFeedback(type, message) {
+            const msgEl = document.getElementById('books-admin-msg');
+            if (!msgEl) return;
+            if (!message) {
+                msgEl.style.display = 'none';
+                msgEl.innerText = '';
+                return;
+            }
+            const styles = {
+                error:   { bg: '#fef2f2', border: '#fecaca', color: '#b91c1c' },
+                success: { bg: '#ecfdf5', border: '#a7f3d0', color: '#047857' },
+                info:    { bg: '#eef2ff', border: '#c7d2fe', color: '#3730a3' },
+                warning: { bg: '#fffbeb', border: '#fde68a', color: '#92400e' }
+            };
+            const st = styles[type] || styles.info;
+            msgEl.style.background = st.bg;
+            msgEl.style.border = `1px solid ${st.border}`;
+            msgEl.style.color = st.color;
+            msgEl.innerText = message;
+            msgEl.style.display = 'block';
+        }
+
+        function normalizeAndValidateBookUrl(rawUrl) {
+            let trimmed = String(rawUrl || '').trim();
+            if (!trimmed) return '';
+            if (/^www\./i.test(trimmed)) {
+                trimmed = 'https://' + trimmed;
+            }
+            try {
+                const parsed = new URL(trimmed);
+                if (parsed.protocol === 'http:' || parsed.protocol === 'https:') {
+                    return parsed.href;
+                }
+            } catch (e) {}
+            return '';
+        }
+
+        function formatBooksErrorReason(err, fallbackText) {
+            const raw = String((err && (err.message || err.details || err.hint || err.error_description)) || err || '').trim();
+            const low = raw.toLowerCase();
+            if (low.includes('invalid') && (low.includes('secret') || low.includes('pin') || low.includes('auth') || low.includes('رمز'))) {
+                return 'فشل رفع الكتاب: الرمز السري للإدارة غير صحيح! يرجى إدخال الرمز المعتمد للمنسق.';
+            }
+            if (low.includes('failed to fetch') || low.includes('network') || low.includes('offline')) {
+                return 'تعذر الاتصال بالخادم أثناء رفع الكتاب إلى قسم «الكتب». يرجى التحقق من اتصال الإنترنت ثم إعادة المحاولة.';
+            }
+            if (low.includes('permission') || low.includes('policy') || low.includes('rls')) {
+                return 'تعذر حفظ الكتاب في جدول «الكتب» (textbooks) بسبب صلاحيات قاعدة البيانات أو رمز الإدارة.';
+            }
+            return raw ? `${fallbackText}: ${raw}` : fallbackText;
+        }
 
         function getLocalSavedBooks() {
             try {
-                return JSON.parse(localStorage.getItem(LOCAL_BOOKS_KEY) || '[]');
+                const parsed = JSON.parse(localStorage.getItem(LOCAL_BOOKS_KEY) || '[]');
+                return Array.isArray(parsed) ? parsed : [];
             } catch (e) {
                 return [];
             }
@@ -5288,32 +5371,57 @@
 
         function saveLocalBooks(booksArr) {
             try {
-                localStorage.setItem(LOCAL_BOOKS_KEY, JSON.stringify(booksArr));
+                localStorage.setItem(LOCAL_BOOKS_KEY, JSON.stringify(Array.isArray(booksArr) ? booksArr : []));
             } catch (e) {}
         }
 
         async function fetchAllLibraryBooks() {
             let dbBooks = [];
-            try {
-                const { data, error } = await client
-                    .from('textbooks')
-                    .select('*')
-                    .order('created_at', { ascending: false });
-                if (!error && Array.isArray(data)) {
-                    dbBooks = data;
+            let remoteSucceeded = false;
+
+            if (typeof navigator === 'undefined' || navigator.onLine !== false) {
+                try {
+                    if (typeof client !== 'undefined' && client) {
+                        const { data, error } = await client
+                            .from('textbooks')
+                            .select('*')
+                            .order('created_at', { ascending: false });
+                        if (!error && Array.isArray(data)) {
+                            dbBooks = data.filter(b => b && b.is_active !== false);
+                            remoteSucceeded = true;
+                        }
+                    }
+                } catch (e) {
+                    console.warn('Textbooks fetch warning:', e);
                 }
-            } catch (e) {
-                console.warn('Textbooks fetch warning:', e);
             }
+
+            if (remoteSucceeded) {
+                saveLocalBooks(dbBooks);
+                cachedLibraryBooks = dbBooks;
+                return dbBooks;
+            }
+
             const localBooks = getLocalSavedBooks();
-            const combined = [...dbBooks];
-            localBooks.forEach(lb => {
-                if (!combined.some(b => String(b.id) === String(lb.id) || (b.title === lb.title && b.url === lb.url))) {
-                    combined.push(lb);
+            cachedLibraryBooks = localBooks;
+            return localBooks;
+        }
+
+        function refreshOpenBooksViews() {
+            const booksModal = document.getElementById('books-modal');
+            const booksContainer = document.getElementById('books-container');
+            if (booksContainer && booksModal && booksModal.style.display === 'block') {
+                filterLibraryBooks(currentLibraryBookFilter || 'ALL');
+            }
+            const bagBooksBtn = document.getElementById('tab-btn-books');
+            const bagDocsList = document.getElementById('bag-docs-list');
+            if (bagBooksBtn && bagBooksBtn.classList.contains('active') && bagDocsList) {
+                if (!cachedLibraryBooks || cachedLibraryBooks.length === 0) {
+                    bagDocsList.innerHTML = '<div style="text-align: center; color: #64748b; padding: 20px;">لا توجد كتب مضافة حالياً. يمكن للمنسق أو إدارة الموقع إضافتها من بوابة المنسق.</div>';
+                } else {
+                    bagDocsList.innerHTML = renderBooksCardsHtml(cachedLibraryBooks);
                 }
-            });
-            cachedLibraryBooks = combined;
-            return combined;
+            }
         }
 
         function renderBooksCardsHtml(booksList) {
@@ -5325,6 +5433,10 @@
                 else if (item.category === 'التعليم الثانوي') { catColor = '#8b5cf6'; catIcon = 'fas fa-graduation-cap'; }
                 else if (item.category === 'أدلة المعلم والمقررات') { catColor = '#d97706'; catIcon = 'fas fa-chalkboard-teacher'; }
 
+                const safeCat = escapeBooksHtml(item.category || 'كتاب مدرسي');
+                const safeTitle = escapeBooksHtml(item.title || '');
+                const safeUrl = normalizeAndValidateBookUrl(item.url);
+
                 return `
                     <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-right: 4px solid ${catColor}; border-radius: 10px; padding: 12px; display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 8px;">
                         <div style="display: flex; align-items: center; gap: 10px; flex: 1;">
@@ -5332,12 +5444,12 @@
                                 <i class="${catIcon}"></i>
                             </div>
                             <div style="text-align: right;">
-                                <div style="font-size: 11px; font-weight: 800; color: ${catColor};">${item.category || 'كتاب مدرسي'}</div>
-                                <div style="font-size: 13.5px; font-weight: 800; color: var(--text-dark); margin-top: 2px;">${item.title || ''}</div>
+                                <div style="font-size: 11px; font-weight: 800; color: ${catColor};">${safeCat}</div>
+                                <div style="font-size: 13.5px; font-weight: 800; color: var(--text-dark); margin-top: 2px;">${safeTitle}</div>
                             </div>
                         </div>
-                        ${item.url 
-                            ? `<a href="${item.url}" target="_blank" rel="noopener noreferrer" class="btn" style="padding: 7px 12px; font-size: 11.5px; white-space: nowrap; flex-shrink: 0; background: ${catColor}; text-decoration: none;"><i class="fas fa-download"></i> تحميل</a>`
+                        ${safeUrl
+                            ? `<a href="${escapeBooksHtml(safeUrl)}" target="_blank" rel="noopener noreferrer" class="btn" style="padding: 7px 12px; font-size: 11.5px; white-space: nowrap; flex-shrink: 0; background: ${catColor}; text-decoration: none;"><i class="fas fa-download"></i> تحميل</a>`
                             : `<span style="font-size: 10.5px; background: #e0e7ff; color: #3730a3; font-weight: 700; padding: 3px 8px; border-radius: 6px; white-space: nowrap; flex-shrink: 0;">قريباً</span>`
                         }
                     </div>
@@ -5351,12 +5463,14 @@
             modal.style.display = 'block';
             container.innerHTML = '<div style="text-align: center; color: #64748b; padding: 25px;"><i class="fas fa-spinner fa-spin"></i> جاري جلب الكتب المدرسية والأدلة...</div>';
 
-            const books = await fetchAllLibraryBooks();
+            await fetchAllLibraryBooks();
             filterLibraryBooks('ALL');
         }
 
         function filterLibraryBooks(category) {
+            currentLibraryBookFilter = category || 'ALL';
             const container = document.getElementById('books-container');
+            if (!container) return;
             const mapIds = {
                 'ALL': 'book-filter-all',
                 'التعليم الأساسي': 'book-filter-pri',
@@ -5368,12 +5482,12 @@
                 const el = document.getElementById(id);
                 if (el) el.classList.remove('active');
             });
-            const activeBtn = document.getElementById(mapIds[category] || 'book-filter-all');
+            const activeBtn = document.getElementById(mapIds[currentLibraryBookFilter] || 'book-filter-all');
             if (activeBtn) activeBtn.classList.add('active');
 
-            const filtered = category === 'ALL'
+            const filtered = currentLibraryBookFilter === 'ALL'
                 ? cachedLibraryBooks
-                : cachedLibraryBooks.filter(b => b.category === category);
+                : cachedLibraryBooks.filter(b => b.category === currentLibraryBookFilter);
 
             if (!filtered || filtered.length === 0) {
                 container.innerHTML = '<div style="text-align: center; color: #64748b; padding: 22px; font-size: 13px;"><i class="fas fa-book-open" style="font-size: 24px; color: #cbd5e1; display: block; margin-bottom: 8px;"></i>لا توجد كتب مضافة في هذا القسم حالياً.<br><span style="font-size: 11.5px; color: #94a3b8;">يمكن للمنسق العام أو إدارة الموقع إضافة الكتب عبر بوابة المنسق.</span></div>';
@@ -5382,124 +5496,226 @@
             container.innerHTML = renderBooksCardsHtml(filtered);
         }
 
+        // رفع وإضافة كتاب جديد حصراً إلى قسم «الكتب» (جدول textbooks عبر admin_manage_books)
         async function publishCoordinatorBook() {
-            const pin = (document.getElementById('books-admin-pin').value || document.getElementById('coord-secret-input').value || document.getElementById('news-admin-pin').value || '').trim();
-            const title = document.getElementById('book-title-input').value.trim();
-            const category = document.getElementById('book-category-input').value;
-            const url = document.getElementById('book-url-input').value.trim();
-            const msg = document.getElementById('books-admin-msg');
+            const publishBtn = document.getElementById('btn-publish-book');
+            const defaultPublishBtnHtml = '<i class="fas fa-cloud-upload-alt"></i> إضافة الكتاب لقسم الكتب';
 
-            msg.style.display = 'none';
-            if (pin !== ADMIN_GATE_HASH) {
-                msg.style.color = '#dc2626';
-                msg.innerText = 'رمز الإدارة السري غير صحيح! يرجى إدخال الرمز المعتمد.';
-                msg.style.display = 'block';
-                return;
-            }
-            if (!title || !url) {
-                msg.style.color = '#dc2626';
-                msg.innerText = 'يرجى كتابة عنوان الكتاب وإرفاق رابط التحميل أولاً.';
-                msg.style.display = 'block';
-                return;
-            }
-
-            msg.style.color = '#4338ca';
-            msg.innerText = 'جاري حفظ الكتاب في قاعدة البيانات ونشره للجميع...';
-            msg.style.display = 'block';
-
-            let savedToServer = false;
             try {
-                // 1. المحاولة الأولى عبر دالة Supabase الآمنة (admin_manage_books)
+                // 1. منع رفع الكتب في وضع عدم الاتصال لضمان وصولها إلى قسم الكتب المخصص
+                if (typeof navigator !== 'undefined' && navigator.onLine === false) {
+                    setBooksAdminFeedback('error', 'وضع عدم الاتصال: رفع الكتب يتطلب اتصالاً بالإنترنت لضمان وصولها إلى قسم «الكتب» المخصص. يرجى المحاولة عند عودة الشبكة.');
+                    return;
+                }
+
+                const pin = getBooksAdminPinValue();
+                const titleInput = document.getElementById('book-title-input');
+                const categoryInput = document.getElementById('book-category-input');
+                const urlInput = document.getElementById('book-url-input');
+
+                const title = titleInput ? titleInput.value.trim() : '';
+                const rawCategory = categoryInput ? categoryInput.value.trim() : '';
+                const category = ALLOWED_BOOK_CATEGORIES.includes(rawCategory) ? rawCategory : ALLOWED_BOOK_CATEGORIES[0];
+                const rawUrl = urlInput ? urlInput.value.trim() : '';
+
+                setBooksAdminFeedback('info', '');
+
+                if (!pin) {
+                    setBooksAdminFeedback('error', 'يرجى إدخال رمز الإدارة السري للمنسق أولاً قبل إضافة الكتاب.');
+                    return;
+                }
+                if (!title) {
+                    setBooksAdminFeedback('error', 'يرجى كتابة عنوان الكتاب أولاً.');
+                    if (titleInput) titleInput.focus();
+                    return;
+                }
+                if (!rawUrl) {
+                    setBooksAdminFeedback('error', 'يرجى إرفاق رابط تحميل الكتاب أولاً.');
+                    if (urlInput) urlInput.focus();
+                    return;
+                }
+
+                const normalizedUrl = normalizeAndValidateBookUrl(rawUrl);
+                if (!normalizedUrl) {
+                    setBooksAdminFeedback('error', 'رابط الكتاب غير صالح. يرجى إدخال رابط يبدأ بـ https:// أو http:// (مثل رابط Google Drive أو PDF مباشر).');
+                    if (urlInput) urlInput.focus();
+                    return;
+                }
+
+                if (typeof client === 'undefined' || !client) {
+                    setBooksAdminFeedback('error', 'تعذر تهيئة الاتصال بقاعدة البيانات داخل المتصفح. يرجى تحديث الصفحة والمحاولة مجدداً.');
+                    return;
+                }
+
+                if (publishBtn) {
+                    publishBtn.disabled = true;
+                    publishBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري رفع الكتاب لقسم الكتب...';
+                }
+                setBooksAdminFeedback('info', 'جاري رفع وحفظ الكتاب في قسم «الكتب» وتحديث القائمة...');
+
+                let savedToBooksTable = false;
+                let lastError = null;
+
+                // 2. الإرسال الحصري لمسار الكتب فقط: admin_manage_books ثم جدول textbooks (دون أي مساس بالأخبار أو الأقسام الأخرى)
                 const { data: rpcData, error: rpcErr } = await client.rpc('admin_manage_books', {
                     admin_secret: pin,
                     action_type: 'add',
                     book_title: title,
                     book_category: category,
-                    book_url: url,
+                    book_url: normalizedUrl,
                     book_id: null
                 });
 
                 if (!rpcErr && (!rpcData || rpcData.success !== false)) {
-                    savedToServer = true;
+                    savedToBooksTable = true;
                 } else {
-                    // 2. المحاولة الثانية عبر الإدراج المباشر في جدول textbooks
-                    const { error: insertErr } = await client.from('textbooks').insert([{
-                        title: title,
-                        category: category,
-                        url: url,
-                        is_active: true
-                    }]);
+                    lastError = rpcErr || { message: (rpcData && rpcData.message) || 'رفض الخادم حفظ الكتاب في قسم الكتب.' };
+
+                    const authRejected = typeof isNewsAuthError === 'function' && isNewsAuthError(lastError);
+                    if (authRejected && pin !== ADMIN_GATE_HASH) {
+                        setBooksAdminFeedback('error', 'فشل رفع الكتاب: الرمز السري للإدارة غير صحيح! يرجى إدخال الرمز المعتمد للمنسق.');
+                        return;
+                    }
+
+                    // المحاولة الاحتياطية بالإدراج المباشر في جدول textbooks المخصص للكتب فقط
+                    const { error: insertErr } = await client
+                        .from('textbooks')
+                        .insert([{
+                            title: title,
+                            category: category,
+                            url: normalizedUrl,
+                            is_active: true
+                        }])
+                        .select('id');
+
                     if (!insertErr) {
-                        savedToServer = true;
+                        savedToBooksTable = true;
+                    } else {
+                        lastError = authRejected ? lastError : insertErr;
                     }
                 }
+
+                if (!savedToBooksTable) {
+                    console.error('publishCoordinatorBook failed:', lastError);
+                    setBooksAdminFeedback('error', formatBooksErrorReason(lastError, 'تعذر رفع الكتاب إلى قسم «الكتب» في قاعدة البيانات'));
+                    return;
+                }
+
+                if (titleInput) titleInput.value = '';
+                if (urlInput) urlInput.value = '';
+
+                // 3. تحديث قائمة الكتب مباشرة في بوابة المنسق والمكتبة الرقمية وحقيبة المدرس مع إبقاء رسالة النجاح ظاهرة
+                await fetchAllLibraryBooks();
+                refreshOpenBooksViews();
+                await loadCoordinatorBooksList(true);
+
+                setBooksAdminFeedback('success', `تمت إضافة الكتاب «${title}» بنجاح في قسم «الكتب» (${category}) وتحديث قائمة الكتب فوراً!`);
             } catch (err) {
-                console.warn('Books server save warning:', err);
+                console.error('publishCoordinatorBook exception:', err);
+                setBooksAdminFeedback('error', formatBooksErrorReason(err, 'حدث خطأ غير متوقع أثناء رفع الكتاب إلى قسم «الكتب»'));
+            } finally {
+                if (publishBtn) {
+                    publishBtn.disabled = false;
+                    publishBtn.innerHTML = defaultPublishBtnHtml;
+                }
             }
-
-            if (savedToServer) {
-                msg.style.color = '#15803d';
-                msg.innerText = 'تمت إضافة الكتاب بنجاح في قاعدة البيانات وأصبح متاحاً لجميع المدرسين!';
-            } else {
-                const newBookObj = {
-                    id: 'bk_' + Date.now(),
-                    title: title,
-                    category: category,
-                    url: url,
-                    is_active: true,
-                    created_at: new Date().toISOString()
-                };
-                const localArr = getLocalSavedBooks();
-                localArr.unshift(newBookObj);
-                saveLocalBooks(localArr);
-                msg.style.color = '#b45309';
-                msg.innerText = 'تم حفظ الكتاب محلياً على هذا الجهاز فقط؛ يرجى من مالك الموقع تفعيل جدول textbooks في Supabase ليظهر لجميع المستخدمين.';
-            }
-
-            document.getElementById('book-title-input').value = '';
-            document.getElementById('book-url-input').value = '';
-            await fetchAllLibraryBooks();
-            loadCoordinatorBooksList();
         }
 
-        async function loadCoordinatorBooksList() {
-            const pin = (document.getElementById('books-admin-pin').value || document.getElementById('coord-secret-input').value || document.getElementById('news-admin-pin').value || '').trim();
+        async function loadCoordinatorBooksList(preserveMsg = false) {
             const listEl = document.getElementById('coord-books-manage-list');
-            const msg = document.getElementById('books-admin-msg');
+            const listBtn = document.getElementById('btn-list-books');
+            const defaultListBtnHtml = '<i class="fas fa-list"></i> استعراض وحذف';
+            if (!listEl) return;
 
-            if (pin !== ADMIN_GATE_HASH) {
-                msg.style.color = '#dc2626';
-                msg.innerText = 'يرجى إدخال رمز الإدارة السري أولاً لاستعراض الكتب وحذفها.';
-                msg.style.display = 'block';
-                return;
+            try {
+                const pin = getBooksAdminPinValue();
+                if (!pin) {
+                    setBooksAdminFeedback('error', 'يرجى إدخال رمز الإدارة السري أولاً لاستعراض الكتب وحذفها.');
+                    return;
+                }
+
+                if (!preserveMsg) {
+                    setBooksAdminFeedback('info', '');
+                }
+                if (listBtn) {
+                    listBtn.disabled = true;
+                    listBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري الجلب...';
+                }
+                listEl.innerHTML = '<div style="text-align:center; font-size:12px; color:#475569; padding:12px;"><i class="fas fa-spinner fa-spin" style="margin-left:5px;"></i>جاري تحميل قائمة الكتب...</div>';
+
+                const books = await fetchAllLibraryBooks();
+                if (!books || books.length === 0) {
+                    listEl.innerHTML = '<div style="text-align:center; font-size:12px; color:#64748b; background:#f8fafc; border:1px dashed #cbd5e1; border-radius:8px; padding:12px;">لا توجد كتب مضافة حالياً في قسم «الكتب».</div>';
+                    return;
+                }
+
+                const headerHtml = `<div style="font-size:11.5px; color:#3730a3; font-weight:bold; margin-bottom:6px; display:flex; justify-content:space-between; align-items:center;"><span><i class="fas fa-book-reader" style="margin-left:4px; color:#4338ca;"></i>الكتب المضافة في قسم «الكتب» (${books.length})</span></div>`;
+                const itemsHtml = books.map(item => {
+                    const safeId = escapeBooksHtml(String(item.id));
+                    const safeCategory = escapeBooksHtml(item.category || 'كتاب مدرسي');
+                    const safeTitle = escapeBooksHtml(item.title || '(كتاب بدون عنوان)');
+                    const safeUrl = normalizeAndValidateBookUrl(item.url);
+                    return `
+                        <div data-book-card-id="${safeId}" style="display:flex; justify-content:space-between; align-items:center; gap:8px; background:#f8fafc; border:1px solid #cbd5e1; border-right:3px solid #4338ca; border-radius:8px; padding:8px 10px; margin-bottom:6px; font-size:12px;">
+                            <div style="flex:1; min-width:0; text-align:right;">
+                                <div style="font-size:10.5px; font-weight:800; color:#4338ca;">[${safeCategory}]</div>
+                                <div style="font-weight:bold; color:#1e293b; word-break:break-word; margin-top:2px;">${safeTitle}</div>
+                            </div>
+                            <div style="display:flex; gap:5px; flex-shrink:0; align-items:center;">
+                                ${safeUrl ? `<a href="${escapeBooksHtml(safeUrl)}" target="_blank" rel="noopener noreferrer" class="btn" style="background:#0284c7; padding:4px 8px; font-size:11px; text-decoration:none;"><i class="fas fa-external-link-alt"></i></a>` : ''}
+                                <button type="button" class="btn" style="background:#ef4444; padding:4px 10px; font-size:11px;" onclick="deleteCoordinatorBook('${safeId}', this)">
+                                    <i class="fas fa-trash"></i> حذف
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+                listEl.innerHTML = headerHtml + itemsHtml;
+            } catch (e) {
+                console.error('loadCoordinatorBooksList error:', e);
+                const errMsg = formatBooksErrorReason(e, 'تعذر جلب قائمة الكتب');
+                listEl.innerHTML = `<div style="background:#fef2f2; border:1px solid #fecaca; color:#b91c1c; border-radius:8px; padding:10px; font-size:12px; text-align:center; font-weight:bold;">${escapeBooksHtml(errMsg)}</div>`;
+                if (!preserveMsg) setBooksAdminFeedback('error', errMsg);
+            } finally {
+                if (listBtn) {
+                    listBtn.disabled = false;
+                    listBtn.innerHTML = defaultListBtnHtml;
+                }
             }
-            msg.style.display = 'none';
-            listEl.innerHTML = '<div style="text-align:center; font-size:12px; padding:10px;">جاري تحميل الكتب...</div>';
-
-            const books = await fetchAllLibraryBooks();
-            if (!books || books.length === 0) {
-                listEl.innerHTML = '<div style="text-align:center; font-size:12px; color:#64748b; padding:10px;">لا توجد كتب مضافة حالياً.</div>';
-                return;
-            }
-
-            listEl.innerHTML = books.map(item => `
-                <div style="display:flex; justify-content:space-between; align-items:center; background:#f8fafc; border:1px solid #cbd5e1; border-radius:6px; padding:8px; margin-bottom:6px; font-size:12px;">
-                    <div style="flex:1; font-weight:bold; color:#1e293b; padding-left:8px;">[${item.category}] ${item.title}</div>
-                    <button class="btn" style="background:#ef4444; padding:4px 10px; font-size:11px;" onclick="deleteCoordinatorBook('${item.id}')">
-                        <i class="fas fa-trash"></i> حذف
-                    </button>
-                </div>
-            `).join('');
         }
 
-        async function deleteCoordinatorBook(bookId) {
-            const pin = (document.getElementById('books-admin-pin').value || document.getElementById('coord-secret-input').value || document.getElementById('news-admin-pin').value || '').trim();
-            if (pin !== ADMIN_GATE_HASH) return;
-            if (!confirm('هل أنت متأكد من حذف هذا الكتاب نهائياً؟')) return;
+        async function deleteCoordinatorBook(bookId, btnEl) {
+            const defaultBtnHtml = '<i class="fas fa-trash"></i> حذف';
             try {
-                const numericId = /^\d+$/.test(String(bookId)) ? Number(bookId) : null;
+                if (typeof navigator !== 'undefined' && navigator.onLine === false) {
+                    setBooksAdminFeedback('error', 'وضع عدم الاتصال: حذف الكتب من قسم «الكتب» يتطلب اتصالاً بالإنترنت. يرجى المحاولة عند عودة الشبكة.');
+                    return;
+                }
+
+                const pin = getBooksAdminPinValue();
+                if (!pin) {
+                    setBooksAdminFeedback('error', 'يرجى إدخال رمز الإدارة السري أولاً لحذف الكتاب.');
+                    return;
+                }
+                if (bookId === undefined || bookId === null || String(bookId).trim() === '') {
+                    setBooksAdminFeedback('error', 'تعذر تحديد معرّف الكتاب المطلوب حذفه.');
+                    return;
+                }
+                if (!confirm('هل أنت متأكد من حذف هذا الكتاب نهائياً من قسم «الكتب»؟')) return;
+
+                if (btnEl) {
+                    btnEl.disabled = true;
+                    btnEl.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+                }
+                setBooksAdminFeedback('info', 'جاري حذف الكتاب من قسم «الكتب» وتحديث القائمة...');
+
+                const numericId = /^\d+$/.test(String(bookId).trim()) ? Number(String(bookId).trim()) : null;
+                let deletedFromServer = false;
+                let lastError = null;
+
                 if (numericId !== null) {
-                    const { error: rpcErr } = await client.rpc('admin_manage_books', {
+                    const { data: rpcData, error: rpcErr } = await client.rpc('admin_manage_books', {
                         admin_secret: pin,
                         action_type: 'delete',
                         book_title: '',
@@ -5507,17 +5723,47 @@
                         book_url: '',
                         book_id: numericId
                     });
-                    if (rpcErr) {
-                        await client.from('textbooks').delete().eq('id', bookId);
+                    if (!rpcErr && (!rpcData || rpcData.success !== false)) {
+                        deletedFromServer = true;
+                    } else {
+                        lastError = rpcErr || { message: (rpcData && rpcData.message) || 'رفض الخادم حذف الكتاب.' };
+                        const { error: delErr } = await client.from('textbooks').delete().eq('id', numericId);
+                        if (!delErr) {
+                            deletedFromServer = true;
+                        } else {
+                            lastError = delErr;
+                        }
                     }
                 } else {
-                    await client.from('textbooks').delete().eq('id', bookId);
+                    const { error: delErr } = await client.from('textbooks').delete().eq('id', bookId);
+                    if (!delErr) {
+                        deletedFromServer = true;
+                    } else {
+                        lastError = delErr;
+                    }
                 }
-            } catch (e) {}
-            const localArr = getLocalSavedBooks().filter(b => String(b.id) !== String(bookId));
-            saveLocalBooks(localArr);
-            await fetchAllLibraryBooks();
-            loadCoordinatorBooksList();
+
+                if (!deletedFromServer) {
+                    console.error('deleteCoordinatorBook failed:', lastError);
+                    setBooksAdminFeedback('error', formatBooksErrorReason(lastError, 'تعذر حذف الكتاب من قسم «الكتب»'));
+                    return;
+                }
+
+                const localArr = getLocalSavedBooks().filter(b => String(b.id) !== String(bookId));
+                saveLocalBooks(localArr);
+                await fetchAllLibraryBooks();
+                refreshOpenBooksViews();
+                await loadCoordinatorBooksList(true);
+                setBooksAdminFeedback('success', 'تم حذف الكتاب بنجاح من قسم «الكتب» وتحديث القائمة!');
+            } catch (e) {
+                console.error('deleteCoordinatorBook exception:', e);
+                setBooksAdminFeedback('error', formatBooksErrorReason(e, 'حدث خطأ غير متوقع أثناء حذف الكتاب'));
+            } finally {
+                if (btnEl) {
+                    btnEl.disabled = false;
+                    btnEl.innerHTML = defaultBtnHtml;
+                }
+            }
         }
 
         // =========================================================================
