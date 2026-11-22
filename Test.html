@@ -2582,6 +2582,7 @@
                         <option value="أدلة المعلم والمقررات">أدلة المعلم والمقررات</option>
                     </select>
                     <input type="url" id="book-url-input" placeholder="رابط تحميل الكتاب (Google Drive أو رابط PDF مباشر)" style="width: 100%; text-align: left; direction: ltr;">
+                    <textarea id="book-guidance-input" rows="3" placeholder="فهرس الدروس أو التوجيهات المنهجية (اختياري لتوجيه الذكاء التربوي) — مثلاً: المحور 1: ...، المحور 2: ...، المصطلحات المعتمدة..." style="width: 100%; padding: 10px 11px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 12.5px; font-family: inherit; outline: none; resize: vertical; background: #ffffff; text-align: right; direction: rtl;"></textarea>
                 </div>
                 <div style="display: flex; gap: 8px; flex-wrap: wrap;">
                     <button type="button" id="btn-publish-book" class="btn" style="flex: 1; background: #4338ca;" onclick="publishCoordinatorBook()">
@@ -2948,12 +2949,12 @@
 
                 <div class="pg-field-group">
                     <label for="pg-level"><i class="fas fa-chalkboard"></i> المستوى الدراسي:</label>
-                    <select id="pg-level"></select>
+                    <select id="pg-level" onchange="onPedagogicalReferenceContextChange()"></select>
                 </div>
 
                 <div class="pg-field-group">
                     <label for="pg-subject"><i class="fas fa-book"></i> المادة الدراسية:</label>
-                    <select id="pg-subject"></select>
+                    <select id="pg-subject" onchange="onPedagogicalReferenceContextChange()"></select>
                 </div>
 
                 <div class="pg-field-group">
@@ -2966,9 +2967,35 @@
                 </div>
             </div>
 
-            <div class="pg-field-group" style="margin-bottom: 12px;">
+            <div class="pg-field-group" style="margin-bottom: 10px;">
                 <label for="pg-lesson-title"><i class="fas fa-pen-nib"></i> عنوان الدرس أو المحور:</label>
                 <input type="text" id="pg-lesson-title" placeholder="مثلاً: الجملة الفعلية، الكسور العشرية، التوازن البيئي، معادلات الدرجة الثانية..." onkeydown="if(event.key==='Enter'){ event.preventDefault(); generatePedagogicalDocument(); }">
+            </div>
+
+            <!-- بطاقة المرجع المرتبط تلقائياً من المكتبة الرقمية -->
+            <div id="pg-ref-book-card" style="background: #f0fdf4; border: 1.5px solid #bbf7d0; border-right: 4px solid var(--gold); border-radius: 10px; padding: 10px 12px; margin-bottom: 10px; text-align: right;">
+                <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 6px;">
+                    <div style="font-size: 12.2px; font-weight: 900; color: var(--primary-dark);">
+                        <i class="fas fa-book-open" style="color: var(--gold); margin-left: 5px;"></i>المرجع المرتبط من المكتبة الرقمية
+                    </div>
+                    <span id="pg-ref-book-status" style="font-size: 10.5px; font-weight: 800; padding: 2px 8px; border-radius: 99px; background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0;">جارٍ فحص المكتبة...</span>
+                </div>
+                <div id="pg-ref-book-summary" style="font-size: 12px; color: #1e293b; font-weight: 700; margin-bottom: 7px; line-height: 1.6;"></div>
+                <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+                    <select id="pg-ref-book-select" onchange="onPedagogicalBookSelectChange()" style="flex: 1; min-width: 210px; padding: 8px 10px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 12px; font-weight: 700; background: #ffffff; color: var(--text-dark); font-family: inherit; outline: none;">
+                        <option value="">بدون تحديد كتاب</option>
+                    </select>
+                    <a id="pg-ref-book-open-btn" href="#" target="_blank" rel="noopener noreferrer" class="btn" style="display: none; background: #116835; border: 1px solid var(--gold); padding: 7px 11px; font-size: 11.5px; text-decoration: none; white-space: nowrap;">
+                        📖 فتح الكتاب (Drive)
+                    </a>
+                </div>
+                <div id="pg-ref-guide-note" style="display: none; margin-top: 6px; font-size: 11px; color: #065f46; font-weight: 700;"></div>
+            </div>
+
+            <!-- حقل اختياري لمقتطف أو محاور من الكتاب المدرسي -->
+            <div class="pg-field-group" style="margin-bottom: 12px;">
+                <label for="pg-book-excerpt"><i class="fas fa-highlighter"></i> مقتطف أو محاور من الكتاب المدرسي (اختياري):</label>
+                <textarea id="pg-book-excerpt" rows="2" placeholder="اتركه فارغاً للتوليد المعتاد، أو الصق هنا محاور الدرس أو فقرة من الكتاب المدرسي المعتمد..." style="width: 100%; padding: 9px 11px; border: 1.5px solid #cbd5e1; border-radius: 9px; font-size: 12.5px; font-weight: 600; background: #ffffff; color: var(--text-dark); outline: none; font-family: inherit; resize: vertical;"></textarea>
             </div>
 
             <button type="button" id="btn-pg-generate" class="btn btn-block" style="background: linear-gradient(135deg, #116835, #08331a); border: 1.5px solid var(--gold); padding: 12px;" onclick="generatePedagogicalDocument()">
@@ -6288,12 +6315,61 @@
         let isSyncingPendingBooks = false;
         const LOCAL_BOOKS_KEY = 'nour_custom_textbooks_v1';
         const PENDING_BOOKS_QUEUE_KEY = 'nour_pending_books_v1';
+        const BOOK_GUIDANCE_MAP_KEY = 'nour_books_guidance_v1';
         const ALLOWED_BOOK_CATEGORIES = [
             'التعليم الأساسي',
             'التعليم الإعدادي',
             'التعليم الثانوي',
             'أدلة المعلم والمقررات'
         ];
+
+        function getBookGuidanceMap() {
+            try {
+                const parsed = JSON.parse(localStorage.getItem(BOOK_GUIDANCE_MAP_KEY) || '{}');
+                return parsed && typeof parsed === 'object' ? parsed : {};
+            } catch (e) {
+                return {};
+            }
+        }
+
+        function saveBookGuidanceLocal(bookInfo, guidanceText) {
+            const clean = String(guidanceText || '').trim();
+            if (!clean || !bookInfo) return;
+            try {
+                const map = getBookGuidanceMap();
+                if (bookInfo.id != null && String(bookInfo.id).trim()) {
+                    map['id:' + String(bookInfo.id).trim()] = clean;
+                }
+                const normUrl = normalizeAndValidateBookUrl(bookInfo.url);
+                if (normUrl) {
+                    map['url:' + normUrl.toLowerCase()] = clean;
+                }
+                const normTitle = String(bookInfo.title || '').trim().toLowerCase().replace(/\s+/g, ' ');
+                if (normTitle) {
+                    map['title:' + normTitle] = clean;
+                }
+                localStorage.setItem(BOOK_GUIDANCE_MAP_KEY, JSON.stringify(map));
+            } catch (e) {}
+        }
+
+        function getBookGuidanceText(book) {
+            if (!book || typeof book !== 'object') return '';
+            const direct = String(book.guidance || book.syllabus_index || book.methodology_notes || book.description || '').trim();
+            if (direct) return direct;
+            const map = getBookGuidanceMap();
+            if (book.id != null && map['id:' + String(book.id).trim()]) {
+                return map['id:' + String(book.id).trim()];
+            }
+            const normUrl = normalizeAndValidateBookUrl(book.url);
+            if (normUrl && map['url:' + normUrl.toLowerCase()]) {
+                return map['url:' + normUrl.toLowerCase()];
+            }
+            const normTitle = String(book.title || '').trim().toLowerCase().replace(/\s+/g, ' ');
+            if (normTitle && map['title:' + normTitle]) {
+                return map['title:' + normTitle];
+            }
+            return '';
+        }
 
         function escapeBooksHtml(str) {
             return String(str == null ? '' : str)
@@ -6418,9 +6494,13 @@
                 title: String(bookPayload.title || '').trim(),
                 category: safeCategory,
                 url: String(bookPayload.url || '').trim(),
+                guidance: String(bookPayload.guidance || '').trim(),
                 admin_secret: String(bookPayload.admin_secret || '').trim(),
                 created_at: new Date().toISOString()
             };
+            if (pendingItem.guidance) {
+                saveBookGuidanceLocal(pendingItem, pendingItem.guidance);
+            }
             queue.push(pendingItem);
             savePendingBooksQueue(queue);
             return pendingItem;
@@ -6511,6 +6591,7 @@
                 ? bookData.category
                 : ALLOWED_BOOK_CATEGORIES[0];
             const normalizedUrl = normalizeAndValidateBookUrl(bookData.url);
+            const guidance = String(bookData.guidance || '').trim();
 
             if (!pin) {
                 return { ok: false, isAuthError: true, error: { message: 'يرجى إدخال رمز الإدارة السري للمنسق لإتمام رفع الكتاب.' } };
@@ -6563,7 +6644,17 @@
             }
 
             if (savedToBooksTable) {
-                return { ok: true, title, category, url: normalizedUrl };
+                if (guidance) {
+                    saveBookGuidanceLocal({ title, url: normalizedUrl }, guidance);
+                    try {
+                        await client
+                            .from('textbooks')
+                            .update({ description: guidance })
+                            .eq('title', title)
+                            .eq('url', normalizedUrl);
+                    } catch (e) {}
+                }
+                return { ok: true, title, category, url: normalizedUrl, guidance };
             }
             return { ok: false, isAuthError: authRejected, error: lastError };
         }
@@ -6677,13 +6768,20 @@
                 }
             }
 
+            const enrichBooksWithGuidance = (arr) => (Array.isArray(arr) ? arr : []).map(b => {
+                if (!b || typeof b !== 'object') return b;
+                const g = getBookGuidanceText(b);
+                return g ? { ...b, guidance: g } : b;
+            });
+
             if (remoteSucceeded) {
-                saveLocalBooks(dbBooks);
-                cachedLibraryBooks = dbBooks;
-                return dbBooks;
+                const enriched = enrichBooksWithGuidance(dbBooks);
+                saveLocalBooks(enriched);
+                cachedLibraryBooks = enriched;
+                return enriched;
             }
 
-            const localBooks = getLocalSavedBooks();
+            const localBooks = enrichBooksWithGuidance(getLocalSavedBooks());
             cachedLibraryBooks = localBooks;
             return localBooks;
         }
@@ -6702,6 +6800,9 @@
                 } else {
                     bagDocsList.innerHTML = renderBooksCardsHtml(cachedLibraryBooks);
                 }
+            }
+            if (typeof refreshPedagogicalBookReference === 'function') {
+                refreshPedagogicalBookReference(false);
             }
         }
 
@@ -6787,11 +6888,13 @@
                 const titleInput = document.getElementById('book-title-input');
                 const categoryInput = document.getElementById('book-category-input');
                 const urlInput = document.getElementById('book-url-input');
+                const guidanceInput = document.getElementById('book-guidance-input');
 
                 const title = titleInput ? titleInput.value.trim() : '';
                 const rawCategory = categoryInput ? categoryInput.value.trim() : '';
                 const category = ALLOWED_BOOK_CATEGORIES.includes(rawCategory) ? rawCategory : ALLOWED_BOOK_CATEGORIES[0];
                 const rawUrl = urlInput ? urlInput.value.trim() : '';
+                const guidance = guidanceInput ? guidanceInput.value.trim() : '';
 
                 setBooksAdminFeedback('info', '');
 
@@ -6823,10 +6926,12 @@
                         title: title,
                         category: category,
                         url: normalizedUrl,
+                        guidance: guidance,
                         admin_secret: pin
                     });
                     if (titleInput) titleInput.value = '';
                     if (urlInput) urlInput.value = '';
+                    if (guidanceInput) guidanceInput.value = '';
                     setBooksAdminFeedback('warning', `تم حفظ الكتاب «${title}» في قائمة الانتظار أثناء عدم الاتصال، وسيُرفع تلقائياً إلى قسم «الكتب» (${category}) فور عودة الإنترنت.`);
                     return;
                 }
@@ -6847,6 +6952,7 @@
                     title: title,
                     category: category,
                     url: normalizedUrl,
+                    guidance: guidance,
                     admin_secret: pin
                 });
 
@@ -6861,10 +6967,12 @@
                             title: title,
                             category: category,
                             url: normalizedUrl,
+                            guidance: guidance,
                             admin_secret: pin
                         });
                         if (titleInput) titleInput.value = '';
                         if (urlInput) urlInput.value = '';
+                        if (guidanceInput) guidanceInput.value = '';
                         setBooksAdminFeedback('warning', `انقطع الاتصال أثناء الإرسال؛ تم حفظ الكتاب «${title}» في قائمة الانتظار وسيُرفع تلقائياً إلى قسم «الكتب» (${category}) فور استقرار الإنترنت.`);
                         return;
                     }
@@ -6876,6 +6984,7 @@
 
                 if (titleInput) titleInput.value = '';
                 if (urlInput) urlInput.value = '';
+                if (guidanceInput) guidanceInput.value = '';
 
                 // 3. تحديث قائمة الكتب مباشرة مع إبقاء رسالة النجاح ظاهرة
                 await fetchAllLibraryBooks();
@@ -6929,10 +7038,11 @@
                     const safeCategory = escapeBooksHtml(item.category || 'كتاب مدرسي');
                     const safeTitle = escapeBooksHtml(item.title || '(كتاب بدون عنوان)');
                     const safeUrl = normalizeAndValidateBookUrl(item.url);
+                    const hasGuidance = !!getBookGuidanceText(item);
                     return `
                         <div data-book-card-id="${safeId}" style="display:flex; justify-content:space-between; align-items:center; gap:8px; background:#f8fafc; border:1px solid #cbd5e1; border-right:3px solid #4338ca; border-radius:8px; padding:8px 10px; margin-bottom:6px; font-size:12px;">
                             <div style="flex:1; min-width:0; text-align:right;">
-                                <div style="font-size:10.5px; font-weight:800; color:#4338ca;">[${safeCategory}]</div>
+                                <div style="font-size:10.5px; font-weight:800; color:#4338ca;">[${safeCategory}]${hasGuidance ? ' <span style="background:#ecfdf5;color:#065f46;border:1px solid #a7f3d0;padding:1px 6px;border-radius:4px;font-size:9.5px;margin-right:4px;">✓ فهرس/توجيه منهجي</span>' : ''}</div>
                                 <div style="font-weight:bold; color:#1e293b; word-break:break-word; margin-top:2px;">${safeTitle}</div>
                             </div>
                             <div style="display:flex; gap:5px; flex-shrink:0; align-items:center;">
@@ -8811,6 +8921,333 @@
             const cfg = MAURITANIA_CURRICULUM_MAP[stageEl.value] || MAURITANIA_CURRICULUM_MAP['ابتدائية'];
             levelEl.innerHTML = cfg.levels.map(lv => `<option value="${escapePdHtml(lv)}">${escapePdHtml(lv)}</option>`).join('');
             subjectEl.innerHTML = cfg.subjects.map(sb => `<option value="${escapePdHtml(sb)}">${escapePdHtml(sb)}</option>`).join('');
+            refreshPedagogicalBookReference(true);
+        }
+
+        // -------------------------------------------------------------------------
+        // الربط المباشر بين المكتبة الرقمية ومولّد الجذاذات والتمارين الذكي
+        // -------------------------------------------------------------------------
+        let pgMatchedBooksState = { primaryBook: null, guideBook: null, matchedBooks: [], allBooks: [] };
+
+        function normalizeArForBookMatch(str) {
+            return String(str || '')
+                .replace(/[\u064B-\u065F\u0670\u0640]/g, '')
+                .replace(/[أإآٱ]/g, 'ا')
+                .replace(/ة/g, 'ه')
+                .replace(/ى/g, 'ي')
+                .replace(/[ؤئ]/g, 'ء')
+                .toLowerCase()
+                .replace(/\s+/g, ' ')
+                .trim();
+        }
+
+        function getPedagogicalLibraryBooksPool() {
+            let source = [];
+            if (typeof cachedLibraryBooks !== 'undefined' && Array.isArray(cachedLibraryBooks) && cachedLibraryBooks.length > 0) {
+                source = cachedLibraryBooks;
+            } else if (typeof getLocalSavedBooks === 'function') {
+                source = getLocalSavedBooks();
+            }
+            return (Array.isArray(source) ? source : [])
+                .filter(b => b && b.is_active !== false && String(b.title || '').trim() !== '')
+                .map((b, idx) => {
+                    const guidance = typeof getBookGuidanceText === 'function' ? getBookGuidanceText(b) : String(b.guidance || b.description || '').trim();
+                    const refKey = String(b.id != null ? b.id : (`idx_${idx}_${String(b.title || '').slice(0, 24)}`));
+                    return { ...b, guidance, _refKey: refKey };
+                });
+        }
+
+        function extractSubjectKeywordsForBooks(subject) {
+            const n = normalizeArForBookMatch(subject);
+            const kw = new Set();
+            const basePart = n.split('(')[0].trim();
+            if (basePart) kw.add(basePart);
+            if (/رياضيات|حساب|math/.test(n)) ['رياضيات', 'حساب', 'math', 'mathematiques'].forEach(k => kw.add(k));
+            if (/عربيه|قراءه|نحو|ادب/.test(n)) ['عربيه', 'اللغه العربيه', 'قراءه', 'قواعد', 'نحو', 'ادب', 'تعبير'].forEach(k => kw.add(k));
+            if (/فرنسيه|francais|french/.test(n)) ['فرنسيه', 'اللغه الفرنسيه', 'francais', 'french', 'lecture', 'langue francaise'].forEach(k => kw.add(k));
+            if (/انجليزيه|english|anglais/.test(n)) ['انجليزيه', 'اللغه الانجليزيه', 'english', 'anglais'].forEach(k => kw.add(k));
+            if (/فيزياء|كيمياء|physique|chimie/.test(n)) ['فيزياء', 'كيمياء', 'الفيزياء', 'الكيمياء', 'physique', 'chimie', 'pc'].forEach(k => kw.add(k));
+            if (/علوم طبيعيه|طبيعيه|svt|sciences naturelles/.test(n)) ['علوم طبيعيه', 'العلوم الطبيعيه', 'طبيعيه', 'احياء', 'svt', 'sciences naturelles', 'sn'].forEach(k => kw.add(k));
+            if (/تربيه علميه|ايقاظ/.test(n)) ['تربيه علميه', 'علميه', 'علوم', 'ايقاظ'].forEach(k => kw.add(k));
+            if (/اسلاميه|قران|فقه|فكر اسلامي/.test(n)) ['اسلاميه', 'تربيه اسلاميه', 'فكر اسلامي', 'قران', 'فقه', 'سيره'].forEach(k => kw.add(k));
+            if (/تاريخ|جغرافيا|اجتماعيات/.test(n)) ['تاريخ', 'جغرافيا', 'اجتماعيات', 'histoire', 'geographie'].forEach(k => kw.add(k));
+            if (/مدنيه|مواطنه|civique/.test(n)) ['مدنيه', 'تربيه مدنيه', 'مواطنه', 'civique', 'ic'].forEach(k => kw.add(k));
+            if (/فلسفه|philosophie/.test(n)) ['فلسفه', 'الفلسفه', 'philosophie'].forEach(k => kw.add(k));
+            return Array.from(kw).filter(k => k.length >= 2);
+        }
+
+        function extractLevelInfoForBooks(stage, level) {
+            const n = normalizeArForBookMatch(level);
+            const numMatch = n.match(/([1-7])\s*(?:af|as)/i) || n.match(/\b([1-7])\b/);
+            let yearNum = numMatch ? numMatch[1] : '';
+            if (!yearNum) {
+                if (/اولي|الاولي|اول/.test(n)) yearNum = '1';
+                else if (/ثانيه|الثانيه/.test(n)) yearNum = '2';
+                else if (/ثالثه|الثالثه/.test(n)) yearNum = '3';
+                else if (/رابعه|الرابعه/.test(n)) yearNum = '4';
+                else if (/خامسه|الخامسه/.test(n)) yearNum = '5';
+                else if (/سادسه|السادسه/.test(n)) yearNum = '6';
+                else if (/سابعه|السابعه|بكالوريا|باك/.test(n)) yearNum = '7';
+            }
+            const yearMap = {
+                '1': ['الاولي', 'اولي', '1af', '1as', 'السنه الاولي', 'سنه اولي', 'الاول'],
+                '2': ['الثانيه', 'ثانيه', '2af', '2as', 'السنه الثانيه', 'سنه ثانيه'],
+                '3': ['الثالثه', 'ثالثه', '3af', '3as', 'السنه الثالثه', 'سنه ثالثه'],
+                '4': ['الرابعه', 'رابعه', '4af', '4as', 'السنه الرابعه', 'سنه رابعه', 'بريفه', 'bepc'],
+                '5': ['الخامسه', 'خامسه', '5af', '5as', 'السنه الخامسه', 'سنه خامسه'],
+                '6': ['السادسه', 'سادسه', '6af', '6as', 'السنه السادسه', 'سنه سادسه', 'كونكور'],
+                '7': ['السابعه', 'سابعه', '7as', 'السنه السابعه', 'بكالوريا', 'باك', 'bac']
+            };
+            const stageCatMap = {
+                'ابتدائية': 'التعليم الأساسي',
+                'إعدادية': 'التعليم الإعدادي',
+                'ثانوية': 'التعليم الثانوي'
+            };
+            const stageTitleHints = {
+                'ابتدائية': ['اساسي', 'ابتدائي', 'ابتداءي', 'af'],
+                'إعدادية': ['اعدادي', 'اعداديه', 'متوسط', 'bepc', 'بريفه'],
+                'ثانوية': ['ثانوي', 'ثانويه', 'بكالوريا', 'باك', 'bac', 'علمي', 'اداب']
+            };
+            return {
+                yearNum,
+                yearTokens: yearNum ? (yearMap[yearNum] || []) : [],
+                expectedCategory: stageCatMap[stage] || 'التعليم الأساسي',
+                stageHints: stageTitleHints[stage] || []
+            };
+        }
+
+        function findMatchingLibraryBooks(stage, level, subject) {
+            const allBooks = getPedagogicalLibraryBooksPool();
+            const subjectKeywords = extractSubjectKeywordsForBooks(subject);
+            const levelInfo = extractLevelInfoForBooks(stage, level);
+            const otherStageCats = ['التعليم الأساسي', 'التعليم الإعدادي', 'التعليم الثانوي'].filter(c => c !== levelInfo.expectedCategory);
+
+            const scored = allBooks.map(book => {
+                const normTitle = normalizeArForBookMatch(book.title);
+                const normGuidance = normalizeArForBookMatch(book.guidance);
+                const searchable = `${normTitle} ${normGuidance}`;
+                const isGuide = book.category === 'أدلة المعلم والمقررات' || /دليل|مقرر|منهاج|مرشد/.test(normTitle);
+                let score = 0;
+                let subjectMatched = false;
+                let levelMatched = false;
+                let wrongStage = false;
+
+                if (book.category === levelInfo.expectedCategory) {
+                    score += 35;
+                } else if (book.category === 'أدلة المعلم والمقررات') {
+                    score += 18;
+                    if (levelInfo.stageHints.some(h => normTitle.includes(h))) score += 14;
+                } else if (otherStageCats.includes(book.category)) {
+                    wrongStage = true;
+                    score -= 60;
+                }
+
+                for (const kw of subjectKeywords) {
+                    if (searchable.includes(kw)) {
+                        subjectMatched = true;
+                        score += normTitle.includes(kw) ? 45 : 28;
+                        break;
+                    }
+                }
+
+                if (levelInfo.yearNum) {
+                    if (levelInfo.yearTokens.some(tok => normTitle.includes(tok))) {
+                        levelMatched = true;
+                        score += 35;
+                    } else {
+                        const otherYearNums = ['1', '2', '3', '4', '5', '6', '7'].filter(y => y !== levelInfo.yearNum);
+                        const otherWords = {
+                            '1': ['الاولي', 'اولي', '1af', '1as'],
+                            '2': ['الثانيه', 'ثانيه', '2af', '2as'],
+                            '3': ['الثالثه', 'ثالثه', '3af', '3as'],
+                            '4': ['الرابعه', 'رابعه', '4af', '4as'],
+                            '5': ['الخامسه', 'خامسه', '5af', '5as'],
+                            '6': ['السادسه', 'سادسه', '6af', '6as'],
+                            '7': ['السابعه', 'سابعه', '7as', 'بكالوريا']
+                        };
+                        const mentionsDifferentYear = otherYearNums.some(y => (otherWords[y] || []).some(w => normTitle.includes(w)));
+                        if (mentionsDifferentYear) score -= 22;
+                    }
+                }
+
+                const isAutoMatch = !wrongStage && subjectMatched && score >= 55;
+                return { book, score, isGuide, subjectMatched, levelMatched, isAutoMatch };
+            });
+
+            scored.sort((a, b) => b.score - a.score);
+            const matchedEntries = scored.filter(s => s.isAutoMatch);
+            const primaryEntry = matchedEntries.find(s => !s.isGuide) || matchedEntries[0] || null;
+            const guideEntry = matchedEntries.find(s => s.isGuide && (!primaryEntry || s.book._refKey !== primaryEntry.book._refKey)) || null;
+
+            return {
+                primaryBook: primaryEntry ? primaryEntry.book : null,
+                guideBook: guideEntry ? guideEntry.book : null,
+                matchedBooks: matchedEntries.map(s => s.book),
+                allBooks: scored.map(s => s.book)
+            };
+        }
+
+        function updatePedagogicalRefBookVisuals(selectedBook, companionGuide, isAutoMatched) {
+            const statusEl = document.getElementById('pg-ref-book-status');
+            const summaryEl = document.getElementById('pg-ref-book-summary');
+            const openBtn = document.getElementById('pg-ref-book-open-btn');
+            const guideNoteEl = document.getElementById('pg-ref-guide-note');
+
+            if (selectedBook) {
+                if (statusEl) {
+                    statusEl.textContent = isAutoMatched ? '✓ مطابق تلقائياً' : '✓ مرجع محدد';
+                    statusEl.style.background = '#ecfdf5';
+                    statusEl.style.color = '#065f46';
+                    statusEl.style.borderColor = '#6ee7b7';
+                }
+                if (summaryEl) {
+                    const safeTitle = escapePdHtml(selectedBook.title);
+                    const safeCat = escapePdHtml(selectedBook.category || 'المكتبة الرقمية');
+                    const guideHtml = companionGuide
+                        ? `<div style="margin-top:3px;font-size:11.5px;color:#065f46;"><i class="fas fa-chalkboard-teacher" style="margin-left:4px;color:var(--gold);"></i>دليل المعلم المرافق: <strong>${escapePdHtml(companionGuide.title)}</strong></div>`
+                        : '';
+                    summaryEl.innerHTML = `<span style="color:#116835;">${safeTitle}</span> <span style="font-size:10.5px;color:#64748b;">(${safeCat})</span>${guideHtml}`;
+                }
+                const validUrl = typeof normalizeAndValidateBookUrl === 'function' ? normalizeAndValidateBookUrl(selectedBook.url) : '';
+                if (openBtn) {
+                    if (validUrl) {
+                        openBtn.href = validUrl;
+                        openBtn.style.display = 'inline-flex';
+                    } else {
+                        openBtn.style.display = 'none';
+                    }
+                }
+                if (guideNoteEl) {
+                    const hasGuidance = Boolean((selectedBook.guidance && selectedBook.guidance.trim()) || (companionGuide && companionGuide.guidance && companionGuide.guidance.trim()));
+                    if (hasGuidance) {
+                        guideNoteEl.innerHTML = '<i class="fas fa-check-circle" style="color:#116835;margin-left:4px;"></i>يتضمن هذا المرجع فهرس دروس / توجيهات منهجية ستُمرَّر تلقائياً للذكاء التربوي.';
+                        guideNoteEl.style.display = 'block';
+                    } else {
+                        guideNoteEl.style.display = 'none';
+                        guideNoteEl.textContent = '';
+                    }
+                }
+            } else {
+                if (statusEl) {
+                    statusEl.textContent = pgMatchedBooksState.allBooks.length > 0 ? 'اختياري' : 'لا توجد كتب بعد';
+                    statusEl.style.background = '#fffbeb';
+                    statusEl.style.color = '#92400e';
+                    statusEl.style.borderColor = '#fcd34d';
+                }
+                if (summaryEl) {
+                    summaryEl.innerHTML = pgMatchedBooksState.allBooks.length > 0
+                        ? '<span style="color:#64748b;font-weight:600;">لم يُعثر على كتاب مطابق تلقائياً لهذه المادة والمستوى؛ يمكنك اختيار كتاب من القائمة أو المتابعة بدون تحديد كتاب.</span>'
+                        : '<span style="color:#64748b;font-weight:600;">لا توجد كتب محمّلة حالياً في المكتبة الرقمية — سيعمل التوليد وفق المنهاج الموريتاني مباشرة.</span>';
+                }
+                if (openBtn) openBtn.style.display = 'none';
+                if (guideNoteEl) {
+                    guideNoteEl.style.display = 'none';
+                    guideNoteEl.textContent = '';
+                }
+            }
+        }
+
+        function refreshPedagogicalBookReference(resetSelection = true) {
+            const stageEl = document.getElementById('pg-stage');
+            const levelEl = document.getElementById('pg-level');
+            const subjectEl = document.getElementById('pg-subject');
+            const selectEl = document.getElementById('pg-ref-book-select');
+            if (!stageEl || !levelEl || !subjectEl) return;
+
+            const prevSelectedVal = (!resetSelection && selectEl) ? selectEl.value : null;
+            pgMatchedBooksState = findMatchingLibraryBooks(stageEl.value, levelEl.value, subjectEl.value);
+
+            const matchedKeys = new Set(pgMatchedBooksState.matchedBooks.map(b => b._refKey));
+            if (selectEl) {
+                const optionsHtml = ['<option value="">بدون تحديد كتاب</option>'].concat(
+                    pgMatchedBooksState.allBooks.map(b => {
+                        const star = matchedKeys.has(b._refKey) ? '★ ' : '';
+                        const catTxt = b.category ? ` [${b.category}]` : '';
+                        return `<option value="${escapePdHtml(b._refKey)}">${escapePdHtml(star + b.title + catTxt)}</option>`;
+                    })
+                ).join('');
+                selectEl.innerHTML = optionsHtml;
+
+                const hasPrevInPool = prevSelectedVal !== null && (prevSelectedVal === '' || pgMatchedBooksState.allBooks.some(b => b._refKey === prevSelectedVal));
+                if (hasPrevInPool && prevSelectedVal !== '') {
+                    selectEl.value = prevSelectedVal;
+                } else if (pgMatchedBooksState.primaryBook) {
+                    selectEl.value = pgMatchedBooksState.primaryBook._refKey;
+                } else {
+                    selectEl.value = '';
+                }
+            }
+
+            onPedagogicalBookSelectChange();
+        }
+
+        function onPedagogicalReferenceContextChange() {
+            refreshPedagogicalBookReference(true);
+        }
+
+        function onPedagogicalBookSelectChange() {
+            const selectEl = document.getElementById('pg-ref-book-select');
+            const selectedKey = selectEl ? selectEl.value : '';
+            const selectedBook = selectedKey
+                ? pgMatchedBooksState.allBooks.find(b => b._refKey === selectedKey) || null
+                : null;
+            const isAuto = Boolean(selectedBook && pgMatchedBooksState.primaryBook && selectedBook._refKey === pgMatchedBooksState.primaryBook._refKey);
+            const companionGuide = isAuto ? pgMatchedBooksState.guideBook : null;
+            updatePedagogicalRefBookVisuals(selectedBook, companionGuide, isAuto);
+        }
+
+        function getActivePedagogicalBookReference() {
+            const selectEl = document.getElementById('pg-ref-book-select');
+            const excerptEl = document.getElementById('pg-book-excerpt');
+            const selectedKey = selectEl ? selectEl.value : '';
+            const primaryBook = selectedKey
+                ? pgMatchedBooksState.allBooks.find(b => b._refKey === selectedKey) || null
+                : null;
+            const isAuto = Boolean(primaryBook && pgMatchedBooksState.primaryBook && primaryBook._refKey === pgMatchedBooksState.primaryBook._refKey);
+            const guideBook = isAuto ? pgMatchedBooksState.guideBook : null;
+
+            const names = [];
+            if (primaryBook && primaryBook.title) names.push(primaryBook.title.trim());
+            if (guideBook && guideBook.title) names.push(`ودليل المعلم: ${guideBook.title.trim()}`);
+            const referenceLabel = names.join(' — ');
+
+            const guidanceParts = [];
+            if (primaryBook && primaryBook.guidance && primaryBook.guidance.trim()) {
+                guidanceParts.push(primaryBook.guidance.trim());
+            }
+            if (guideBook && guideBook.guidance && guideBook.guidance.trim()) {
+                guidanceParts.push(guideBook.guidance.trim());
+            }
+
+            return {
+                primaryBook,
+                guideBook,
+                referenceLabel,
+                bookGuidance: guidanceParts.join('\n'),
+                excerpt: excerptEl ? excerptEl.value.trim() : ''
+            };
+        }
+
+        function buildReferenceBookDocRowHtml(refContext) {
+            if (!refContext || !refContext.primaryBook) return '';
+            const book = refContext.primaryBook;
+            const guide = refContext.guideBook;
+            const safeBookTitle = escapePdHtml(book.title || '');
+            const safeBookUrl = typeof normalizeAndValidateBookUrl === 'function' ? normalizeAndValidateBookUrl(book.url) : '';
+            const safeGuideUrl = (guide && typeof normalizeAndValidateBookUrl === 'function') ? normalizeAndValidateBookUrl(guide.url) : '';
+
+            return `
+                <div style="margin: 0 0 10px; padding: 8px 11px; background: #f0fdf4; border: 1.5px solid #86efac; border-right: 4px solid #d4af37; border-radius: 7px; display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 12px;">
+                    <div style="flex: 1; min-width: 180px; text-align: right; color: #064e3b;">
+                        <strong>الكتاب المدرسي المرجعي:</strong> ${safeBookTitle}
+                        ${guide ? `<div style="font-size: 11px; color: #116835; margin-top: 2px;"><strong>دليل المعلم المرافق:</strong> ${escapePdHtml(guide.title || '')}</div>` : ''}
+                    </div>
+                    <div style="display: flex; gap: 6px; flex-wrap: wrap; align-items: center;">
+                        ${safeBookUrl ? `<a href="${escapePdHtml(safeBookUrl)}" target="_blank" rel="noopener noreferrer" contenteditable="false" style="display: inline-flex; align-items: center; gap: 4px; background: #116835; color: #ffffff; border: 1px solid #d4af37; border-radius: 6px; padding: 5px 10px; font-size: 11px; font-weight: 800; text-decoration: none; white-space: nowrap;">📖 فتح الكتاب المرجعي (Drive)</a>` : ''}
+                        ${safeGuideUrl ? `<a href="${escapePdHtml(safeGuideUrl)}" target="_blank" rel="noopener noreferrer" contenteditable="false" style="display: inline-flex; align-items: center; gap: 4px; background: #0f766e; color: #ffffff; border: 1px solid #d4af37; border-radius: 6px; padding: 5px 9px; font-size: 11px; font-weight: 800; text-decoration: none; white-space: nowrap;">📘 دليل المعلم</a>` : ''}
+                    </div>
+                </div>
+            `;
         }
 
         function extractMeaningfulSentences(rawText, maxSentences) {
@@ -9586,7 +10023,7 @@
             return { systemInstruction, prompt };
         }
 
-        function buildCleanOfflinePedagogicalTemplate(stage, level, subject, docType, lessonTitle, cfg, noticeInfo) {
+        function buildCleanOfflinePedagogicalTemplate(stage, level, subject, docType, lessonTitle, cfg, noticeInfo, refContext = null) {
             const safeLesson = escapePdHtml(lessonTitle);
             const safeLevel = escapePdHtml(level);
             const safeSubject = escapePdHtml(subject);
@@ -9595,6 +10032,7 @@
             const p1 = maxPts === 10 ? 2.5 : 5;
             const p2 = maxPts === 10 ? 3.5 : 7;
             const p3 = maxPts === 10 ? 4 : 8;
+            const refBookBarHtml = buildReferenceBookDocRowHtml(refContext);
 
             const noticeBanner = `
                 <div style="margin: 0 0 11px; padding: 10px 12px; background: #fffbeb; border: 1.5px solid #f59e0b; border-right: 5px solid #d4af37; border-radius: 8px; font-size: 12px; line-height: 1.7; color: #78350f;">
@@ -9628,6 +10066,7 @@
                             <td>${escapePdHtml(cfg.duration)} | التاريخ: ${escapePdHtml(todayStr)}</td>
                         </tr>
                     </table>
+                    ${refBookBarHtml}
 
                     <div style="margin: 10px 0; padding: 9px 11px; background: #f8fafc; border: 1px solid #cbd5e1; border-right: 4px solid #116835; border-radius: 6px;">
                         <div style="font-weight: 800; color: #064e3b; margin-bottom: 4px;">أولاً: الكفايات المستهدفة والأهداف الإجرائية لدرس «${safeLesson}»</div>
@@ -9707,6 +10146,7 @@
                 </div>
 
                 ${noticeBanner}
+                ${refBookBarHtml}
 
                 ${isExam ? `
                     <table>
@@ -9769,7 +10209,7 @@
             `;
         }
 
-        function buildAiPedagogicalDocumentHtml(stage, level, subject, docType, lessonTitle, cfg, aiText, fromCache = false) {
+        function buildAiPedagogicalDocumentHtml(stage, level, subject, docType, lessonTitle, cfg, aiText, fromCache = false, refContext = null) {
             const safeLesson = escapePdHtml(lessonTitle);
             const safeLevel = escapePdHtml(level);
             const safeSubject = escapePdHtml(subject);
@@ -9778,6 +10218,7 @@
             const badgeText = fromCache
                 ? 'محتوى علمي وبيداغوجي محفوظ محلياً من توليد ذكي سابق لنفس الدرس (يعمل دون إنترنت)'
                 : 'محتوى علمي ومعرفي مولّد ذكياً ومباشرة لهذا الدرس وفق المنهاج الموريتاني';
+            const refBookBarHtml = buildReferenceBookDocRowHtml(refContext);
 
             const topMetaBlock = isExam
                 ? `
@@ -9817,6 +10258,7 @@
                 </div>
 
                 ${topMetaBlock}
+                ${refBookBarHtml}
 
                 ${renderNourAiOutputToSafeHtml(aiText)}
 
@@ -9843,12 +10285,16 @@
             }
 
             const cfg = MAURITANIA_CURRICULUM_MAP[stage] || MAURITANIA_CURRICULUM_MAP['ابتدائية'];
+            const refContext = getActivePedagogicalBookReference();
             const headerHtml = buildOfficialPdPrintHeader(stage);
             const preview = document.getElementById('pg-doc-preview');
             const resultSec = document.getElementById('pg-result-section');
             const genBtn = document.getElementById('btn-pg-generate');
             const prevBtnHtml = genBtn ? genBtn.innerHTML : '';
-            const cacheKey = makePgAiCacheKey(stage, level, subject, docType, lessonTitle);
+            const baseCacheKey = makePgAiCacheKey(stage, level, subject, docType, lessonTitle);
+            const cacheKey = (refContext.referenceLabel || refContext.excerpt)
+                ? `${baseCacheKey}||ref:${refContext.referenceLabel.slice(0, 60)}||ex:${refContext.excerpt.slice(0, 60)}`
+                : baseCacheKey;
             const isOnline = isNourOnlineNow();
 
             if (isOnline) {
@@ -9873,11 +10319,22 @@
                 setPgFeedback('success', 'جارٍ الاتصال بخادم نور الذكي لتوليد المحتوى العلمي والتربوي...');
 
                 const { systemInstruction, prompt } = buildPedagogicalAiRequest(stage, level, subject, docType, lessonTitle, cfg);
+                let finalPrompt = prompt;
+                if (refContext.referenceLabel) {
+                    finalPrompt += `\n\nالمرجع المدرسي الرسمي المعتمد من المكتبة الرقمية للمنصة: ${refContext.referenceLabel}. التزم بمصطلحاته وتدرجه المنهجي في المقرر الموريتاني.`;
+                    if (refContext.bookGuidance) {
+                        finalPrompt += `\nفهرس الدروس والتوجيهات المنهجية المرفقة مع الكتاب المرجعي:\n${refContext.bookGuidance}`;
+                    }
+                }
+                if (refContext.excerpt) {
+                    finalPrompt += `\nمقتطف أو محاور من الكتاب المدرسي أرفقها المدرس:\n${refContext.excerpt}`;
+                }
+
                 let aiRes = { ok: false, reason: 'network_error', error: 'تعذّر الاتصال بالخادم.' };
                 try {
                     aiRes = await callNourAiEdgeFunction({
                         mode: 'pedagogical',
-                        prompt,
+                        prompt: finalPrompt,
                         systemInstruction,
                         metadata: {
                             stage,
@@ -9902,19 +10359,19 @@
                 let feedbackMsg = '';
                 if (aiRes && aiRes.ok && aiRes.text) {
                     saveNourAiDocCacheEntry(cacheKey, aiRes.text);
-                    bodyContent = buildAiPedagogicalDocumentHtml(stage, level, subject, docType, lessonTitle, cfg, aiRes.text, false);
+                    bodyContent = buildAiPedagogicalDocumentHtml(stage, level, subject, docType, lessonTitle, cfg, aiRes.text, false, refContext);
                     feedbackMsg = `تم توليد «${docType}» لدرس «${lessonTitle}» بنجاح عبر الذكاء التربوي (نور)! يمكنك التعديل المباشر أو الحفظ في حقيبتك أو الطباعة A4.`;
                 } else {
-                    const cachedEntry = getNourAiDocCache()[cacheKey];
+                    const cachedEntry = getNourAiDocCache()[cacheKey] || getNourAiDocCache()[baseCacheKey];
                     if (cachedEntry && cachedEntry.text) {
-                        bodyContent = buildAiPedagogicalDocumentHtml(stage, level, subject, docType, lessonTitle, cfg, cachedEntry.text, true);
+                        bodyContent = buildAiPedagogicalDocumentHtml(stage, level, subject, docType, lessonTitle, cfg, cachedEntry.text, true, refContext);
                         feedbackMsg = `تعذّر الوصول المؤقت لخادم التوليد الذكي (${aiRes.error || 'خطأ اتصال'})، فتم عرض النسخة الذكية المحفوظة سابقاً لنفس الدرس.`;
                     } else {
                         bodyContent = buildCleanOfflinePedagogicalTemplate(stage, level, subject, docType, lessonTitle, cfg, {
                             isOffline: false,
                             title: 'قالب تنظيمي نظيف — تعذّر الوصول مؤقتاً لخادم التوليد الذكي',
                             body: `لم نتمكن مؤقتاً من جلب المحتوى الذكي من الخادم (${aiRes.error || 'يرجى المحاولة مجدداً'}). تم تجهيز قالب تنظيمي نظيف يحمل عنوان درس «${lessonTitle}» دون حشو أي قواعد أو أمثلة من دروس أخرى. يمكنك إعادة المحاولة أو الضغط على «تعديل النص» لإكمال التحضير والطباعة A4.`
-                        });
+                        }, refContext);
                         feedbackMsg = `تم تجهيز القالب التنظيمي النظيف لدرس «${lessonTitle}» (تعذّر الوصول المؤقت لخادم التوليد الذكي).`;
                     }
                 }
@@ -9934,23 +10391,24 @@
 
             // وضع عدم الاتصال بالإنترنت (Offline):
             // إذا كان نفس الدرس قد وُلّد ذكياً من قبل وحُفظ محلياً نعرضه؛ وإلا نعرض قالباً تنظيمياً نظيفاً دون حشو قواعد دروس أخرى
-            const cachedOffline = getNourAiDocCache()[cacheKey];
+            const cachedOffline = getNourAiDocCache()[cacheKey] || getNourAiDocCache()[baseCacheKey];
             let offlineBody = '';
             let offlineFeedback = '';
             if (cachedOffline && cachedOffline.text) {
-                offlineBody = buildAiPedagogicalDocumentHtml(stage, level, subject, docType, lessonTitle, cfg, cachedOffline.text, true);
+                offlineBody = buildAiPedagogicalDocumentHtml(stage, level, subject, docType, lessonTitle, cfg, cachedOffline.text, true, refContext);
                 offlineFeedback = `وضع عدم الاتصال: تم استرجاع المحتوى الذكي المحفوظ مسبقاً لدرس «${lessonTitle}»! يمكنك التعديل أو الحفظ أو الطباعة A4.`;
             } else {
                 offlineBody = buildCleanOfflinePedagogicalTemplate(stage, level, subject, docType, lessonTitle, cfg, {
                     isOffline: true,
                     title: 'وضع العمل بدون إنترنت — قالب تنظيمي جاهز للتحرير',
                     body: `أنت تعمل حالياً دون اتصال بالإنترنت، لذا تم تجهيز قالب تنظيمي نظيف يحمل عنوان درس «${lessonTitle}» وبياناته الرسمية دون حشو قواعد أو أمثلة غير مطابقة. يتفعّل التوليد الذكي للمحتوى العلمي والمعرفي التفصيلي تلقائياً فور توفر الاتصال بالإنترنت، ويمكنك الآن الضغط على «تعديل النص» للتحرير والطباعة A4.`
-                });
+                }, refContext);
                 offlineFeedback = `وضع عدم الاتصال: تم تجهيز قالب تنظيمي نظيف لدرس «${lessonTitle}». سيعمل التوليد الذكي للمحتوى العلمي تلقائياً عند توفر الإنترنت.`;
             }
 
             if (preview && resultSec) {
                 preview.innerHTML = headerHtml + offlineBody;
+                preview.scrollTop = 0;
                 resultSec.style.display = 'block';
                 currentPgDocMeta = { stage, level, subject, docType, lessonTitle, createdAt: new Date().toISOString() };
                 setPgFeedback('success', offlineFeedback);
@@ -10087,6 +10545,11 @@
             renderSavedPedagogicalDocs();
             setPgFeedback('', '');
             document.getElementById('pedagogical-gen-modal').style.display = 'block';
+            if (typeof fetchAllLibraryBooks === 'function') {
+                fetchAllLibraryBooks().then(() => {
+                    refreshPedagogicalBookReference(false);
+                }).catch(() => {});
+            }
         }
 
         // -------------------------------------------------------------------------
