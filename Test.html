@@ -1381,6 +1381,346 @@
             box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.25);
         }
 
+        /* ============================================================== */
+        /* قسم وبوابات «التطوير المهني والذكاء التربوي» (الهوية الخضراء والذهبية) */
+        /* ============================================================== */
+        .pd-portal-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 11px;
+            margin-bottom: 20px;
+        }
+        .pd-portal-card {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+            text-align: right;
+            background: linear-gradient(135deg, #0b4f27 0%, #116835 60%, #147a3f 100%);
+            color: #ffffff;
+            border: 1.5px solid var(--gold);
+            border-radius: 13px;
+            padding: 13px 15px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(17, 104, 53, 0.22);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            font-family: inherit;
+        }
+        .pd-portal-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(17, 104, 53, 0.32);
+        }
+        .pd-portal-card.pd-card-gold {
+            background: linear-gradient(135deg, #093b1e 0%, #105c30 62%, #1a6d3a 100%);
+        }
+        .pd-portal-card.pd-card-emerald {
+            background: linear-gradient(135deg, #064e3b 0%, #0f766e 65%, #115e59 100%);
+        }
+        .pd-icon-box {
+            width: 46px;
+            height: 46px;
+            border-radius: 12px;
+            background: rgba(212, 175, 55, 0.16);
+            border: 1.5px solid var(--gold);
+            color: var(--gold);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+        .pd-card-info {
+            flex: 1;
+            min-width: 0;
+        }
+        .pd-card-title {
+            font-size: 14.5px;
+            font-weight: 800;
+            color: #ffffff;
+            line-height: 1.35;
+        }
+        .pd-card-desc {
+            font-size: 11.5px;
+            color: #d1fae5;
+            margin-top: 3px;
+            line-height: 1.45;
+        }
+        .pd-card-arrow {
+            color: var(--gold);
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        /* نماذج المولّد البيداغوجي */
+        .pg-form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 9px;
+            margin-bottom: 12px;
+        }
+        @media (max-width: 520px) {
+            .pg-form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        .pg-field-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: 800;
+            color: var(--primary-dark);
+            margin-bottom: 4px;
+            text-align: right;
+        }
+        .pg-field-group select,
+        .pg-field-group input {
+            width: 100%;
+            padding: 10px 11px;
+            border: 1.5px solid #cbd5e1;
+            border-radius: 9px;
+            font-size: 13px;
+            font-weight: 700;
+            background: #ffffff;
+            color: var(--text-dark);
+            outline: none;
+            font-family: inherit;
+        }
+        .pg-field-group select:focus,
+        .pg-field-group input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(17, 104, 53, 0.12);
+        }
+        .pg-doc-paper {
+            background: #ffffff;
+            border: 1.5px solid #cbd5e1;
+            border-top: 4px solid var(--primary);
+            border-radius: 10px;
+            padding: 16px;
+            margin-top: 12px;
+            color: #111827;
+            font-size: 13px;
+            line-height: 1.75;
+            max-height: 460px;
+            overflow-y: auto;
+            box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.04);
+        }
+        .pg-doc-paper.is-editing {
+            border: 2px dashed var(--gold);
+            background: #fffef5;
+            box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.18);
+        }
+        .pg-doc-paper table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+            font-size: 12px;
+        }
+        .pg-doc-paper th,
+        .pg-doc-paper td {
+            border: 1px solid #94a3b8;
+            padding: 7px 8px;
+            text-align: right;
+            vertical-align: top;
+        }
+        .pg-doc-paper th {
+            background: #ecfdf5;
+            color: #064e3b;
+            font-weight: 800;
+        }
+        .pg-toolbar {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 12px;
+        }
+        .pg-toolbar .btn {
+            flex: 1;
+            min-width: 135px;
+            font-size: 12.5px;
+            padding: 10px 10px;
+        }
+
+        /* أكاديمية نور */
+        .acad-welcome-box {
+            background: linear-gradient(135deg, #0b4f27, #116835);
+            color: #ffffff;
+            border: 1.5px solid var(--gold);
+            border-radius: 12px;
+            padding: 14px;
+            margin-bottom: 14px;
+            text-align: right;
+        }
+        .acad-tracks-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        @media (max-width: 520px) {
+            .acad-tracks-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        .acad-track-card {
+            background: #f8fafc;
+            border: 1.5px solid #cbd5e1;
+            border-top: 3px solid var(--primary);
+            border-radius: 11px;
+            padding: 12px;
+            text-align: right;
+            cursor: pointer;
+            transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+            font-family: inherit;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .acad-track-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--gold);
+            box-shadow: 0 5px 12px rgba(17, 104, 53, 0.12);
+        }
+        .acad-track-card.is-done {
+            background: #f0fdf4;
+            border-color: #16a34a;
+        }
+        .acad-progress-bar {
+            width: 100%;
+            height: 7px;
+            background: #e2e8f0;
+            border-radius: 99px;
+            overflow: hidden;
+        }
+        .acad-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--gold));
+            border-radius: 99px;
+            transition: width 0.3s ease;
+        }
+        .acad-module-card {
+            background: #ffffff;
+            border: 1.5px solid #cbd5e1;
+            border-right: 4px solid var(--primary);
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 10px;
+            text-align: right;
+        }
+        .acad-module-card.completed {
+            background: #f0fdf4;
+            border-color: #86efac;
+            border-right-color: #15803d;
+        }
+        .acad-quiz-box {
+            background: #fffbeb;
+            border: 1.5px solid #fcd34d;
+            border-radius: 10px;
+            padding: 12px;
+            margin-top: 12px;
+            text-align: right;
+        }
+        .acad-quiz-opt {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 7px 9px;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 7px;
+            margin-top: 5px;
+            cursor: pointer;
+            font-size: 12.5px;
+            font-weight: 600;
+        }
+
+        /* مساعد نور الذكي */
+        .na-chips-wrap {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 10px;
+        }
+        .na-chip-btn {
+            background: #ecfdf5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+            border-radius: 8px;
+            padding: 6px 10px;
+            font-size: 11.5px;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: inherit;
+            transition: background 0.15s ease, border-color 0.15s ease;
+        }
+        .na-chip-btn:hover {
+            background: #d1fae5;
+            border-color: var(--primary);
+        }
+        .na-chat-stream {
+            background: #f8fafc;
+            border: 1.5px solid #cbd5e1;
+            border-radius: 11px;
+            padding: 12px;
+            min-height: 250px;
+            max-height: 390px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .na-msg {
+            border-radius: 11px;
+            padding: 10px 12px;
+            font-size: 12.8px;
+            line-height: 1.7;
+            max-width: 94%;
+            word-break: break-word;
+        }
+        .na-msg.user {
+            align-self: flex-start;
+            background: linear-gradient(135deg, #116835, #0b4f27);
+            color: #ffffff;
+            border-bottom-right-radius: 3px;
+            font-weight: 700;
+        }
+        .na-msg.bot {
+            align-self: stretch;
+            background: #ffffff;
+            color: #1e293b;
+            border: 1px solid #cbd5e1;
+            border-right: 4px solid var(--gold);
+            text-align: right;
+        }
+        .na-msg-actions {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px dashed #e2e8f0;
+        }
+        .na-input-row {
+            display: flex;
+            gap: 8px;
+            align-items: stretch;
+        }
+        .na-input-row textarea {
+            flex: 1;
+            min-height: 46px;
+            max-height: 100px;
+            resize: vertical;
+            padding: 10px 12px;
+            border: 1.5px solid #cbd5e1;
+            border-radius: 9px;
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 600;
+            outline: none;
+        }
+        .na-input-row textarea:focus {
+            border-color: var(--primary);
+        }
+
     </style>
 </head>
 <body>
@@ -1513,6 +1853,49 @@
             <!-- زر تقديم تظلم أو شكوى رسمية -->
             <button class="btn btn-block" style="background: linear-gradient(135deg, #be123c, #881337); color: white; border: 1.5px solid #fda4af; box-shadow: 0 4px 10px rgba(190, 18, 60, 0.2);" onclick="openGrievanceModal()">
                 <i class="fas fa-file-signature" style="color: #fde047;"></i> تقديم شكوى أو تظلم رسمي للقيادة
+            </button>
+        </div>
+
+        <!-- قسم وبوابات التطوير المهني والذكاء التربوي -->
+        <div class="section-group-label">
+            <i class="fas fa-brain" style="color: var(--primary);"></i> التطوير المهني والذكاء التربوي
+        </div>
+
+        <div class="pd-portal-grid">
+            <!-- 1. مولّد الجذاذات والتمارين الذكي -->
+            <button type="button" class="pd-portal-card" onclick="openPedagogicalGenModal()">
+                <div class="pd-icon-box">
+                    <i class="fas fa-file-alt"></i>
+                </div>
+                <div class="pd-card-info">
+                    <div class="pd-card-title">مولّد الجذاذات والتمارين الذكي</div>
+                    <div class="pd-card-desc">إعداد جذاذات تربوية، تمارين محلولة، وفروض تقويمية وفق المنهاج الموريتاني مع التعديل والطباعة A4</div>
+                </div>
+                <div class="pd-card-arrow"><i class="fas fa-chevron-left"></i></div>
+            </button>
+
+            <!-- 2. أكاديمية نور للتطوير المهني -->
+            <button type="button" class="pd-portal-card pd-card-gold" onclick="openNourAcademyModal()">
+                <div class="pd-icon-box">
+                    <i class="fas fa-award"></i>
+                </div>
+                <div class="pd-card-info">
+                    <div class="pd-card-title">أكاديمية نور (مساعدك الذكي للتطوير المهني)</div>
+                    <div class="pd-card-desc">6 مسارات تكوينية عملية مع تقييم ذاتي وحفظ التقدم وإفادة إتمام مسار رسمية قابلة للطباعة</div>
+                </div>
+                <div class="pd-card-arrow"><i class="fas fa-chevron-left"></i></div>
+            </button>
+
+            <!-- 3. مساعد نور الذكي -->
+            <button type="button" class="pd-portal-card pd-card-emerald" onclick="openNourAssistantModal()">
+                <div class="pd-icon-box">
+                    <i class="fas fa-comments"></i>
+                </div>
+                <div class="pd-card-info">
+                    <div class="pd-card-title">مساعد نور الذكي للمدرس الموريتاني</div>
+                    <div class="pd-card-desc">استشارات تربوية وإدارية فورية، صياغة التقارير، خطط الدعم، والتشريعات (يعمل حتى بدون إنترنت)</div>
+                </div>
+                <div class="pd-card-arrow"><i class="fas fa-chevron-left"></i></div>
             </button>
         </div>
 
@@ -2263,6 +2646,218 @@
 
             <div id="region-search-counter" style="font-size: 11.5px; color: #64748b; margin-bottom: 10px; font-weight: 600;"></div>
             <div id="region-members-list" style="margin-top: 5px; max-height: 400px; overflow-y: auto; padding-left: 4px;"></div>
+        </div>
+    </div>
+
+    <!-- ================================================================== -->
+    <!-- 1. نافذة «مولّد الجذاذات والتمارين الذكي» -->
+    <!-- ================================================================== -->
+    <div id="pedagogical-gen-modal" class="modal">
+        <div class="modal-content" style="max-width: 720px;">
+            <button class="close-btn" onclick="closeModal('pedagogical-gen-modal')">&times;</button>
+            <div style="text-align: center; border-bottom: 2px solid var(--gold); padding-bottom: 12px; margin-bottom: 14px;">
+                <i class="fas fa-file-alt" style="font-size: 30px; color: var(--primary); margin-bottom: 6px;"></i>
+                <h3 style="color: var(--primary-dark);">مولّد الجذاذات والتمارين الذكي</h3>
+                <p style="font-size: 12px; color: #64748b; margin-top: 3px;">إعداد وثائق تربوية منظمة وفق النظام التعليمي الموريتاني — قابلة للتعديل والحفظ والطباعة حتى بدون إنترنت</p>
+            </div>
+
+            <div class="pg-form-grid">
+                <div class="pg-field-group">
+                    <label for="pg-stage"><i class="fas fa-layer-group"></i> المرحلة التعليمية:</label>
+                    <select id="pg-stage" onchange="onPedagogicalStageChange()">
+                        <option value="ابتدائية">المرحلة الابتدائية (التعليم الأساسي)</option>
+                        <option value="إعدادية">المرحلة الإعدادية (التعليم الإعدادي)</option>
+                        <option value="ثانوية">المرحلة الثانوية (التعليم الثانوي)</option>
+                    </select>
+                </div>
+
+                <div class="pg-field-group">
+                    <label for="pg-level"><i class="fas fa-chalkboard"></i> المستوى الدراسي:</label>
+                    <select id="pg-level"></select>
+                </div>
+
+                <div class="pg-field-group">
+                    <label for="pg-subject"><i class="fas fa-book"></i> المادة الدراسية:</label>
+                    <select id="pg-subject"></select>
+                </div>
+
+                <div class="pg-field-group">
+                    <label for="pg-doc-type"><i class="fas fa-clipboard-list"></i> نوع الوثيقة:</label>
+                    <select id="pg-doc-type">
+                        <option value="جذاذة تربوية متكاملة">جذاذة تربوية متكاملة</option>
+                        <option value="تمرين تطبيقي مع الحل">تمرين تطبيقي مع الحل</option>
+                        <option value="فرض أو اختبار تقويمي">فرض أو اختبار تقويمي</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="pg-field-group" style="margin-bottom: 12px;">
+                <label for="pg-lesson-title"><i class="fas fa-pen-nib"></i> عنوان الدرس أو المحور:</label>
+                <input type="text" id="pg-lesson-title" placeholder="مثلاً: الجملة الفعلية، الكسور العشرية، التوازن البيئي، معادلات الدرجة الثانية..." onkeydown="if(event.key==='Enter'){ event.preventDefault(); generatePedagogicalDocument(); }">
+            </div>
+
+            <button type="button" class="btn btn-block" style="background: linear-gradient(135deg, #116835, #08331a); border: 1.5px solid var(--gold); padding: 12px;" onclick="generatePedagogicalDocument()">
+                <i class="fas fa-magic" style="color: var(--gold);"></i> توليد النموذج التربوي الآن
+            </button>
+
+            <div id="pg-feedback-msg" role="alert" style="display: none; margin-top: 10px; padding: 9px 12px; border-radius: 8px; font-size: 12.5px; font-weight: 700; text-align: center;"></div>
+
+            <!-- منطقة معاينة وتحرير الوثيقة المولّدة -->
+            <div id="pg-result-section" style="display: none;">
+                <div class="pg-toolbar">
+                    <button type="button" id="btn-pg-toggle-edit" class="btn" style="background: #d97706;" onclick="togglePedagogicalEditMode()">
+                        <i class="fas fa-edit"></i> تعديل النص
+                    </button>
+                    <button type="button" class="btn" style="background: #116835;" onclick="savePedagogicalDocLocally()">
+                        <i class="fas fa-save"></i> حفظ في حقيبتي (محلياً)
+                    </button>
+                    <button type="button" class="btn" style="background: #0284c7;" onclick="printPedagogicalDocument()">
+                        <i class="fas fa-print"></i> طباعة ملونة PDF / A4
+                    </button>
+                </div>
+
+                <div id="pg-edit-hint" style="display: none; margin-top: 8px; background: #fffbeb; border: 1px solid #fde68a; color: #92400e; border-radius: 8px; padding: 7px 10px; font-size: 11.5px; font-weight: 700; text-align: center;">
+                    <i class="fas fa-pen"></i> وضع التحرير المباشر نشط الآن — اضغط على أي فقرة أو خلية داخل الجدول للتعديل بحرية.
+                </div>
+
+                <div id="pg-doc-preview" class="pg-doc-paper" contenteditable="true" spellcheck="false"></div>
+            </div>
+
+            <!-- قائمة النماذج المحفوظة محلياً في حقيبة المدرس -->
+            <div style="margin-top: 16px; border-top: 1.5px dashed #cbd5e1; padding-top: 12px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <span style="font-size: 13px; font-weight: 800; color: var(--primary-dark);">
+                        <i class="fas fa-folder-open" style="color: var(--gold); margin-left: 4px;"></i> نماذجي المحفوظة في حقيبتي (<span id="pg-saved-count">0</span>)
+                    </span>
+                </div>
+                <div id="pg-saved-list" style="display: flex; flex-direction: column; gap: 7px; max-height: 190px; overflow-y: auto;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================================================================== -->
+    <!-- 2. نافذة «أكاديمية نور (مساعدك الذكي للتطوير المهني)» -->
+    <!-- ================================================================== -->
+    <div id="nour-academy-modal" class="modal">
+        <div class="modal-content" style="max-width: 720px;">
+            <button class="close-btn" onclick="closeModal('nour-academy-modal')">&times;</button>
+            <div style="text-align: center; border-bottom: 2px solid var(--gold); padding-bottom: 12px; margin-bottom: 14px;">
+                <i class="fas fa-award" style="font-size: 30px; color: var(--primary); margin-bottom: 6px;"></i>
+                <h3 style="color: var(--primary-dark);">أكاديمية نور للتطوير المهني</h3>
+                <p style="font-size: 12px; color: #64748b; margin-top: 3px;">مسارات تكوينية عملية مع حفظ التقدم محلياً وإفادة إتمام رسمية قابلة للطباعة</p>
+            </div>
+
+            <!-- الرسالة الترحيبية المطلوبة -->
+            <div class="acad-welcome-box">
+                <div style="font-size: 13.5px; font-weight: 800; color: var(--gold); margin-bottom: 5px;">
+                    <i class="fas fa-sparkles"></i> مساعدك الذكي للتطوير المهني
+                </div>
+                <p style="font-size: 12.8px; line-height: 1.7; color: #f8fafc; margin: 0;">
+                    مساعدك الذكي للتطوير المهني — مرحبا بك في رحلتك التكوينية، اختر المجال الذي ترغب في تطوير مهاراتك فيه، وسنساعدك في بناء مسارك التكويني.
+                </p>
+                <div style="margin-top: 10px; background: rgba(255,255,255,0.12); border-radius: 8px; padding: 8px 10px;">
+                    <div style="display: flex; justify-content: space-between; font-size: 11.5px; font-weight: 700; margin-bottom: 5px;">
+                        <span>التقدم الإجمالي في الأكاديمية</span>
+                        <span id="acad-overall-progress-label">0 / 18 وحدة مكتملة</span>
+                    </div>
+                    <div class="acad-progress-bar" style="background: rgba(255,255,255,0.22);">
+                        <div id="acad-overall-progress-fill" class="acad-progress-fill" style="width: 0%;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- شاشة عرض المسارات التكوينية الستة -->
+            <div id="acad-tracks-view">
+                <div id="acad-tracks-grid" class="acad-tracks-grid"></div>
+            </div>
+
+            <!-- شاشة تفاصيل المسار التكويني المختار (3 وحدات + تقييم ذاتي + إفادة إتمام) -->
+            <div id="acad-detail-view" style="display: none;">
+                <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 12px; flex-wrap: wrap;">
+                    <button type="button" class="btn" style="background: #475569; padding: 7px 12px; font-size: 12px;" onclick="showAcademyTracksOverview()">
+                        <i class="fas fa-arrow-right"></i> العودة لجميع المسارات الستة
+                    </button>
+                    <span id="acad-track-progress-badge" style="font-size: 12px; font-weight: 800; color: var(--primary-dark); background: #ecfdf5; border: 1px solid #a7f3d0; padding: 5px 10px; border-radius: 8px;"></span>
+                </div>
+
+                <div id="acad-detail-header" style="background: #f0fdf4; border: 1.5px solid #bbf7d0; border-right: 4px solid var(--gold); border-radius: 10px; padding: 12px; margin-bottom: 12px; text-align: right;"></div>
+
+                <div id="acad-modules-container"></div>
+
+                <div id="acad-quiz-container" class="acad-quiz-box"></div>
+
+                <!-- بطاقة إصدار إفادة إتمام المسار -->
+                <div id="acad-cert-panel" style="margin-top: 14px; background: linear-gradient(135deg, #f0fdf4, #fffbeb); border: 1.5px solid var(--gold); border-radius: 11px; padding: 13px; text-align: right;">
+                    <div style="font-size: 13.5px; font-weight: 800; color: var(--primary-dark); margin-bottom: 8px;">
+                        <i class="fas fa-certificate" style="color: var(--gold); margin-left: 5px;"></i> إصدار شهادة / إفادة إتمام المسار التكويني
+                    </div>
+                    <div class="pg-form-grid" style="margin-bottom: 10px;">
+                        <div class="pg-field-group">
+                            <label for="acad-cert-name">الاسم الكامل للمدرس(ة):</label>
+                            <input type="text" id="acad-cert-name" placeholder="اكتب اسمك الكامل كما يظهر في الشهادة">
+                        </div>
+                        <div class="pg-field-group">
+                            <label for="acad-cert-school">المؤسسة / الولاية:</label>
+                            <input type="text" id="acad-cert-school" placeholder="مثال: مدرسة الرياض 3 — نواكشوط الجنوبية">
+                        </div>
+                    </div>
+                    <div id="acad-cert-status" style="font-size: 12px; font-weight: 700; margin-bottom: 9px;"></div>
+                    <button type="button" id="btn-acad-print-cert" class="btn btn-block" style="background: linear-gradient(135deg, #116835, #08331a); border: 1.5px solid var(--gold);" onclick="printAcademyCertificate()">
+                        <i class="fas fa-print" style="color: var(--gold);"></i> إصدار وطباعة إفادة إتمام المسار (A4 / PDF)
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================================================================== -->
+    <!-- 3. نافذة «مساعد نور الذكي» -->
+    <!-- ================================================================== -->
+    <div id="nour-assistant-modal" class="modal">
+        <div class="modal-content" style="max-width: 680px;">
+            <button class="close-btn" onclick="closeModal('nour-assistant-modal')">&times;</button>
+            <div style="text-align: center; border-bottom: 2px solid var(--gold); padding-bottom: 11px; margin-bottom: 12px;">
+                <i class="fas fa-robot" style="font-size: 30px; color: var(--primary); margin-bottom: 6px;"></i>
+                <h3 style="color: var(--primary-dark);">مساعد نور الذكي للمدرس الموريتاني</h3>
+                <p style="font-size: 12px; color: #64748b; margin-top: 3px;">إجابات تربوية وإدارية فورية قابلة للنسخ والطباعة — يعمل بسلاسة حتى عند ضعف أو انقطاع الإنترنت</p>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 7px;">
+                <span style="font-size: 11.5px; font-weight: 800; color: var(--primary-dark);"><i class="fas fa-bolt" style="color: var(--gold);"></i> اقتراحات سريعة:</span>
+                <button type="button" class="btn" style="background: #64748b; padding: 4px 10px; font-size: 11px;" onclick="resetNourAssistantChat()">
+                    <i class="fas fa-redo"></i> محادثة جديدة
+                </button>
+            </div>
+
+            <div class="na-chips-wrap">
+                <button type="button" class="na-chip-btn" onclick="sendNourAssistantQuickPrompt('صياغة تقرير تربوي')">
+                    <i class="fas fa-file-signature"></i> صياغة تقرير تربوي
+                </button>
+                <button type="button" class="na-chip-btn" onclick="sendNourAssistantQuickPrompt('حل مشكلة شغب في القسم')">
+                    <i class="fas fa-users-cog"></i> حل مشكلة شغب في القسم
+                </button>
+                <button type="button" class="na-chip-btn" onclick="sendNourAssistantQuickPrompt('إعداد خطة دعم للتلاميذ المتعثرين')">
+                    <i class="fas fa-hands-helping"></i> إعداد خطة دعم للتلاميذ المتعثرين
+                </button>
+                <button type="button" class="na-chip-btn" onclick="sendNourAssistantQuickPrompt('شرح مادة من التشريعات المدرسية')">
+                    <i class="fas fa-balance-scale"></i> شرح مادة من التشريعات المدرسية
+                </button>
+                <button type="button" class="na-chip-btn" onclick="sendNourAssistantQuickPrompt('اقتراح أنشطة تفاعلية')">
+                    <i class="fas fa-lightbulb"></i> اقتراح أنشطة تفاعلية
+                </button>
+                <button type="button" class="na-chip-btn" onclick="sendNourAssistantQuickPrompt('صياغة طلب إداري أو محضر مجلس')">
+                    <i class="fas fa-envelope-open-text"></i> صياغة طلب إداري أو محضر
+                </button>
+            </div>
+
+            <div id="na-chat-stream" class="na-chat-stream"></div>
+
+            <div class="na-input-row">
+                <textarea id="na-user-input" placeholder="اكتب سؤالك التربوي أو الإداري هنا... (مثلاً: كيف أتعامل مع قسم مكتظ في السنة الخامسة؟)" onkeydown="if(event.key==='Enter' && !event.shiftKey){ event.preventDefault(); sendNourAssistantMessage(); }"></textarea>
+                <button type="button" class="btn" style="background: linear-gradient(135deg, #116835, #08331a); border: 1.5px solid var(--gold); padding: 0 16px;" onclick="sendNourAssistantMessage()">
+                    <i class="fas fa-paper-plane" style="color: var(--gold);"></i> إرسال
+                </button>
+            </div>
         </div>
     </div>
 
@@ -7093,6 +7688,1736 @@
                 submitRegionPin();
             }
         });
+
+        // =========================================================================
+        // قسم «التطوير المهني والذكاء التربوي» — يعمل بالكامل حتى دون إنترنت
+        // 1) مولّد الجذاذات والتمارين الذكي
+        // 2) أكاديمية نور للتطوير المهني (6 مسارات × 3 وحدات + تقييم ذاتي + شهادة A4)
+        // 3) مساعد نور الذكي للمدرس الموريتاني
+        // =========================================================================
+        const PG_SAVED_DOCS_KEY = 'nour_pedagogical_docs_v1';
+        const ACAD_PROGRESS_KEY = 'nour_academy_progress_v1';
+        const NA_CHAT_HISTORY_KEY = 'nour_smart_assistant_chat_v1';
+
+        function escapePdHtml(str) {
+            return String(str == null ? '' : str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        function getSharedPedagogicalMeta() {
+            let shared = {};
+            try {
+                shared = JSON.parse(localStorage.getItem('nour_shared_header_v1') || '{}') || {};
+            } catch (e) {}
+            const memberName = (typeof activeMember !== 'undefined' && activeMember && activeMember.full_name) ? activeMember.full_name : '';
+            const memberSchool = (typeof activeMember !== 'undefined' && activeMember && activeMember.school) ? activeMember.school : '';
+            const memberWilaya = (typeof activeMember !== 'undefined' && activeMember && activeMember.wilaya) ? activeMember.wilaya : '';
+            return {
+                wilaya: shared.wilaya || memberWilaya || '.......................',
+                moughataa: shared.moughataa || '.......................',
+                school: shared.school || memberSchool || '.......................',
+                year: shared.year || '2026 / 2027',
+                teacher: shared.teacher || memberName || '.......................'
+            };
+        }
+
+        function buildOfficialPdPrintHeader(stageLabel) {
+            const meta = getSharedPedagogicalMeta();
+            const isPrimary = stageLabel === 'ابتدائية';
+            const inspectionLine = isPrimary
+                ? `مفتشية التعليم الأساسي بمقاطعة: <span contenteditable="true">${escapePdHtml(meta.moughataa)}</span>`
+                : `المؤسسة الثانوية / الإعدادية: <span contenteditable="true">${escapePdHtml(meta.school)}</span>`;
+            const thirdLine = isPrimary
+                ? `المدرسة: <span contenteditable="true">${escapePdHtml(meta.school)}</span>`
+                : `المقاطعة: <span contenteditable="true">${escapePdHtml(meta.moughataa)}</span>`;
+
+            return `
+                <div class="pd-official-header" style="border-bottom: 2.5px solid #116835; padding-bottom: 9px; margin-bottom: 12px;">
+                    <div style="text-align: center; font-weight: 800; font-size: 13px; color: #064e3b; margin-bottom: 4px;">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; font-size: 11px; line-height: 1.55; font-weight: 800; color: #111827;">
+                        <div style="width: 37%; text-align: right;">
+                            الجمهورية الإسلامية الموريتانية<br>
+                            وزارة التربية وإصلاح النظام التعليمي<br>
+                            الإدارة الجهوية للتربية بولاية: <span contenteditable="true">${escapePdHtml(meta.wilaya)}</span><br>
+                            ${inspectionLine}
+                        </div>
+                        ${buildMauritaniaRibbonSealCenter('26%', 60)}
+                        <div style="width: 37%; text-align: left;">
+                            شرف – إخاء – عدل<br>
+                            السنة الدراسية: <span contenteditable="true">${escapePdHtml(meta.year)}</span><br>
+                            ${thirdLine}<br>
+                            المدرس(ة): <span contenteditable="true">${escapePdHtml(meta.teacher)}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function openPrintableA4Window(docTitle, bodyHtml, extraCss = '') {
+            const w = window.open('', '_blank');
+            if (!w) return false;
+            const printBaseHref = getPrintBaseHref();
+            w.document.open();
+            w.document.write(`
+                <!DOCTYPE html>
+                <html lang="ar" dir="rtl">
+                <head>
+                    <meta charset="UTF-8">
+                    ${printBaseHref ? `<base href="${printBaseHref}">` : ''}
+                    <title>${escapePdHtml(docTitle)}</title>
+                    <style>
+                        @page { size: A4 portrait; margin: 12mm; }
+                        * { box-sizing: border-box; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+                        body {
+                            font-family: 'Cairo', 'Tajawal', 'Segoe UI', Tahoma, Arial, sans-serif;
+                            direction: rtl;
+                            background: #e2e8f0;
+                            color: #111827;
+                            margin: 0;
+                            padding: 16px;
+                            line-height: 1.7;
+                        }
+                        .no-print-bar {
+                            max-width: 210mm;
+                            margin: 0 auto 12px;
+                            background: linear-gradient(135deg, #0b4f27, #116835);
+                            color: #ffffff;
+                            border: 1.5px solid #d4af37;
+                            border-radius: 10px;
+                            padding: 10px 14px;
+                            display: flex;
+                            justify-content: space-between;
+                            align-items: center;
+                            gap: 10px;
+                            flex-wrap: wrap;
+                        }
+                        .no-print-bar button {
+                            background: #d4af37;
+                            color: #064e3b;
+                            border: none;
+                            border-radius: 7px;
+                            padding: 8px 14px;
+                            font-weight: 800;
+                            font-size: 13px;
+                            cursor: pointer;
+                            font-family: inherit;
+                        }
+                        .a4-sheet {
+                            max-width: 210mm;
+                            min-height: 272mm;
+                            margin: 0 auto;
+                            background: #ffffff;
+                            border-radius: 8px;
+                            padding: 14mm 13mm;
+                            box-shadow: 0 8px 24px rgba(15, 23, 42, 0.14);
+                        }
+                        table { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 12px; }
+                        th, td { border: 1px solid #64748b; padding: 7px 8px; text-align: right; vertical-align: top; }
+                        th { background: #ecfdf5; color: #064e3b; font-weight: 800; }
+                        .page-break-before { page-break-before: auto; margin-top: 14px; }
+                        .pd-footer {
+                            margin-top: 18px;
+                            padding-top: 8px;
+                            border-top: 1px solid #cbd5e1;
+                            display: flex;
+                            justify-content: space-between;
+                            font-size: 11px;
+                            color: #475569;
+                            font-weight: 700;
+                        }
+                        @media print {
+                            body { background: #ffffff; padding: 0; }
+                            .no-print-bar { display: none !important; }
+                            .a4-sheet { box-shadow: none; padding: 0; margin: 0; max-width: 100%; min-height: auto; border-radius: 0; }
+                        }
+                        ${extraCss}
+                    </style>
+                </head>
+                <body>
+                    <div class="no-print-bar">
+                        <div style="font-size: 13px; font-weight: 700;">📄 ${escapePdHtml(docTitle)} — جاهز للطباعة الملونة A4 أو الحفظ كـ PDF</div>
+                        <button type="button" onclick="window.print()">🖨️ طباعة ملونة / حفظ PDF</button>
+                    </div>
+                    <div class="a4-sheet">
+                        ${bodyHtml}
+                        <div class="pd-footer">
+                            <span>النقابة الوطنية للمدرسين (نور) — التطوير المهني والذكاء التربوي</span>
+                            <span>وحدة – نضال – حوار</span>
+                        </div>
+                    </div>
+                </body>
+                </html>
+            `);
+            w.document.close();
+            return true;
+        }
+
+        // -------------------------------------------------------------------------
+        // 1. مولّد الجذاذات والتمارين الذكي (وفق النظام التعليمي الموريتاني)
+        // -------------------------------------------------------------------------
+        const MAURITANIA_CURRICULUM_MAP = {
+            'ابتدائية': {
+                label: 'المرحلة الابتدائية (التعليم الأساسي)',
+                duration: '45 دقيقة',
+                maxScore: 10,
+                levels: [
+                    'السنة الأولى أساسي (1AF)',
+                    'السنة الثانية أساسي (2AF)',
+                    'السنة الثالثة أساسي (3AF)',
+                    'السنة الرابعة أساسي (4AF)',
+                    'السنة الخامسة أساسي (5AF)',
+                    'السنة السادسة أساسي (6AF - مسابقة دخول الإعدادية)'
+                ],
+                subjects: [
+                    'اللغة العربية (القراءة والتعبير)',
+                    'قواعد اللغة العربية والإملاء',
+                    'الرياضيات والحساب',
+                    'التربية الإسلامية',
+                    'العلوم الطبيعية والتربية البيئية',
+                    'التاريخ والجغرافيا',
+                    'التربية المدنية والأخلاقية',
+                    'اللغة الفرنسية (Français)'
+                ]
+            },
+            'إعدادية': {
+                label: 'المرحلة الإعدادية (التعليم الإعدادي)',
+                duration: '60 دقيقة',
+                maxScore: 20,
+                levels: [
+                    'السنة الأولى إعدادي (1AS)',
+                    'السنة الثانية إعدادي (2AS)',
+                    'السنة الثالثة إعدادي (3AS)',
+                    'السنة الرابعة إعدادي (4AS - شهادة الإعدادية BEPC)'
+                ],
+                subjects: [
+                    'اللغة العربية وآدابها',
+                    'التربية الإسلامية',
+                    'الرياضيات',
+                    'العلوم الطبيعية',
+                    'الفيزياء والكيمياء',
+                    'التاريخ والجغرافيا',
+                    'التربية المدنية',
+                    'اللغة الفرنسية',
+                    'اللغة الإنجليزية'
+                ]
+            },
+            'ثانوية': {
+                label: 'المرحلة الثانوية (التعليم الثانوي)',
+                duration: '120 دقيقة',
+                maxScore: 20,
+                levels: [
+                    'السنة الخامسة ثانوي — آداب أصلية / عصرية (5AS)',
+                    'السنة الخامسة ثانوي — علوم طبيعية / رياضيات (5AS)',
+                    'السنة السادسة ثانوي — آداب أصلية / عصرية (6AS)',
+                    'السنة السادسة ثانوي — علوم طبيعية / رياضيات (6AS)',
+                    'السنة السابعة ثانوي — البكالوريا (7AS)'
+                ],
+                subjects: [
+                    'اللغة العربية وآدابها',
+                    'الفكر الإسلامي',
+                    'الفلسفة',
+                    'الرياضيات',
+                    'الفيزياء والكيمياء',
+                    'العلوم الطبيعية',
+                    'التاريخ والجغرافيا',
+                    'اللغة الفرنسية',
+                    'اللغة الإنجليزية'
+                ]
+            }
+        };
+
+        let currentPgDocMeta = null;
+        let isPgEditHighlighted = false;
+
+        function setPgFeedback(type, text) {
+            const el = document.getElementById('pg-feedback-msg');
+            if (!el) return;
+            if (!text) {
+                el.style.display = 'none';
+                el.textContent = '';
+                return;
+            }
+            const palettes = {
+                success: { bg: '#ecfdf5', border: '#a7f3d0', color: '#065f46' },
+                error:   { bg: '#fef2f2', border: '#fecaca', color: '#b91c1c' },
+                info:    { bg: '#fffbeb', border: '#fde68a', color: '#92400e' }
+            };
+            const p = palettes[type] || palettes.info;
+            el.style.background = p.bg;
+            el.style.border = `1px solid ${p.border}`;
+            el.style.color = p.color;
+            el.textContent = text;
+            el.style.display = 'block';
+        }
+
+        function onPedagogicalStageChange() {
+            const stageEl = document.getElementById('pg-stage');
+            const levelEl = document.getElementById('pg-level');
+            const subjectEl = document.getElementById('pg-subject');
+            if (!stageEl || !levelEl || !subjectEl) return;
+
+            const cfg = MAURITANIA_CURRICULUM_MAP[stageEl.value] || MAURITANIA_CURRICULUM_MAP['ابتدائية'];
+            levelEl.innerHTML = cfg.levels.map(lv => `<option value="${escapePdHtml(lv)}">${escapePdHtml(lv)}</option>`).join('');
+            subjectEl.innerHTML = cfg.subjects.map(sb => `<option value="${escapePdHtml(sb)}">${escapePdHtml(sb)}</option>`).join('');
+        }
+
+        function getSubjectDidacticProfile(subject, lessonTitle) {
+            const sub = String(subject || '');
+            const cleanLesson = escapePdHtml(lessonTitle);
+
+            if (sub.includes('رياضيات') || sub.includes('الحساب')) {
+                return {
+                    tools: 'السبورة، الأدوات الهندسية، بطاقات الأعداد والعمليات، الكتاب المدرسي المعتمد، ألواح التلاميذ',
+                    prereq: 'إتقان العمليات الأساسية والمفاهيم الرياضية الممهدة لدرس «' + cleanLesson + '».',
+                    competency: 'حل وضعيات-مشكلة دالة بتوظيف مفاهيم وقواعد «' + cleanLesson + '» بدقة واستدلال منطقي سليم.',
+                    warmup: 'تقديم مسألة حياتية قصيرة من واقع التلميذ الموريتاني تستدعي توظيف مفهوم «' + cleanLesson + '» وتنشيط الحساب الذهني.',
+                    build: 'تحليل الوضعية على السبورة بمشاركة التلاميذ، استنتاج القاعدة الرياضية أو القانون المنهجي لـ «' + cleanLesson + '»، وتدوين مثال محلول نموذجي.',
+                    practice: 'حل تمرينين متدرجين على الألواح والدفاتر مع التصحيح الجماعي ورصد الأخطاء المنهجية الشائعة.',
+                    q1: `عرّف القاعدة أو المفهوم الأساسي المتعلق بـ «${cleanLesson}»، مع إعطاء مثال تطبيقي مباشر.`,
+                    q2: `طبّق خطوات «${cleanLesson}» لحل التمرين التالي خطوة بخطوة مع إبراز مراحل الحساب والنتيجة النهائية.`,
+                    q3: `وضعية إدماجية: واجه تلميذ مسألة عملية تتطلب توظيف «${cleanLesson}» للوصول إلى حل دقيق. صُغ المعطيات، واختر العملية المناسبة، ثم تحقق من معقولية النتيجة.`,
+                    a1: `ذكر الصيغة الصحيحة لمفهوم «${cleanLesson}» وشروط تطبيقه مع مثال عددي أو هندسي سليم.`,
+                    a2: `كتابة القانون/الطريقة (نقطة)، إنجاز خطوات الحساب دون أخطاء (نقطتان)، وإبراز النتيجة النهائية بالوحدة المناسبة.`,
+                    a3: `فهم المعطيات واختيار الأداة الرياضية الصحيحة، إنجاز الحل المنهجي المتسلسل، وتبرير النتيجة.`
+                };
+            }
+            if (sub.includes('علوم') || sub.includes('فيزياء') || sub.includes('كيمياء')) {
+                return {
+                    tools: 'الكتاب المدرسي، لوحات ورسوم توضيحية، عينات أو أدوات تجريبية متاحة في البيئة المحلية، السبورة',
+                    prereq: 'المكتسبات العلمية السابقة حول الظواهر الطبيعية والعلاقات السببية المرتبطة بـ «' + cleanLesson + '».',
+                    competency: 'تفسير ظاهرة علمية مرتبطة بـ «' + cleanLesson + '» باتباع خطوات المنهج العلمي (الملاحظة، الفرضية، التحقق، الاستنتاج).',
+                    warmup: 'عرض ظاهرة مألوفة من البيئة الموريتانية مرتبطة بـ «' + cleanLesson + '» وطرح سؤال إشكالي لتحفيز الفضول العلمي.',
+                    build: 'توجيه الملاحظة أو التجربة المبسطة، مناقشة فرضيات التلاميذ، وبناء الخلاصة العلمية الدقيقة مدعومة برسم تخطيطي.',
+                    practice: 'إنجاز نشاط تطبيقي لتثبيت المصطلحات العلمية والربط بين السبب والنتيجة في «' + cleanLesson + '».',
+                    q1: `حدّد المفهوم العلمي الأساسي لـ «${cleanLesson}» واذكر عنصرين رئيسيين يميزانه.`,
+                    q2: `فسّر علمياً الآلية أو العلاقة التي تحكم «${cleanLesson}» مستعيناً برسم تخطيطي أو مخطط مبسط.`,
+                    q3: `وضعية علمية إدماجية: لاحظنا في المحيط البيئي ظاهرة مرتبطة بـ «${cleanLesson}». اقترح فرضية تفسيرية، وبيّن كيفية التحقق منها، ثم استنتج سلوكاً عملياً وقائياً أو تطبيقياً.`,
+                    a1: `تعريف علمي دقيق وذكر العنصرين الأساسيين بوضوح وباستعمال المصطلحات العلمية السليمة.`,
+                    a2: `تفسير سببي مترابط مع رسم/مخطط واضح يحمل البيانات الأساسية بشكل صحيح.`,
+                    a3: `فرضية علمية وجيهة + خطة تحقق منطقية + توصية عملية ملائمة للبيئة.`
+                };
+            }
+            if (sub.includes('إسلامية') || sub.includes('الفكر')) {
+                return {
+                    tools: 'المصحف الشريف، الكتاب المدرسي المعتمد، بطاقات النصوص الشرعية، السبورة',
+                    prereq: 'ربط الدرس بما درسه التلميذ سابقاً من قيم وأحكام شرعية ممهدة لـ «' + cleanLesson + '».',
+                    competency: 'استيعاب أحكام وقيم «' + cleanLesson + '» من النصوص الشرعية وتمثلها في السلوك اليومي.',
+                    warmup: 'قراءة نص شرعي أو طرح موقف حياتي يبرز أهمية «' + cleanLesson + '» في حياة المسلم والمجتمع.',
+                    build: 'قراءة نموذجية للنص المؤطر، شرح المفردات، استنباط الأحكام والفوائد والقيم التربوية لـ «' + cleanLesson + '».',
+                    practice: 'ربط الأحكام المستفادة بمواقف يومية واقعية ومناقشة أثرها الأخلاقي والاجتماعي.',
+                    q1: `بيّن المقصود بـ «${cleanLesson}» واذكر دليلاً شرعياً أو قاعدة مؤطرة له.`,
+                    q2: `استخلص ثلاث فوائد أو أحكام عملية مستفادة من درس «${cleanLesson}».`,
+                    q3: `وضعية سلوكية: عرض عليك زميلك موقفاً يتطلب تطبيق قيم «${cleanLesson}». ما التوجيه الشرعي والتربوي المناسب الذي تقدمه له؟ علّل إجابتك.`,
+                    a1: `التعريف الصحيح لـ «${cleanLesson}» مع الاستشهاد السليم بالنص أو القاعدة الشرعية.`,
+                    a2: `ذكر ثلاث فوائد/أحكام دقيقة ومرتبطة مباشرة بموضوع الدرس.`,
+                    a3: `توجيه تربوي سليم متوافق مع مقاصد الدرس مع تعليل واضح ولغة سليمة.`
+                };
+            }
+            if (sub.includes('تاريخ') || sub.includes('جغرافيا') || sub.includes('مدنية') || sub.includes('فلسفة')) {
+                return {
+                    tools: 'الخرائط الجغرافية/التاريخية، وثائق ونصوص مرجعية، الخط الزمني، الكتاب المدرسي، السبورة',
+                    prereq: 'المكتسبات المعرفية والزمنية/المكانية الممهدة لفهم «' + cleanLesson + '».',
+                    competency: 'تحليل الوثائق والظواهر المرتبطة بـ «' + cleanLesson + '» وتفسير أبعادها بروح نقدية ومواطنة مسؤولة.',
+                    warmup: 'استثمار خريطة أو نص قصير أو سؤال إشكالي يربط «' + cleanLesson + '» بواقع موريتانيا والعالم.',
+                    build: 'قراءة الوثائق المرجعية، استخراج الأسباب والنتائج والمفاهيم المحورية، وتنظيمها في خطاطة تركيبية على السبورة.',
+                    practice: 'تدريب التلاميذ على توطين المعطيات أو كتابة فقرة تركيبية منهجية حول «' + cleanLesson + '».',
+                    q1: `عرّف بالمفهوم أو الحدث المحوري في «${cleanLesson}» محدداً إطاره الزماني أو المكاني.`,
+                    q2: `حلّل عاملين رئيسيين مؤثرين في «${cleanLesson}» وبيّن أبرز نتائجهما.`,
+                    q3: `وضعية تركيبية: اعتماداً على مكتسباتك حول «${cleanLesson}»، اكتب فقرة منظمة (مقدمة، عرض، خاتمة) تبرز فيها أهمية الموضوع وتأثيره في الواقع.`,
+                    a1: `تحديد دقيق للمفهوم/الحدث مع دقة المعطيات الزمنية أو الجغرافية.`,
+                    a2: `ذكر عاملين صحيحين مع ربط منطقي بالنتائج المترتبة عنهما.`,
+                    a3: `احترام المنهجية (مقدمة/عرض/خاتمة)، توظيف الأفكار الصحيحة، وسلامة التعبير.`
+                };
+            }
+            return {
+                tools: 'الكتاب المدرسي الرسمي، السبورة والطباشير الملون، بطاقات لغوية ونصوص داعمة، ألواح التلاميذ',
+                prereq: 'استحضار المكتسبات اللغوية والمهارية السابقة الممهدة لبناء درس «' + cleanLesson + '».',
+                competency: 'فهم وتوظيف قواعد ومهارات «' + cleanLesson + '» في الفهم والتعبير الشفهي والكتابي بسلامة ودقة.',
+                warmup: 'تقديم جمل أو نص قصير مشوّق يتضمن ظاهرة «' + cleanLesson + '» وطرح أسئلة استكشافية لاستثارة انتباه المتعلمين.',
+                build: 'قراءة الأمثلة وتحليلها بمشاركة التلاميذ، استنتاج القاعدة أو المهارة الأساسية لـ «' + cleanLesson + '»، وصياغتها بلغة واضحة.',
+                practice: 'إنجاز تطبيقات شفهية وكتابية متدرجة على الألواح والدفاتر مع المعالجة الفورية للتعثرات.',
+                q1: `استخرج من الأمثلة المعطاة ما يمثّل «${cleanLesson}» وحدّد قاعدته أو خصائصه الأساسية.`,
+                q2: `طبّق ما درسته في «${cleanLesson}» عبر تصحيح أو تحويل ثلاث جمل تطبيقية بدقة.`,
+                q3: `وضعية إدماجية كتابية: أنتج فقرة متماسكة من 4 إلى 6 أسطر تتناول موضوعاً من الحياة المدرسية، موظفاً فيها «${cleanLesson}» توظيفاً سليماً ومسطّراً تحته.`,
+                a1: `استخراج صحيح للظاهرة المستهدفة مع صياغة واضحة للقاعدة الأساسية.`,
+                a2: `إنجاز التحويلات/التصحيحات الثلاثة بشكل سليم مع احترام القواعد الإملائية والنحوية.`,
+                a3: `ملاءمة الفقرة للمطلوب، توظيف «${cleanLesson}» بشكل صحيح ومتنوع، وتماسك الأسلوب والخط.`
+            };
+        }
+
+        function generatePedagogicalDocument() {
+            const stage = document.getElementById('pg-stage').value;
+            const level = document.getElementById('pg-level').value;
+            const subject = document.getElementById('pg-subject').value;
+            const docType = document.getElementById('pg-doc-type').value;
+            const lessonInput = document.getElementById('pg-lesson-title');
+            const lessonTitle = lessonInput ? lessonInput.value.trim() : '';
+
+            if (!lessonTitle) {
+                setPgFeedback('error', 'يرجى إدخال عنوان الدرس أو المحور قبل توليد النموذج.');
+                if (lessonInput) lessonInput.focus();
+                return;
+            }
+
+            const cfg = MAURITANIA_CURRICULUM_MAP[stage] || MAURITANIA_CURRICULUM_MAP['ابتدائية'];
+            const prof = getSubjectDidacticProfile(subject, lessonTitle);
+            const safeLesson = escapePdHtml(lessonTitle);
+            const safeLevel = escapePdHtml(level);
+            const safeSubject = escapePdHtml(subject);
+            const safeDocType = escapePdHtml(docType);
+            const todayStr = new Date().toLocaleDateString('ar-MR', { year: 'numeric', month: 'long', day: 'numeric' });
+            const maxPts = cfg.maxScore;
+            const p1 = maxPts === 10 ? 2.5 : 5;
+            const p2 = maxPts === 10 ? 3.5 : 7;
+            const p3 = maxPts === 10 ? 4 : 8;
+
+            const headerHtml = buildOfficialPdPrintHeader(stage);
+            let bodyContent = '';
+
+            if (docType === 'جذاذة تربوية متكاملة') {
+                bodyContent = `
+                    <div style="text-align: center; background: #ecfdf5; border: 1.5px solid #116835; border-radius: 8px; padding: 8px 12px; margin-bottom: 11px;">
+                        <div style="font-size: 15px; font-weight: 900; color: #064e3b;">جذاذة تربوية متكاملة — ${safeLesson}</div>
+                        <div style="font-size: 11.5px; color: #116835; font-weight: 700;">${escapePdHtml(cfg.label)} | ${safeLevel}</div>
+                    </div>
+
+                    <table>
+                        <tr>
+                            <th style="width: 18%;">المادة الدراسية</th>
+                            <td style="width: 32%;">${safeSubject}</td>
+                            <th style="width: 18%;">المستوى الدراسي</th>
+                            <td style="width: 32%;">${safeLevel}</td>
+                        </tr>
+                        <tr>
+                            <th>عنوان الدرس</th>
+                            <td><strong>${safeLesson}</strong></td>
+                            <th>المدة الزمنية</th>
+                            <td>${escapePdHtml(cfg.duration)} | التاريخ: ${escapePdHtml(todayStr)}</td>
+                        </tr>
+                    </table>
+
+                    <div style="margin: 10px 0; padding: 9px 11px; background: #f8fafc; border: 1px solid #cbd5e1; border-right: 4px solid #116835; border-radius: 6px;">
+                        <div style="font-weight: 800; color: #064e3b; margin-bottom: 4px;">أولاً: الكفاية المستهدفة والأهداف التعلمية الإجرائية</div>
+                        <p style="margin: 0 0 6px;"><strong>الكفاية القاعدية:</strong> ${prof.competency}</p>
+                        <ul style="margin: 0; padding-right: 18px;">
+                            <li><strong>الهدف المعرفي:</strong> أن يتعرّف التلميذ على المفاهيم والعناصر الأساسية لدرس «${safeLesson}» ويستوعبها بدقة.</li>
+                            <li><strong>الهدف المهاري:</strong> أن يوظّف التلميذ قواعد وخطوات «${safeLesson}» في إنجاز تطبيقات وتمارين متنوعة.</li>
+                            <li><strong>الهدف الوجداني:</strong> أن ينمّي التلميذ روح المشاركة المنظمة، والدقة، والتعاون الإيجابي داخل القسم.</li>
+                        </ul>
+                    </div>
+
+                    <div style="margin: 10px 0; padding: 9px 11px; background: #fffbeb; border: 1px solid #fde68a; border-right: 4px solid #d4af37; border-radius: 6px;">
+                        <div><strong>المكتسبات القبلية:</strong> ${prof.prereq}</div>
+                        <div style="margin-top: 4px;"><strong>الوسائل الديدكتيكية والمعينات:</strong> ${prof.tools}.</div>
+                    </div>
+
+                    <div style="font-weight: 800; color: #064e3b; margin: 10px 0 4px;">ثانياً: مراحل سير الدرس (الجدول الديدكتيكي المنظم)</div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="width: 14%;">المراحل</th>
+                                <th style="width: 9%;">المدة</th>
+                                <th style="width: 31%;">أنشطة المدرس</th>
+                                <th style="width: 28%;">أنشطة التلميذ</th>
+                                <th style="width: 18%;">مؤشرات التقويم</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>1. التمهيد</strong><br>(الوضعية المشكلة)</td>
+                                <td>10 د</td>
+                                <td>مراقبة المكتسبات القبلية، و${prof.warmup}</td>
+                                <td>يستحضر مكتسباته السابقة، يلاحظ الوضعية، ويقترح فرضيات وأجوبة أولية.</td>
+                                <td>استعداد التلاميذ وتفاعلهم مع الإشكالية المطروحة.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>2. البناء</strong><br>(الاكتشاف والترسيخ)</td>
+                                <td>15 – 25 د</td>
+                                <td>${prof.build}</td>
+                                <td>يناقش، يحلل الأمثلة، يشارك في صياغة القاعدة أو الخلاصة ويدوّنها بوضوح.</td>
+                                <td>قدرة التلميذ على صياغة المفهوم بلغة سليمة.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>3. التطبيق</strong><br>(الممارسة الموجهة)</td>
+                                <td>10 – 15 د</td>
+                                <td>${prof.practice}</td>
+                                <td>ينجز التمارين التطبيقية فردياً أو في مجموعات ويصحح أخطاءه.</td>
+                                <td>نسبة الإجابات الصحيحة وسلامة المنهجية.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>4. التقويم</strong><br>(الإدماج والدعم)</td>
+                                <td>10 د</td>
+                                <td>طرح نشاط تقويمي ختامي قصير، رصد المتعثرين، وتكليف بواجب منزلي هادف.</td>
+                                <td>يحل نشاط التقويم بمفرده ويعرض نتيجته للتحقق النهائي.</td>
+                                <td>تحقق الأهداف وتحديد فئة الدعم الفوري.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div style="margin-top: 10px; padding: 8px 10px; border: 1px dashed #94a3b8; border-radius: 6px; font-size: 12px;">
+                        <strong>ملاحظات المدرس بعد تنفيذ الحصة (التقويم الذاتي والدعم):</strong> ............................................................................................................
+                    </div>
+                `;
+            } else if (docType === 'تمرين تطبيقي مع الحل') {
+                bodyContent = `
+                    <div style="text-align: center; background: #ecfdf5; border: 1.5px solid #116835; border-radius: 8px; padding: 8px 12px; margin-bottom: 11px;">
+                        <div style="font-size: 15px; font-weight: 900; color: #064e3b;">تمرين تطبيقي متدرج مع الحل النموذجي</div>
+                        <div style="font-size: 12px; color: #116835; font-weight: 700;">المادة: ${safeSubject} | ${safeLevel} | الدرس: «${safeLesson}»</div>
+                    </div>
+
+                    <div style="padding: 10px 12px; border: 1.5px solid #cbd5e1; border-radius: 8px; margin-bottom: 12px; background: #ffffff;">
+                        <div style="font-weight: 800; color: #064e3b; border-bottom: 1.5px solid #d4af37; padding-bottom: 5px; margin-bottom: 8px;">
+                            أولاً: نص التمرين والأسئلة المتدرجة (المجموع: ${maxPts} نقاط)
+                        </div>
+                        <p style="margin: 0 0 8px;"><strong>توجيه:</strong> اقرأ الأسئلة بتمعّن، ورتّب إجابتك بخط واضح ومنظم اعتماداً على ما درسته في «${safeLesson}».</p>
+                        <ol style="margin: 0; padding-right: 20px;">
+                            <li style="margin-bottom: 8px;"><strong>المستوى الأول — الفهم المباشر (${p1} نقطة):</strong> ${prof.q1}</li>
+                            <li style="margin-bottom: 8px;"><strong>المستوى الثاني — التطبيق والتحليل (${p2} نقطة):</strong> ${prof.q2}</li>
+                            <li style="margin-bottom: 4px;"><strong>المستوى الثالث — الإدماج وحل المشكلات (${p3} نقطة):</strong> ${prof.q3}</li>
+                        </ol>
+                    </div>
+
+                    <div class="page-break-before" style="padding: 11px 12px; border: 1.5px solid #116835; border-right: 5px solid #d4af37; border-radius: 8px; background: #f0fdf4;">
+                        <div style="font-weight: 900; color: #064e3b; font-size: 14px; margin-bottom: 8px;">
+                            ثانياً: التصحيح النموذجي وسلّم التنقيط (قسم منفصل للمدرس)
+                        </div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th style="width: 14%;">رقم السؤال</th>
+                                    <th style="width: 58%;">عناصر الإجابة النموذجية</th>
+                                    <th style="width: 16%;">معيار التقييم</th>
+                                    <th style="width: 12%;">التنقيط</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>السؤال 1</strong></td>
+                                    <td>${prof.a1}</td>
+                                    <td>دقة المفهوم</td>
+                                    <td><strong>${p1} / ${maxPts}</strong></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>السؤال 2</strong></td>
+                                    <td>${prof.a2}</td>
+                                    <td>سلامة التطبيق</td>
+                                    <td><strong>${p2} / ${maxPts}</strong></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>السؤال 3</strong></td>
+                                    <td>${prof.a3}</td>
+                                    <td>الإدماج والانسجام</td>
+                                    <td><strong>${p3} / ${maxPts}</strong></td>
+                                </tr>
+                                <tr style="background: #ecfdf5;">
+                                    <td colspan="3" style="text-align: left; font-weight: 800;">المجموع الكلي للنقاط:</td>
+                                    <td><strong>${maxPts} / ${maxPts}</strong></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+            } else {
+                bodyContent = `
+                    <div style="text-align: center; background: #ecfdf5; border: 1.5px solid #116835; border-radius: 8px; padding: 8px 12px; margin-bottom: 10px;">
+                        <div style="font-size: 15px; font-weight: 900; color: #064e3b;">فرض / اختبار تقويمي — ${safeSubject}</div>
+                        <div style="font-size: 12px; color: #116835; font-weight: 700;">${safeLevel} | المحور: «${safeLesson}» | المدة: ${escapePdHtml(cfg.duration)}</div>
+                    </div>
+
+                    <table>
+                        <tr>
+                            <td style="width: 45%;"><strong>الاسم الكامل للتلميذ(ة):</strong> .................................</td>
+                            <td style="width: 28%;"><strong>القسم / الرقم:</strong> .................</td>
+                            <td style="width: 27%; text-align: center; background: #fffbeb;"><strong>النقطة:</strong> ....... / ${maxPts}</td>
+                        </tr>
+                    </table>
+
+                    <div style="padding: 10px 12px; border: 1.5px solid #cbd5e1; border-radius: 8px; margin-bottom: 12px; background: #ffffff;">
+                        <div style="font-weight: 800; color: #064e3b; margin-bottom: 6px;">التمرين الأول: المعارف والمفاهيم الأساسية (${p1} نقاط)</div>
+                        <p style="margin: 0 0 10px;">${prof.q1}</p>
+
+                        <div style="font-weight: 800; color: #064e3b; margin-bottom: 6px;">التمرين الثاني: التطبيق والاستدلال المنهجي (${p2} نقاط)</div>
+                        <p style="margin: 0 0 10px;">${prof.q2}</p>
+
+                        <div style="font-weight: 800; color: #064e3b; margin-bottom: 6px;">التمرين الثالث: الوضعية الإدماجية (${p3} نقاط)</div>
+                        <p style="margin: 0;">${prof.q3}</p>
+                    </div>
+
+                    <div class="page-break-before" style="padding: 11px 12px; border: 1.5px solid #116835; border-right: 5px solid #d4af37; border-radius: 8px; background: #f0fdf4;">
+                        <div style="font-weight: 900; color: #064e3b; font-size: 14px; margin-bottom: 8px;">
+                            التصحيح النموذجي وسلّم التنقيط المفصّل (خاص بالمدرس)
+                        </div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th style="width: 17%;">التمرين</th>
+                                    <th style="width: 55%;">مؤشرات التصحيح النموذجي</th>
+                                    <th style="width: 16%;">معايير التقويم</th>
+                                    <th style="width: 12%;">الدرجة</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>التمرين الأول</strong></td>
+                                    <td>${prof.a1}</td>
+                                    <td>الملاءمة والدقة</td>
+                                    <td><strong>${p1} / ${maxPts}</strong></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>التمرين الثاني</strong></td>
+                                    <td>${prof.a2}</td>
+                                    <td>توظيف أدوات المادة</td>
+                                    <td><strong>${p2} / ${maxPts}</strong></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>التمرين الثالث</strong></td>
+                                    <td>${prof.a3}</td>
+                                    <td>الانسجام والإتقان</td>
+                                    <td><strong>${p3} / ${maxPts}</strong></td>
+                                </tr>
+                                <tr style="background: #ecfdf5;">
+                                    <td colspan="3" style="text-align: left; font-weight: 800;">سلّم التنقيط الكامل:</td>
+                                    <td><strong>${maxPts} / ${maxPts}</strong></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+            }
+
+            const preview = document.getElementById('pg-doc-preview');
+            const resultSec = document.getElementById('pg-result-section');
+            if (preview && resultSec) {
+                preview.innerHTML = headerHtml + bodyContent;
+                resultSec.style.display = 'block';
+                currentPgDocMeta = {
+                    stage,
+                    level,
+                    subject,
+                    docType,
+                    lessonTitle,
+                    createdAt: new Date().toISOString()
+                };
+                setPgFeedback('success', `تم توليد «${docType}» لدرس «${lessonTitle}» بنجاح! يمكنك التعديل المباشر أو الحفظ في حقيبتك أو الطباعة A4.`);
+                if (typeof resultSec.scrollIntoView === 'function') {
+                    resultSec.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }
+            }
+        }
+
+        function togglePedagogicalEditMode() {
+            const preview = document.getElementById('pg-doc-preview');
+            const hint = document.getElementById('pg-edit-hint');
+            const btn = document.getElementById('btn-pg-toggle-edit');
+            if (!preview) return;
+            isPgEditHighlighted = !isPgEditHighlighted;
+            preview.setAttribute('contenteditable', 'true');
+            preview.classList.toggle('is-editing', isPgEditHighlighted);
+            if (hint) hint.style.display = isPgEditHighlighted ? 'block' : 'none';
+            if (btn) {
+                btn.innerHTML = isPgEditHighlighted
+                    ? '<i class="fas fa-check"></i> إنهاء التظليل (التعديل متاح دائماً)'
+                    : '<i class="fas fa-edit"></i> تعديل النص';
+            }
+            if (isPgEditHighlighted) {
+                preview.focus();
+            }
+        }
+
+        function getSavedPedagogicalDocs() {
+            try {
+                const parsed = JSON.parse(localStorage.getItem(PG_SAVED_DOCS_KEY) || '[]');
+                return Array.isArray(parsed) ? parsed : [];
+            } catch (e) {
+                return [];
+            }
+        }
+
+        function savePedagogicalDocLocally() {
+            const preview = document.getElementById('pg-doc-preview');
+            if (!preview || !preview.innerHTML.trim()) {
+                setPgFeedback('error', 'يرجى توليد نموذج أولاً قبل الحفظ في حقيبتك.');
+                return;
+            }
+            const meta = currentPgDocMeta || {
+                stage: document.getElementById('pg-stage')?.value || 'ابتدائية',
+                level: document.getElementById('pg-level')?.value || '',
+                subject: document.getElementById('pg-subject')?.value || '',
+                docType: document.getElementById('pg-doc-type')?.value || 'وثيقة تربوية',
+                lessonTitle: document.getElementById('pg-lesson-title')?.value.trim() || 'نموذج تربوي محفوظ'
+            };
+            const list = getSavedPedagogicalDocs();
+            const docItem = {
+                id: 'pgdoc_' + Date.now(),
+                ...meta,
+                html: preview.innerHTML,
+                savedAt: new Date().toLocaleDateString('ar-MR', { year: 'numeric', month: 'short', day: 'numeric' })
+            };
+            list.unshift(docItem);
+            try {
+                localStorage.setItem(PG_SAVED_DOCS_KEY, JSON.stringify(list.slice(0, 30)));
+                renderSavedPedagogicalDocs();
+                setPgFeedback('success', `تم حفظ «${meta.docType}: ${meta.lessonTitle}» في حقيبتك محلياً بنجاح (متاح دائماً حتى بدون إنترنت)!`);
+            } catch (e) {
+                setPgFeedback('error', 'تعذر الحفظ المحلي بسبب امتلاء ذاكرة المتصفح.');
+            }
+        }
+
+        function renderSavedPedagogicalDocs() {
+            const listEl = document.getElementById('pg-saved-list');
+            const countEl = document.getElementById('pg-saved-count');
+            if (!listEl) return;
+            const docs = getSavedPedagogicalDocs();
+            if (countEl) countEl.textContent = String(docs.length);
+            if (docs.length === 0) {
+                listEl.innerHTML = '<div style="text-align: center; font-size: 12px; color: #64748b; background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 8px; padding: 10px;">لا توجد نماذج محفوظة في حقيبتك بعد. ولّد نموذجاً واضغط «حفظ في حقيبتي».</div>';
+                return;
+            }
+            listEl.innerHTML = docs.map(d => `
+                <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; background: #f8fafc; border: 1px solid #cbd5e1; border-right: 3px solid var(--primary); border-radius: 8px; padding: 8px 10px; font-size: 12px;">
+                    <div style="flex: 1; min-width: 0; text-align: right;">
+                        <div style="font-weight: 800; color: var(--primary-dark);">${escapePdHtml(d.docType)} — ${escapePdHtml(d.lessonTitle)}</div>
+                        <div style="font-size: 10.5px; color: #64748b;">${escapePdHtml(d.subject)} | ${escapePdHtml(d.level)} | ${escapePdHtml(d.savedAt || '')}</div>
+                    </div>
+                    <div style="display: flex; gap: 5px; flex-shrink: 0;">
+                        <button type="button" class="btn" style="background: #116835; padding: 4px 8px; font-size: 11px;" onclick="loadSavedPedagogicalDoc('${escapePdHtml(d.id)}')">
+                            <i class="fas fa-folder-open"></i> فتح
+                        </button>
+                        <button type="button" class="btn" style="background: #dc2626; padding: 4px 8px; font-size: 11px;" onclick="deleteSavedPedagogicalDoc('${escapePdHtml(d.id)}')">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function loadSavedPedagogicalDoc(docId) {
+            const doc = getSavedPedagogicalDocs().find(d => String(d.id) === String(docId));
+            if (!doc) return;
+            const preview = document.getElementById('pg-doc-preview');
+            const resultSec = document.getElementById('pg-result-section');
+            if (preview && resultSec) {
+                preview.innerHTML = doc.html;
+                resultSec.style.display = 'block';
+                currentPgDocMeta = doc;
+                setPgFeedback('info', `تم استرجاع النموذج المحفوظ «${doc.lessonTitle}» بنجاح — يمكنك تعديله أو طباعته مباشرة.`);
+            }
+        }
+
+        function deleteSavedPedagogicalDoc(docId) {
+            const next = getSavedPedagogicalDocs().filter(d => String(d.id) !== String(docId));
+            try {
+                localStorage.setItem(PG_SAVED_DOCS_KEY, JSON.stringify(next));
+            } catch (e) {}
+            renderSavedPedagogicalDocs();
+        }
+
+        function printPedagogicalDocument() {
+            const preview = document.getElementById('pg-doc-preview');
+            if (!preview || !preview.innerHTML.trim()) {
+                setPgFeedback('error', 'يرجى توليد نموذج أولاً قبل الطباعة.');
+                return;
+            }
+            const title = currentPgDocMeta
+                ? `${currentPgDocMeta.docType} — ${currentPgDocMeta.lessonTitle}`
+                : 'وثيقة تربوية — نقابة نور';
+            const opened = openPrintableA4Window(title, preview.innerHTML);
+            if (!opened) {
+                setPgFeedback('error', 'يرجى السماح بفتح النوافذ المنبثقة لإتمام الطباعة الملونة PDF / A4.');
+            }
+        }
+
+        function openPedagogicalGenModal() {
+            onPedagogicalStageChange();
+            renderSavedPedagogicalDocs();
+            setPgFeedback('', '');
+            document.getElementById('pedagogical-gen-modal').style.display = 'block';
+        }
+
+        // -------------------------------------------------------------------------
+        // 2. أكاديمية نور للتطوير المهني (6 مسارات × 3 وحدات + تقييم ذاتي + شهادة A4)
+        // -------------------------------------------------------------------------
+        const NOUR_ACADEMY_TRACKS = [
+            {
+                id: 'pedagogy',
+                title: 'المهارات البيداغوجية',
+                icon: 'fas fa-chalkboard-teacher',
+                summary: 'التخطيط بالكفايات، بناء الوضعيات المشكلة، والتنشيط الصفي الفعال',
+                modules: [
+                    {
+                        title: 'الوحدة 1: التخطيط التربوي الفعال وفق المقاربة بالكفايات',
+                        goal: 'صياغة أهداف إجرائية قابلة للقياس وربطها بالكفاية القاعدية.',
+                        summary: 'يرتكز التدريس الحديث على نقل التلميذ من التلقي السلبي إلى بناء المعرفة عبر وضعيات دالة مرتبطة بواقعه الموريتاني.',
+                        steps: [
+                            'حدّد الكفاية المستهدفة قبل كتابة الجذاذة واشتق منها 3 أهداف واضحة (معرفي، مهاري، وجداني).',
+                            'وزّع زمن الحصة بدقة بين التمهيد (15%)، البناء (45%)، التطبيق (25%)، والتقويم (15%).',
+                            'اربط كل مرحلة بمؤشر تقويم ملموس يثبت تحقق الفهم قبل الانتقال للخطوة التالية.'
+                        ]
+                    },
+                    {
+                        title: 'الوحدة 2: تصميم الوضعيات المشكلة والتعلم النشط',
+                        goal: 'تحويل الدروس النظرية إلى أنشطة تفاعلية تحفّز التفكير والنقاش.',
+                        summary: 'الوضعية المشكلة تضع المتعلم أمام تحدٍ مناسب لمستواه، فيبحث عن الحل مستعملاً مكتسباته القبلية بتوجيه من المدرس.',
+                        steps: [
+                            'ابدأ الدرس بمثال واقعي أو سؤال إشكالي قصير يثير فضول التلاميذ خلال أول 5 دقائق.',
+                            'وظّف استراتيجية «فكّر – زاوج – شارك» لتفعيل جميع تلاميذ القسم حتى في الأقسام المكتظة.',
+                            'استمع لمحاولات التلاميذ دون مقاطعة فورية، واستثمر الأخطاء كبوابة لتصحيح المفاهيم.'
+                        ]
+                    },
+                    {
+                        title: 'الوحدة 3: التفريق البيداغوجي ومراعاة الفروق الفردية',
+                        goal: 'تكييف الأنشطة التعليمية لتشمل المتفوقين والمتوسطين والمتعثرين.',
+                        summary: 'التدريس الفارق يضمن تكافؤ الفرص داخل القسم عبر تنويع الأمثلة والدعامات ومستوى التمارين دون إقصاء أي متعلم.',
+                        steps: [
+                            'صنّف أنشطة التطبيق إلى 3 مستويات: تمرين أساسي للجميع، تمرين متوسط، وتحدٍ إثرائي للمتفوقين.',
+                            'خصص ركناً للوسائل البصرية والبطاقات التوضيحية لمساعدة التلاميذ ذوي النمط البصري.',
+                            'أعد جدولاً أسبوعياً لمتابعة تحسن الفئة المتعثرة عبر مهام قصيرة ومركزة.'
+                        ]
+                    }
+                ],
+                quiz: [
+                    { q: 'ما الدور الأساسي للوضعية المشكلة في بداية الحصة؟', opts: ['ملء الوقت قبل كتابة الدرس', 'تحفيز التلميذ على البحث وبناء التعلم الجديد', 'استبدال التقويم الختامي'], ans: 1 },
+                    { q: 'كيف يُتعامل بيداغوجياً مع خطأ التلميذ أثناء مرحلة البناء؟', opts: ['اعتباره مؤشراً لفهم طريقة تفكيره ومعالجته تربوياً', 'تجاهله تماماً', 'معاقبة التلميذ فوراً'], ans: 0 },
+                    { q: 'التفريق البيداغوجي يعني:', opts: ['إعطاء نفس التمرين دون أي دعم', 'تنويع المسارات والأنشطة لمراعاة الفروق الفردية', 'التركيز على المتفوقين فقط'], ans: 1 }
+                ]
+            },
+            {
+                id: 'ai_edu',
+                title: 'الذكاء الاصطناعي',
+                icon: 'fas fa-microchip',
+                summary: 'توظيف أدوات الذكاء التربوي في إعداد الجذاذات والتمارين بأمان ومهنية',
+                modules: [
+                    {
+                        title: 'الوحدة 1: مبادئ الذكاء الاصطناعي التربوي للمدرس',
+                        goal: 'فهم كيفية استثمار الأدوات الذكية لتوفير وقت التحضير ورفع جودة الموارد.',
+                        summary: 'الذكاء الاصطناعي مساعد مهني يختصر الجهد الإداري والتحضيري للمدرس، لكنه لا يعوض الحس البيداغوجي والخبرة الإنسانية داخل القسم.',
+                        steps: [
+                            'استخدم الأدوات الذكية لإعداد المسودات الأولية للجذاذات والتمارين المتدرجة.',
+                            'راجع كل محتوى مولّد وطابقه مع المنهاج الموريتاني الرسمي ومستوى تلاميذك الفعلي.',
+                            'احتفظ بأفضل النماذج المعدّلة محلياً في حقيبتك الرقمية لاستخدامها دون إنترنت.'
+                        ]
+                    },
+                    {
+                        title: 'الوحدة 2: هندسة الأوامر التربوية (Prompting) بدقة',
+                        goal: 'صياغة طلبات دقيقة لإنتاج تمارين وأنشطة ملائمة للبيئة المدرسية.',
+                        summary: 'جودة النتيجة التي تحصل عليها من أي مساعد ذكي تعتمد على تحديد 4 عناصر: المرحلة، المادة، الهدف، وشكل المخرج المطلوب.',
+                        steps: [
+                            'اذكر دائماً السياق: (المرحلة، المستوى، المادة، وعدد التلاميذ أو زمن الحصة).',
+                            'اطلب تدرج الصعوبة وسلّم التنقيط والتصحيح النموذجي في طلب واحد منظم.',
+                            'اطلب تبسيط اللغة أو إضافة أمثلة من البيئة المحلية لتقريب المفاهيم للتلاميذ.'
+                        ]
+                    },
+                    {
+                        title: 'الوحدة 3: الأخلاقيات وحماية خصوصية التلاميذ',
+                        goal: 'الالتزام بالاستخدام الآمن والمسؤول للأدوات الرقمية في التعليم.',
+                        summary: 'حماية البيانات الشخصية للتلاميذ والتحقق العلمي من المعلومات ركيزتان أساسيتان لكل استخدام مهني للتقنية.',
+                        steps: [
+                            'لا تُدخل أبداً الأسماء الكاملة للتلاميذ أو أرقامهم الوطنية أو بياناتهم الخاصة في أي أداة خارجية.',
+                            'تحقق دائماً من صحة الآيات، القواعد اللغوية، والعمليات الحسابية قبل طباعة أي وثيقة.',
+                            'درّب التلاميذ في الثانوي على استعمال التقنية للفهم والبحث لا للنسخ والغش.'
+                        ]
+                    }
+                ],
+                quiz: [
+                    { q: 'ما القاعدة الذهبية عند استعمال أي نموذج مولّد ذكياً قبل تدريسه؟', opts: ['طباعته مباشرة دون قراءة', 'مراجعته وتكييفه وفق المنهاج ومستوى القسم', 'الاستغناء عن الكتاب المدرسي'], ans: 1 },
+                    { q: 'أي ممارسة تُعد مخالفة لحماية خصوصية التلاميذ؟', opts: ['كتابة مستوى القسم فقط', 'إدخال أسماء التلاميذ وبياناتهم الشخصية في أدوات عامة', 'تحديد المادة وعنوان الدرس'], ans: 1 },
+                    { q: 'العناصر الأربعة لصياغة طلب تربوي دقيق هي:', opts: ['المرحلة، المادة، الهدف، وشكل المخرج', 'كلمة واحدة فقط', 'العنوان دون تفاصيل'], ans: 0 }
+                ]
+            },
+            {
+                id: 'assessment',
+                title: 'التقويم والاختبارات',
+                icon: 'fas fa-tasks',
+                summary: 'بناء الفروض التقويمية، سلالم التنقيط العادلة، وخطط معالجة التعثرات',
+                modules: [
+                    {
+                        title: 'الوحدة 1: أنواع التقويم التربوي ووظائفه الثلاث',
+                        goal: 'التمييز العملي بين التقويم التشخيصي والتكويني والإجمالي.',
+                        summary: 'التقويم ليس أداة للعقاب أو الترتيب فحسب، بل بوصلة توجّه التدريس وتكشف فجوات التعلم في وقت مبكر.',
+                        steps: [
+                            'أجرِ تقويماً تشخيصياً قصيراً في بداية كل وحدة لرصد المكتسبات القبلية بدقة.',
+                            'وظّف التقويم التكويني يومياً (الألواح، الأسئلة السريعة) لتصحيح المسار أثناء الحصة.',
+                            'اجعل التقويم الإجمالي (الفرض/الاختبار) مطابقاً لما دُرّس فعلياً في القسم.'
+                        ]
+                    },
+                    {
+                        title: 'الوحدة 2: بناء اختبار متوازن وسلّم تنقيط موضوعي',
+                        goal: 'إعداد فروض متدرجة الصعوبة تقلّل الذاتية في التصحيح.',
+                        summary: 'الاختبار الجيد يجمع بين أسئلة الفهم البسيط (30%)، التطبيق المتوسط (40%)، والوضعية الإدماجية (30%).',
+                        steps: [
+                            'صُغ تعليمات الأسئلة بلغة واضحة خالية من الغموض أو الازدواجية.',
+                            'أعدّ شبكة التصحيح وسلّم التنقيط قبل توزيع أوراق الفرض على التلاميذ.',
+                            'قسّم نقاط الوضعية الإدماجية على معايير واضحة: الملاءمة، الاستعمال السليم، والانسجام.'
+                        ]
+                    },
+                    {
+                        title: 'الوحدة 3: استثمار نتائج الاختبارات في خطط الدعم',
+                        goal: 'تحويل نتائج التصحيح إلى حصص معالجة مركزة ومثمرة.',
+                        summary: 'بعد كل فرض، يكشف تحليل الأخطاء المتكررة مواطن الخلل الجماعية والفردية التي تتطلب دعماً موجهاً.',
+                        steps: [
+                            'دوّن أكثر 3 أخطاء تكررت في أوراق التلاميذ أثناء التصحيح.',
+                            'خصّص حصة تصحيح تفاعلية لمعالجة الأخطاء المشتركة وتوزيع بطاقات دعم للفئة المتعثرة.',
+                            'أشرك التلميذ في اكتشاف خطئه وتصحيحه بيده لترسيخ التعلم.'
+                        ]
+                    }
+                ],
+                quiz: [
+                    { q: 'متى يُفضّل إعداد شبكة التصحيح وسلّم التنقيط؟', opts: ['بعد تصحيح نصف الأوراق', 'قبل إجراء الاختبار بالتزامن مع صياغة الأسئلة', 'في نهاية السنة فقط'], ans: 1 },
+                    { q: 'ما وظيفة التقويم التكويني أثناء الحصة؟', opts: ['تتبع الفهم ومعالجة التعثرات فورياً', 'إصدار قرار الرسوب', 'زيادة عدد الواجبات فقط'], ans: 0 },
+                    { q: 'أفضل استثمار لنتائج الفرض المحروس هو:', opts: ['إخفاء الأوراق عن التلاميذ', 'تحليل الأخطاء الشائعة وبناء خطة دعم موجهة', 'الانتقال مباشرة دون تصحيح'], ans: 1 }
+                ]
+            },
+            {
+                id: 'classroom',
+                title: 'إدارة الفصل',
+                icon: 'fas fa-users-cog',
+                summary: 'القيادة الإيجابية للقسم، تدبير الأقسام المكتظة، ومعالجة الشغب تربوياً',
+                modules: [
+                    {
+                        title: 'الوحدة 1: بناء ميثاق القسم والروتين اليومي المنظم',
+                        goal: 'إرساء قواعد سلوكية واضحة ومتفق عليها منذ الأسابيع الأولى.',
+                        summary: 'الانضباط الإيجابي يبدأ بالوقاية والتنظيم الواضح لا بردود الفعل الغاضبة؛ حين يعرف التلميذ المتوقع منه ينخفض التشويش تلقائياً.',
+                        steps: [
+                            'شارك التلاميذ في صياغة 5 قواعد إيجابية مختصرة تُعلّق في واجهة القسم.',
+                            'اعتمد روتيناً ثابتاً لبداية الحصة (استقرار، تحضير الأدوات، نشاط تمهيدي لمدة 3 دقائق).',
+                            'استعمل إشارات بصرية أو صمتاً هادئاً لاستعادة الانتباه بدل رفع الصوت المستمر.'
+                        ]
+                    },
+                    {
+                        title: 'الوحدة 2: التعامل الهادئ والحازم مع الشغب والنزاعات',
+                        goal: 'احتواء السلوكيات المزعجة دون تعطيل سير الدرس أو كسر العلاقة التربوية.',
+                        summary: 'القاعدة المهنية الذهبية: افصل بين السلوك المرفوض وشخص التلميذ، وعالج الإزعاج بالتدرج الهادئ.',
+                        steps: [
+                            'ابدأ بالتدخل غير اللفظي: التواصل البصري الهادئ أو الاقتراب المكاني من التلميذ المشاغب.',
+                            'وجّه تنبيهاً مقتضباً ومباشراً يركز على المطلوب فعله الآن دون جدال أمام الزملاء.',
+                            'خصّص دقيقتين بعد الحصة لحوار فردي هادئ لمعرفة سبب السلوك وإشراك الإدارة/الأسرة عند التكرار.'
+                        ]
+                    },
+                    {
+                        title: 'الوحدة 3: إدارة الأقسام المكتظة والمشتركة بذكاء',
+                        goal: 'توزيع الانتباه والمهام بكفاءة في الفصول ذات الأعداد الكبيرة.',
+                        summary: 'في الأقسام المكتظة، يصبح تنظيم المجموعات وتوزيع الأدوار (مقرر، منظم وقت، موزع أوراق) أداة حاسمة لحفظ الهدوء.',
+                        steps: [
+                            'أعد ترتيب المقاعد دورياً لضمان وصول بصرك وحركتك إلى الصفوف الخلفية.',
+                            'وزّع مسؤوليات صفية بسيطة بالتناوب لإشعار التلاميذ بالانتماء والمسؤولية.',
+                            'اعتمد الأنشطة الثنائية السريعة والألواح لتقييم استجابة الجميع في ثوانٍ.'
+                        ]
+                    }
+                ],
+                quiz: [
+                    { q: 'ما الخطوة الأولى المفضلة عند حدوث همس أو تشويش خفيف في القسم؟', opts: ['إيقاف الدرس والصراخ لمدة طويلة', 'التواصل البصري الهادئ أو الاقتراب المكاني مع مواصلة الشرح', 'طرد التلميذ فوراً من المدرسة'], ans: 1 },
+                    { q: 'ما فائدة إشراك التلاميذ في وضع ميثاق القسم؟', opts: ['تعزيز التزامهم الذاتي واحترامهم للقواعد', 'إضاعة وقت الحصة', 'إلغاء دور المدرس'], ans: 0 },
+                    { q: 'في القسم المكتظ، أفضل أداة سريعة للتأكد من مشاركة الجميع هي:', opts: ['سؤال تلميذ واحد فقط طوال الحصة', 'استعمال الألواح والأنشطة الثنائية المنظمة', 'إلغاء التطبيقات'], ans: 1 }
+                ]
+            },
+            {
+                id: 'legislation',
+                title: 'التشريعات المهنية',
+                icon: 'fas fa-balance-scale',
+                summary: 'حقوق وواجبات المدرس الموريتاني، المسار المهني، والضوابط الإدارية',
+                modules: [
+                    {
+                        title: 'الوحدة 1: الحقوق المهنية والاجتماعية للمدرس في موريتانيا',
+                        goal: 'الوعي بالحقوق المكفولة في النظام الأساسي لعمال التعليم والنصوص التنظيمية.',
+                        summary: 'معرفة المدرس بحقوقه القانونية (الراتب والعلاوات، الترقية، الإجازات، التكوين، والحماية الوظيفية) تصون كرامته وتساعده على المطالبة بها عبر القنوات الرسمية.',
+                        steps: [
+                            'احتفظ بنسخة رقمية وورقية منظمة من ملفك الإداري (قرار التعيين، الترسيم، الترقيات، آخر كشف راتب).',
+                            'تعرّف على شروط الترقية والانتقال السنوي ومواعيد إيداع الطلبات الرسمية.',
+                            'استفد من قسم «النصوص القانونية» في منصة نور لمراجعة المقررات والمراسيم المعتمدة.'
+                        ]
+                    },
+                    {
+                        title: 'الوحدة 2: الواجبات المهنية وأخلاقيات مهنة التدريس',
+                        goal: 'الالتزام بالضوابط التربوية والإدارية التي تحمي المدرس وتضمن جودة الأداء.',
+                        summary: 'الالتزام بالحضور، التحضير التربوي، المعاملة التربوية السليمة للتلاميذ، والسر المهني يشكّل الحصن القانوني الأول للمدرس.',
+                        steps: [
+                            'وثّق غيابات التلاميذ وحالاتك الطارئة عبر السجلات الرسمية والمراسلات الإدارية المعتمدة.',
+                            'التزم بالوسائل التربوية البديلة وتجنب العقاب البدني أو اللفظي الذي يعرّضك للمساءلة القانونية.',
+                            'اتبع السلم الإداري في كل مراسلة أو طلب رسمي (المدير ← المفتشية ← الإدارة الجهوية).'
+                        ]
+                    },
+                    {
+                        title: 'الوحدة 3: المساطر الإدارية والتظلم القانوني والنقابي',
+                        goal: 'إتقان صياغة التظلمات والطلبات الإدارية وحفظ الحقوق بالتوثيق.',
+                        summary: 'أي إجراء إداري أو تظلم يكتسب قوته من التوثيق المكتوب، الهدوء، الاستناد للنصوص، ومتابعة رقم الإيداع.',
+                        steps: [
+                            'قدّم كل طلب أو تظلم مكتوباً بنسختين مع أخذ وصل استلام أو تأشيرة إيداع مؤرخة.',
+                            'صُغ مراسلاتك بلغة إدارية رصينة تحدد الوقائع والتواريخ والمطلب بدقة.',
+                            'عند التعرض لأي تعسف، تواصل مع منسقية نقابة نور الجهوية أو بوابة الشكاوى الرسمية بالمنصة.'
+                        ]
+                    }
+                ],
+                quiz: [
+                    { q: 'ما القاعدة الأهم عند تقديم أي طلب إداري أو تظلم رسمي؟', opts: ['الاكتفاء بالحديث الشفهي', 'تقديمه مكتوباً عبر السلم الإداري مع الاحتفاظ بوصل استلام مؤرخ', 'إرساله دون توقيع أو تاريخ'], ans: 1 },
+                    { q: 'ما الذي يحمي المدرس قانونياً ومهنياً داخل القسم؟', opts: ['الالتزام بالتشريعات التربوية وتوثيق السجلات وتجنب العقاب البدني', 'إهمال سجل النداء', 'العمل دون تحضير'], ans: 0 },
+                    { q: 'أين يمكن مراجعة المراسيم والمقررات الرسمية داخل المنصة؟', opts: ['في قسم النصوص القانونية والمقررات الرسمية', 'لا توجد نصوص بالمنصة', 'في شريط الأخبار فقط'], ans: 0 }
+                ]
+            },
+            {
+                id: 'leadership',
+                title: 'القيادة التربوية',
+                icon: 'fas fa-chess-king',
+                summary: 'التسيير التشاركي، بناء فرق العمل، وقيادة مشروع المؤسسة التربوية',
+                modules: [
+                    {
+                        title: 'الوحدة 1: من التسيير الإداري إلى القيادة التربوية الملهمة',
+                        goal: 'تبنّي روح المبادرة والتأثير الإيجابي داخل المدرسة والمجتمع المحلي.',
+                        summary: 'القيادة التربوية ليست حكراً على المدير؛ كل مدرس قائد في قسمه وعضو فاعل في مجلس المعلمين وفي تحسين مناخ المؤسسة.',
+                        steps: [
+                            'بادر بطرح أفكار عملية في اجتماعات مجلس المعلمين لتحسين نتائج التحصيل والانضباط.',
+                            'ابنِ علاقات مهنية قائمة على الاحترام المتبادل وتبادل الخبرات بين المدرسين القدامى والجدد.',
+                            'اجعل مصلحة التلميذ وجودة التعلمات المعيار الأول في كل قرار تربوي.'
+                        ]
+                    },
+                    {
+                        title: 'الوحدة 2: التخطيط التشاركي لمشروع المؤسسة',
+                        goal: 'المساهمة في تشخيص واقع المدرسة وبناء خطة تحسين واقعية.',
+                        summary: 'مشروع المؤسسة يوحّد جهود الإدارة والمدرسين ورابطة آباء التلاميذ حول أولويات واضحة قابلة للتنفيذ والمتابعة.',
+                        steps: [
+                            'شخّص نقاط القوة والتحديات في مؤسستك (التسرب، ضعف القراءة، قلة الوسائل).',
+                            'اختر هدفين أو ثلاثة أهداف واقعية قابلة للإنجاز خلال الفصل الدراسي.',
+                            'حدّد المسؤوليات ومؤشرات النجاح وتاريخ المراجعة لكل نشاط.'
+                        ]
+                    },
+                    {
+                        title: 'الوحدة 3: التواصل الفعال مع أولياء الأمور والمجتمع المحلي',
+                        goal: 'تعزيز الشراكة الإيجابية بين الأسرة والمدرسة لدعم التلاميذ.',
+                        summary: 'التواصل المنتظم والبنّاء مع الأسر يقلل من الغياب والتسرب المدرسي ويعزز احترام المجتمع لدور المدرس.',
+                        steps: [
+                            'ابدأ اللقاء مع ولي الأمر بذكر نقطة إيجابية في ابنه قبل مناقشة الصعوبات.',
+                            'قدّم توصيات بسيطة وعملية يمكن للأسرة متابعتها في المنزل (تخصيص وقت للمراجعة، متابعة الدفتر).',
+                            'وثّق اللقاءات والاتفاقات باختصار لضمان استمرارية المتابعة خلال السنة.'
+                        ]
+                    }
+                ],
+                quiz: [
+                    { q: 'ما السمة الأبرز للقيادة التربوية الناجحة داخل المؤسسة؟', opts: ['الانفراد بالقرارات', 'التشاركية، المبادرة، والتركيز على تحسين تعلمات التلاميذ', 'الاكتفاء بالعمل الورقي فقط'], ans: 1 },
+                    { q: 'عند التواصل مع ولي أمر تلميذ متعثر، يُستحسن البدء بـ:', opts: ['ذكر نقطة إيجابية ثم عرض الصعوبة وخطة الدعم المشتركة', 'اللوم المباشر فقط', 'تجاهل ولي الأمر'], ans: 0 },
+                    { q: 'يرتكز مشروع المؤسسة الناجح على:', opts: ['تشخيص واقعي وأهداف محددة ومؤشرات متابعة واضحة', 'شعارات عامة غير قابلة للقياس', 'جهد فردي معزول'], ans: 0 }
+                ]
+            }
+        ];
+
+        let activeAcademyTrackId = null;
+
+        function getAcademyProgress() {
+            try {
+                const parsed = JSON.parse(localStorage.getItem(ACAD_PROGRESS_KEY) || '{}');
+                return parsed && typeof parsed === 'object' ? parsed : {};
+            } catch (e) {
+                return {};
+            }
+        }
+
+        function saveAcademyProgress(progressObj) {
+            try {
+                localStorage.setItem(ACAD_PROGRESS_KEY, JSON.stringify(progressObj || {}));
+            } catch (e) {}
+        }
+
+        function getTrackProgressState(trackId) {
+            const all = getAcademyProgress();
+            const entry = all[trackId] || { modules: [false, false, false], quizPassed: false, quizScore: 0 };
+            if (!Array.isArray(entry.modules) || entry.modules.length !== 3) {
+                entry.modules = [false, false, false];
+            }
+            return entry;
+        }
+
+        function updateAcademyOverallProgressBar() {
+            const all = getAcademyProgress();
+            let completedCount = 0;
+            const totalModules = NOUR_ACADEMY_TRACKS.length * 3;
+            NOUR_ACADEMY_TRACKS.forEach(tr => {
+                const st = all[tr.id];
+                if (st && Array.isArray(st.modules)) {
+                    completedCount += st.modules.filter(Boolean).length;
+                }
+            });
+            const pct = Math.round((completedCount / totalModules) * 100);
+            const lbl = document.getElementById('acad-overall-progress-label');
+            const fill = document.getElementById('acad-overall-progress-fill');
+            if (lbl) lbl.textContent = `${completedCount} / ${totalModules} وحدة مكتملة (${pct}%)`;
+            if (fill) fill.style.width = `${pct}%`;
+        }
+
+        function renderAcademyTracksGrid() {
+            const grid = document.getElementById('acad-tracks-grid');
+            if (!grid) return;
+            updateAcademyOverallProgressBar();
+
+            grid.innerHTML = NOUR_ACADEMY_TRACKS.map(track => {
+                const st = getTrackProgressState(track.id);
+                const doneMods = st.modules.filter(Boolean).length;
+                const pct = Math.round((doneMods / 3) * 100);
+                const isComplete = doneMods === 3 && st.quizPassed;
+
+                return `
+                    <button type="button" class="acad-track-card ${isComplete ? 'is-done' : ''}" onclick="openAcademyTrackDetail('${track.id}')">
+                        <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; width: 100%;">
+                            <div style="width: 36px; height: 36px; border-radius: 9px; background: #ecfdf5; border: 1px solid #a7f3d0; color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0;">
+                                <i class="${track.icon}"></i>
+                            </div>
+                            <span style="font-size: 10.5px; font-weight: 800; padding: 2px 7px; border-radius: 6px; background: ${isComplete ? '#dcfce7' : '#fef3c7'}; color: ${isComplete ? '#166534' : '#92400e'};">
+                                ${isComplete ? '✓ مسار مكتمل' : `${doneMods}/3 وحدات`}
+                            </span>
+                        </div>
+                        <div style="font-size: 14px; font-weight: 800; color: var(--primary-dark);">${escapePdHtml(track.title)}</div>
+                        <div style="font-size: 11.5px; color: #475569; line-height: 1.5;">${escapePdHtml(track.summary)}</div>
+                        <div class="acad-progress-bar" style="margin-top: 4px;">
+                            <div class="acad-progress-fill" style="width: ${pct}%;"></div>
+                        </div>
+                    </button>
+                `;
+            }).join('');
+        }
+
+        function showAcademyTracksOverview() {
+            activeAcademyTrackId = null;
+            const tracksView = document.getElementById('acad-tracks-view');
+            const detailView = document.getElementById('acad-detail-view');
+            if (tracksView) tracksView.style.display = 'block';
+            if (detailView) detailView.style.display = 'none';
+            renderAcademyTracksGrid();
+        }
+
+        function openAcademyTrackDetail(trackId) {
+            const track = NOUR_ACADEMY_TRACKS.find(t => t.id === trackId);
+            if (!track) return;
+            activeAcademyTrackId = trackId;
+
+            const tracksView = document.getElementById('acad-tracks-view');
+            const detailView = document.getElementById('acad-detail-view');
+            if (tracksView) tracksView.style.display = 'none';
+            if (detailView) detailView.style.display = 'block';
+
+            const meta = getSharedPedagogicalMeta();
+            const nameInput = document.getElementById('acad-cert-name');
+            const schoolInput = document.getElementById('acad-cert-school');
+            if (nameInput && !nameInput.value.trim() && meta.teacher && !meta.teacher.includes('...')) {
+                nameInput.value = meta.teacher;
+            }
+            if (schoolInput && !schoolInput.value.trim()) {
+                const parts = [meta.school, meta.wilaya].filter(p => p && !p.includes('...'));
+                if (parts.length) schoolInput.value = parts.join(' — ');
+            }
+
+            renderActiveAcademyTrack();
+        }
+
+        function renderActiveAcademyTrack() {
+            const track = NOUR_ACADEMY_TRACKS.find(t => t.id === activeAcademyTrackId);
+            if (!track) return;
+            const st = getTrackProgressState(track.id);
+            const doneMods = st.modules.filter(Boolean).length;
+            updateAcademyOverallProgressBar();
+
+            const badge = document.getElementById('acad-track-progress-badge');
+            if (badge) {
+                badge.textContent = `الإنجاز: ${doneMods} / 3 وحدات ${st.quizPassed ? '• التقييم الذاتي: ناجح ✓' : ''}`;
+            }
+
+            const headerEl = document.getElementById('acad-detail-header');
+            if (headerEl) {
+                headerEl.innerHTML = `
+                    <div style="font-size: 15.5px; font-weight: 900; color: var(--primary-dark);">
+                        <i class="${track.icon}" style="color: var(--gold); margin-left: 6px;"></i> مسار: ${escapePdHtml(track.title)}
+                    </div>
+                    <div style="font-size: 12px; color: #475569; margin-top: 4px;">${escapePdHtml(track.summary)}</div>
+                `;
+            }
+
+            const modsEl = document.getElementById('acad-modules-container');
+            if (modsEl) {
+                modsEl.innerHTML = track.modules.map((mod, idx) => {
+                    const isDone = Boolean(st.modules[idx]);
+                    return `
+                        <div class="acad-module-card ${isDone ? 'completed' : ''}">
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; flex-wrap: wrap; margin-bottom: 6px;">
+                                <div style="font-size: 13.5px; font-weight: 800; color: var(--primary-dark); flex: 1;">${escapePdHtml(mod.title)}</div>
+                                <button type="button" class="btn" style="background: ${isDone ? '#15803d' : '#475569'}; padding: 5px 10px; font-size: 11px;" onclick="toggleAcademyModule('${track.id}', ${idx})">
+                                    <i class="fas ${isDone ? 'fa-check-circle' : 'fa-circle'}"></i> ${isDone ? 'وحدة مكتملة ✓' : 'تحديد كمكتملة'}
+                                </button>
+                            </div>
+                            <div style="font-size: 12px; color: #065f46; font-weight: 700; margin-bottom: 5px;"><strong>الهدف التكويني:</strong> ${escapePdHtml(mod.goal)}</div>
+                            <p style="font-size: 12.2px; color: #334155; margin: 0 0 8px; line-height: 1.65;">${escapePdHtml(mod.summary)}</p>
+                            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 7px; padding: 8px 10px;">
+                                <div style="font-size: 11.5px; font-weight: 800; color: var(--primary-dark); margin-bottom: 4px;">
+                                    <i class="fas fa-shoe-prints" style="color: var(--gold); margin-left: 4px;"></i> خطوات تطبيقية داخل القسم:
+                                </div>
+                                <ol style="margin: 0; padding-right: 18px; font-size: 12px; color: #1e293b; line-height: 1.65;">
+                                    ${mod.steps.map(step => `<li>${escapePdHtml(step)}</li>`).join('')}
+                                </ol>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            const quizEl = document.getElementById('acad-quiz-container');
+            if (quizEl) {
+                quizEl.innerHTML = `
+                    <div style="font-size: 13.5px; font-weight: 800; color: #92400e; margin-bottom: 8px;">
+                        <i class="fas fa-clipboard-check" style="margin-left: 5px;"></i> اختبار التقييم الذاتي القصير (${track.quiz.length} أسئلة)
+                    </div>
+                    ${track.quiz.map((item, qIdx) => `
+                        <div style="margin-bottom: 10px;">
+                            <div style="font-size: 12.5px; font-weight: 800; color: #1e293b;">${qIdx + 1}) ${escapePdHtml(item.q)}</div>
+                            ${item.opts.map((opt, oIdx) => `
+                                <label class="acad-quiz-opt">
+                                    <input type="radio" name="acad_q_${qIdx}" value="${oIdx}">
+                                    <span>${escapePdHtml(opt)}</span>
+                                </label>
+                            `).join('')}
+                        </div>
+                    `).join('')}
+                    <button type="button" class="btn" style="background: #d97706; width: 100%; font-size: 12.5px;" onclick="evaluateAcademyQuiz('${track.id}')">
+                        <i class="fas fa-check-double"></i> تحقق من إجابات التقييم الذاتي
+                    </button>
+                    <div id="acad-quiz-feedback" style="margin-top: 8px; font-size: 12.2px; font-weight: 700; ${st.quizPassed ? 'color: #15803d;' : 'display: none;'}">
+                        ${st.quizPassed ? `✓ سبق أن اجتزت التقييم الذاتي لهذا المسار بنجاح (${st.quizScore || 3} / 3).` : ''}
+                    </div>
+                `;
+            }
+
+            const certStatus = document.getElementById('acad-cert-status');
+            if (certStatus) {
+                if (doneMods === 3 && st.quizPassed) {
+                    certStatus.style.color = '#15803d';
+                    certStatus.textContent = '✓ تهانينا! أكملت جميع الوحدات الثلاث واجتزت التقييم الذاتي — إفادة إتمام المسار جاهزة للطباعة فوراً.';
+                } else {
+                    certStatus.style.color = '#92400e';
+                    const rem = [];
+                    if (doneMods < 3) rem.push(`إكمال الوحدات المتبقية (${3 - doneMods})`);
+                    if (!st.quizPassed) rem.push('اجتياز التقييم الذاتي القصير (2/3 على الأقل)');
+                    certStatus.textContent = `لإصدار إفادة إتمام المسار الرسمية، يُرجى: ${rem.join(' + ')}.`;
+                }
+            }
+        }
+
+        function toggleAcademyModule(trackId, modIdx) {
+            const all = getAcademyProgress();
+            const entry = getTrackProgressState(trackId);
+            entry.modules[modIdx] = !entry.modules[modIdx];
+            all[trackId] = entry;
+            saveAcademyProgress(all);
+            renderActiveAcademyTrack();
+        }
+
+        function evaluateAcademyQuiz(trackId) {
+            const track = NOUR_ACADEMY_TRACKS.find(t => t.id === trackId);
+            if (!track) return;
+            const fb = document.getElementById('acad-quiz-feedback');
+            let score = 0;
+            let unanswered = 0;
+
+            track.quiz.forEach((item, qIdx) => {
+                const selected = document.querySelector(`input[name="acad_q_${qIdx}"]:checked`);
+                if (!selected) {
+                    unanswered++;
+                } else if (Number(selected.value) === item.ans) {
+                    score++;
+                }
+            });
+
+            if (unanswered > 0) {
+                if (fb) {
+                    fb.style.display = 'block';
+                    fb.style.color = '#dc2626';
+                    fb.textContent = 'يرجى اختيار إجابة لكل سؤال قبل التحقق.';
+                }
+                return;
+            }
+
+            const passed = score >= 2;
+            const all = getAcademyProgress();
+            const entry = getTrackProgressState(trackId);
+            entry.quizPassed = passed;
+            entry.quizScore = score;
+            all[trackId] = entry;
+            saveAcademyProgress(all);
+
+            renderActiveAcademyTrack();
+            const fbAfter = document.getElementById('acad-quiz-feedback');
+            if (fbAfter) {
+                fbAfter.style.display = 'block';
+                fbAfter.style.color = passed ? '#15803d' : '#b45309';
+                fbAfter.textContent = passed
+                    ? `أحسنت! نتيجتك في التقييم الذاتي: ${score} / ${track.quiz.length} — تم اعتماد اجتياز التقييم وحفظ تقدمك.`
+                    : `نتيجتك: ${score} / ${track.quiz.length}. يُنصح بمراجعة الوحدات الثلاث وإعادة المحاولة لتحقيق 2/${track.quiz.length} على الأقل.`;
+            }
+        }
+
+        function printAcademyCertificate() {
+            const track = NOUR_ACADEMY_TRACKS.find(t => t.id === activeAcademyTrackId);
+            if (!track) return;
+            const st = getTrackProgressState(track.id);
+            const doneMods = st.modules.filter(Boolean).length;
+            const certStatus = document.getElementById('acad-cert-status');
+
+            if (doneMods < 3 || !st.quizPassed) {
+                if (certStatus) {
+                    certStatus.style.color = '#dc2626';
+                    certStatus.textContent = 'يرجى تحديد الوحدات الثلاث كمكتملة واجتياز التقييم الذاتي القصير أولاً لإصدار الإفادة الرسمية.';
+                }
+                return;
+            }
+
+            const teacherName = (document.getElementById('acad-cert-name')?.value || '').trim();
+            const schoolInfo = (document.getElementById('acad-cert-school')?.value || '').trim();
+            if (!teacherName) {
+                if (certStatus) {
+                    certStatus.style.color = '#dc2626';
+                    certStatus.textContent = 'يرجى كتابة الاسم الكامل للمدرس(ة) قبل إصدار وطباعة الشهادة.';
+                }
+                document.getElementById('acad-cert-name')?.focus();
+                return;
+            }
+
+            const todayStr = new Date().toLocaleDateString('ar-MR', { year: 'numeric', month: 'long', day: 'numeric' });
+            const verifyCode = 'NOUR-ACAD-' + track.id.toUpperCase().slice(0, 4) + '-' + String(Date.now()).slice(-5);
+
+            const certHtml = `
+                <div style="border: 4px double #116835; padding: 16px; border-radius: 10px; background: linear-gradient(180deg, #ffffff 0%, #f0fdf4 100%);">
+                    ${buildOfficialPdPrintHeader('ابتدائية')}
+
+                    <div style="text-align: center; margin: 16px 0 12px;">
+                        <div style="display: inline-block; background: #116835; color: #ffffff; border: 2px solid #d4af37; border-radius: 99px; padding: 6px 24px; font-size: 16px; font-weight: 900;">
+                            إفادة إتمام مسار تكويني مهني
+                        </div>
+                        <div style="font-size: 12px; color: #92400e; font-weight: 800; margin-top: 6px;">
+                            أكاديمية نور للتطوير المهني — النقابة الوطنية للمدرسين (نور)
+                        </div>
+                    </div>
+
+                    <div style="text-align: center; font-size: 14px; line-height: 2.1; color: #111827; padding: 10px 14px;">
+                        تشهد <strong>أكاديمية نور للتطوير المهني</strong> التابعة للنقابة الوطنية للمدرسين (نور) بأن الأستاذ(ة) / المعلم(ة):<br>
+                        <div style="font-size: 20px; font-weight: 900; color: #064e3b; margin: 6px 0; border-bottom: 2px solid #d4af37; display: inline-block; padding: 2px 20px;">
+                            ${escapePdHtml(teacherName)}
+                        </div>
+                        ${schoolInfo ? `<div style="font-size: 13px; color: #475569; font-weight: 700;">المؤسسة / الولاية: ${escapePdHtml(schoolInfo)}</div>` : ''}
+                        <div style="margin-top: 8px;">
+                            قد أتمّ(ت) بنجاح جميع الوحدات التطبيقية والتقييم الذاتي لمسار:
+                        </div>
+                        <div style="font-size: 17px; font-weight: 900; color: #116835; background: #ecfdf5; border: 1.5px solid #a7f3d0; border-radius: 8px; padding: 6px 14px; display: inline-block; margin: 8px 0;">
+                            «${escapePdHtml(track.title)}»
+                        </div>
+                    </div>
+
+                    <div style="background: #ffffff; border: 1px solid #cbd5e1; border-right: 4px solid #116835; border-radius: 8px; padding: 10px 14px; margin: 12px 0; font-size: 12.5px;">
+                        <div style="font-weight: 800; color: #064e3b; margin-bottom: 5px;">الوحدات التكوينية المنجزة ضمن المسار:</div>
+                        <ul style="margin: 0; padding-right: 20px;">
+                            ${track.modules.map(m => `<li>${escapePdHtml(m.title)}</li>`).join('')}
+                        </ul>
+                        <div style="margin-top: 6px; font-weight: 800; color: #15803d;">نتيجة التقييم الذاتي: ${st.quizScore || 3} / ${track.quiz.length} (ناجح)</div>
+                    </div>
+
+                    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 22px; padding: 0 10px; font-size: 12px; font-weight: 800; color: #1e293b;">
+                        <div>
+                            <div>تاريخ الإصدار: ${escapePdHtml(todayStr)}</div>
+                            <div style="font-size: 11px; color: #64748b; margin-top: 3px;">رمز التحقق: ${escapePdHtml(verifyCode)}</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div>أمانة التكوين والتطوير المهني</div>
+                            <div style="color: #116835; margin-top: 4px;">النقابة الوطنية للمدرسين (نور)</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            openPrintableA4Window(`إفادة إتمام مسار ${track.title} — ${teacherName}`, certHtml);
+        }
+
+        function openNourAcademyModal() {
+            showAcademyTracksOverview();
+            document.getElementById('nour-academy-modal').style.display = 'block';
+        }
+
+        // -------------------------------------------------------------------------
+        // 3. مساعد نور الذكي للمدرس الموريتاني (يعمل فورياً حتى دون إنترنت)
+        // -------------------------------------------------------------------------
+        let nourAssistantMessages = [];
+
+        function getStoredNourAssistantChat() {
+            try {
+                const parsed = JSON.parse(localStorage.getItem(NA_CHAT_HISTORY_KEY) || '[]');
+                return Array.isArray(parsed) ? parsed : [];
+            } catch (e) {
+                return [];
+            }
+        }
+
+        function saveNourAssistantChat() {
+            try {
+                localStorage.setItem(NA_CHAT_HISTORY_KEY, JSON.stringify(nourAssistantMessages.slice(-24)));
+            } catch (e) {}
+        }
+
+        function generateNourAssistantReply(questionText) {
+            const q = String(questionText || '').trim();
+            const low = q.toLowerCase();
+
+            if (low.includes('تقرير') || low.includes('زيارة') || low.includes('حادثة')) {
+                return {
+                    title: 'نموذج جاهز لصياغة تقرير تربوي رسمي',
+                    plainText:
+`نموذج تقرير تربوي رسمي
+-------------------------
+التاريخ: ${new Date().toLocaleDateString('ar-MR')}
+المرسل: الأستاذ(ة) / المعلم(ة) ...........................
+المرسل إليه: السيد مدير المدرسة / السيد المفتش المقاطعي
+
+الموضوع: تقرير تربوي حول (وضعية القسم / سير الدروس / حادثة تربوية)
+
+1. تمهيد وسياق التقرير:
+أتشرف بأن أرفع إلى سيادتكم هذا التقرير التربوي حول وضعية القسم [ذكر المستوى والشعبة] خلال الفترة الممتدة من [التاريخ] إلى [التاريخ].
+
+2. المعطيات والملاحظات الميدانية:
+- نسبة تقدم تنفيذ البرنامج الدراسي: [مثال: 75%] وفق التوزيع الشهري المعتمد.
+- مستوى الانضباط والمواظبة: [منتظم / سُجّلت بعض حالات الغياب لدى ...].
+- مستوى التحصيل الدراسي: يظهر تفوق واضح لدى فئة من التلاميذ، مقابل حاجة فئة محددة للدعم في [المادة/المهارة].
+
+3. الإجراءات التربوية المتخذة:
+- تفعيل أنشطة دعم مركزة داخل القسم وتصحيح الأخطاء الشائعة.
+- التواصل مع أولياء الأمور المعنيين لمتابعة الواجبات المنزلية.
+
+4. المقترحات والتوصيات:
+- توفير الوسائل الديدكتيكية اللازمة ودعم حصص المعالجة للفئة المتعثرة.
+
+وتقبلوا فائق التقدير والاحترام.
+التوقيع: ...........................`,
+                    html: `
+                        <div style="font-weight: 800; color: var(--primary-dark); margin-bottom: 6px;"><i class="fas fa-file-signature" style="color: var(--gold);"></i> نموذج جاهز لصياغة تقرير تربوي رسمي</div>
+                        <p style="margin: 0 0 6px;">إليك صيغة إدارية وتربوية معتمدة يمكنك نسخها وتعبئة ما بين الأقواس مباشرة:</p>
+                        <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 7px; padding: 9px 11px; font-size: 12.2px;">
+                            <strong>الموضوع:</strong> تقرير تربوي حول وضعية القسم / سير الدروس<br>
+                            <strong>1. التمهيد:</strong> أتشرف بأن أرفع إلى سيادتكم هذا التقرير التربوي حول وضعية قسم [المستوى] خلال الفترة [من... إلى...].<br>
+                            <strong>2. الملاحظات الميدانية:</strong><br>
+                            • نسبة تقدم تنفيذ المنهاج وفق التوزيع المعتمد: [.....%].<br>
+                            • المواظبة والانضباط الصفي: [وصف موضوعي دقيق].<br>
+                            • نتائج التحصيل والتعثرات المرصودة في [المادة/المهارات الأساسية].<br>
+                            <strong>3. الإجراءات المتخذة:</strong> برمجة أنشطة دعم فوري، متابعة دفاتر التلاميذ، وإشعار أولياء الأمور.<br>
+                            <strong>4. التوصيات والمقترحات:</strong> دعم الوسائل التربوية وتخصيص حصص معالجة للفئة المتعثرة.<br>
+                            <strong>التوقيع:</strong> المدرس(ة) .........................
+                        </div>
+                    `
+                };
+            }
+
+            if (low.includes('شغب') || low.includes('انضباط') || low.includes('فوضى') || low.includes('مكتظ')) {
+                return {
+                    title: 'خطة عملية لمعالجة الشغب وضبط القسم تربوياً',
+                    plainText:
+`خطة عملية لمعالجة الشغب وضبط القسم
+--------------------------------------
+1. التدخل الفوري الهادئ (أثناء الحصة):
+- توقف لحظياً بصمت هادئ وتواصل بصري مباشر مع مصدر التشويش دون انفعال أو صراخ.
+- اقترب مكانياً من مقعد التلميذ أثناء مواصلة الشرح؛ فالحضور المكاني يوقف 80% من الإزعاج فوراً.
+- وجّه توجيهاً إيجابياً قصيراً يحدد السلوك المطلوب (مثال: «افتح دفترك وابدأ التمرين الأول»).
+
+2. خطة الاحتواء والتدرج التربوي:
+- تجنّب الجدال العلني أمام القسم حتى لا يكسب المشاغب تعاطفاً أو استعراضاً أمام زملائه.
+- أجرِ حواراً فردياً من دقيقتين بعد الحصة لفهم سبب السلوك (ملل، ضعف فهم، أو مشكلة أسرية).
+- كلّف التلميذ كثير الحركة بمسؤولية صفية منظمة (توزيع الأوراق، مسح السبورة، ضبط الوقت).
+
+3. عند التكرار والتوثيق الرسمي:
+- دوّن الوقائع بتواريخها في دفتر الملاحظات.
+- نسّق مع مدير المؤسسة واستدعِ ولي الأمر لعقد ميثاق التزام مشترك يحفظ هيبة القسم وحق بقية التلاميذ في التعلم.`,
+                    html: `
+                        <div style="font-weight: 800; color: var(--primary-dark); margin-bottom: 6px;"><i class="fas fa-users-cog" style="color: var(--gold);"></i> خطة عملية لمعالجة الشغب وضبط القسم تربوياً</div>
+                        <ol style="margin: 0; padding-right: 18px;">
+                            <li><strong>الاحتواء الفوري دون صراخ:</strong> استعمل الصمت القصير، التواصل البصري الحازم، والاقتراب المكاني من التلميذ أثناء الشرح.</li>
+                            <li><strong>منع الجدال العلني:</strong> لا تدخل في نقاش حاد أمام التلاميذ؛ وجّه تعليمة سلوكية مقتضبة وواصل الدرس لحماية زمن التعلم.</li>
+                            <li><strong>تحويل الطاقة السلبية إلى مسؤولية:</strong> كلّف التلميذ المشاغب بمهمة تنظيمية محددة داخل القسم وغيّر مكانه قرب الصفوف الأمامية.</li>
+                            <li><strong>الحوار الفردي والتوثيق:</strong> تحدث معه بهدوء بعد الحصة، وعند التكرار وثّق الحالات بالتاريخ ونسّق مع الإدارة وولي الأمر.</li>
+                        </ol>
+                    `
+                };
+            }
+
+            if (low.includes('دعم') || low.includes('متعثر') || low.includes('ضعيف') || low.includes('تأخر')) {
+                return {
+                    title: 'خطة دعم بيداغوجي منظمة للتلاميذ المتعثرين',
+                    plainText:
+`خطة دعم ومعالجة للتلاميذ المتعثرين (4 أسابيع)
+-----------------------------------------------
+1. التشخيص وتصنيف التعثرات (الأسبوع 1):
+- إجراء رائز تشخيصي قصير (15 دقيقة) في المهارات الأساسية (القراءة والفهم، أو العمليات الأربع).
+- تصنيف المتعثرين إلى مجموعات حاجة (مجموعة القراءة الأساسية، مجموعة الحساب والمنهجية).
+
+2. أنشطة المعالجة المركزة (الأسبوع 2 و3):
+- تخصيص 15 دقيقة في نهاية حصتين أسبوعياً لبطاقات دعم مبسطة ومتدرجة.
+- اعتماد نظام «التعلم بالأقران» عبر إشراك تلميذ متمكن بجانب زميله المتعثر في أنشطة موجهة.
+- التركيز على مهارة واحدة فقط في كل حصة مع تشجيع كل تحسن مهما كان بسيطاً.
+
+3. التقويم البعدي وإشراك الأسرة (الأسبوع 4):
+- إعادة تطبيق اختبار قصير مكافئ لقياس نسبة التحسن المحققة.
+- إرسال بطاقة متابعة موجزة لولي الأمر تتضمن واجباً يومياً خفيفاً (10 دقائق).`,
+                    html: `
+                        <div style="font-weight: 800; color: var(--primary-dark); margin-bottom: 6px;"><i class="fas fa-hands-helping" style="color: var(--gold);"></i> خطة دعم بيداغوجي منظمة للتلاميذ المتعثرين (4 أسابيع)</div>
+                        <ul style="margin: 0; padding-right: 18px;">
+                            <li><strong>الأسبوع 1 (التشخيص الدقيق):</strong> رائز قصير لتحديد نوع التعثر بالضبط (قراءة، إملاء، حساب، أو فهم تعليمات) وتوزيع التلاميذ حسب الحاجة.</li>
+                            <li><strong>الأسبوعان 2 و3 (المعالجة المتدرجة):</strong> بطاقات تمارين مبسطة تركز على مهارة واحدة في كل جلسة + تفعيل التعلم التعاوني بالأقران والتعزيز الإيجابي.</li>
+                            <li><strong>الأسبوع 4 (القياس والتتبع):</strong> تقويم بعدي لقياس الأثر وتوثيق التقدم مع إشعار ولي الأمر بخطوات المتابعة المنزلية.</li>
+                        </ul>
+                    `
+                };
+            }
+
+            if (low.includes('تشريع') || low.includes('قانون') || low.includes('حقوق') || low.includes('تحويل') || low.includes('إجازة') || low.includes('ترقية')) {
+                return {
+                    title: 'توضيح عملي حول التشريعات المدرسية وحقوق المدرس الموريتاني',
+                    plainText:
+`إرشادات التشريعات المدرسية وحقوق المدرس الموريتاني
+----------------------------------------------------
+1. الإطار القانوني العام:
+يخضع المدرسون الموريتانيون للنظام الأساسي العام للوظيفة العمومية والنظام الأساسي الخاص بعمال التعليم والمقررات الوزارية المنظمة للمسار المهني.
+
+2. أبرز الحقوق المكفولة:
+- الحق في الراتب المنتظم والعلاوات المهنية (علاوة البعد، الطبشور، التجهيز، وغيرها حسب الوضعية).
+- الحق في الترقية الدورية، التكوين المستمر، والرخص القانونية (السنوية، المرضية المبررة، والأمومة).
+- الحق في الحماية القانونية أثناء تأدية الوظيفة والتمثيل النقابي المشروع.
+
+3. قواعد إدارية ذهبية لحماية حقوقك:
+- احرص دائماً على احترام السلم الإداري (المدير ← المفتشية ← الإدارة الجهوية ← الوزارة).
+- لا تكتفِ بالمراجعة الشفهية؛ قدم طلبك مكتوباً واحتفظ بنسخة مؤشرة بتاريخ الإيداع.
+- راجع النصوص الكاملة في نافذة «النصوص القانونية والمقررات الرسمية» بالمنصة، واستعن ببوابة الشكاوى في «نور» عند أي تظلم مهني.`,
+                    html: `
+                        <div style="font-weight: 800; color: var(--primary-dark); margin-bottom: 6px;"><i class="fas fa-balance-scale" style="color: var(--gold);"></i> إرشادات التشريعات المدرسية وحقوق المدرس الموريتاني</div>
+                        <ul style="margin: 0; padding-right: 18px;">
+                            <li><strong>الحقوق الأساسية:</strong> الراتب والعلاوات المستحقة، الترقية وفق الأقدمية والكفاءة، الرخص القانونية المبررة، والحماية الوظيفية أثناء أداء المهنة.</li>
+                            <li><strong>قاعدة السلم الإداري:</strong> يُقدّم كل طلب (تحويل، رخصة، تظلم، تصحيح وضعية) مكتوباً عبر المدير ثم المفتشية فالإدارة الجهوية مع الاحتفاظ بنسخة مؤرخة.</li>
+                            <li><strong>المرجع المباشر بالمنصة:</strong> يمكنك الاطلاع على المراسيم والمقررات في زر <em>«النصوص القانونية والمقررات الرسمية»</em> أو رفع تظلم موثق عبر بوابة الشكاوى الرسمية.</li>
+                        </ul>
+                    `
+                };
+            }
+
+            if (low.includes('نشاط') || low.includes('أنشطة') || low.includes('تفاعلي') || low.includes('ألعاب') || low.includes('تحفيز')) {
+                return {
+                    title: '5 أنشطة تفاعلية سريعة قابلة للتطبيق دون إمكانات مكلفة',
+                    plainText:
+`5 أنشطة تفاعلية سريعة للقسم (بدون تكلفة إضافية)
+--------------------------------------------------
+1. استراتيجية «فكّر – زاوج – شارك»: دقيقة للتفكير الفردي، دقيقتان للنقاش مع الزميل، ثم عرض الإجابة.
+2. سباق الألواح الصامت: طرح سؤال سريع ورفع جميع الألواح دفعة واحدة عند الإشارة لرصد الفهم خلال ثوانٍ.
+3. المعلم الصغير: تكليف تلميذ بشرح خطوة من الحل لزملائه على السبورة لتعزيز الثقة والفهم العميق.
+4. بطاقات الخطأ المتعمد: كتابة جملة أو عملية بها خطأ واحد على السبورة وتحدي المجموعات لاكتشافه وتصحيحه.
+5. خريطة الدرس في 3 كلمات: طلب تلخيص الدرس في نهاية الحصة بـ 3 كلمات مفتاحية أو جملة جامعة.`,
+                    html: `
+                        <div style="font-weight: 800; color: var(--primary-dark); margin-bottom: 6px;"><i class="fas fa-lightbulb" style="color: var(--gold);"></i> 5 أنشطة تفاعلية سريعة قابلة للتطبيق بأبسط الوسائل</div>
+                        <ol style="margin: 0; padding-right: 18px;">
+                            <li><strong>فكّر – زاوج – شارك:</strong> دقيقة تفكير فردي، دقيقتان تشاور ثنائي، ثم مشاركة جماعية.</li>
+                            <li><strong>تحدي الألواح السريع:</strong> سؤال مباشر مع رفع الألواح معاً لقياس فهم القسم كله في 30 ثانية.</li>
+                            <li><strong>اكتشف الخطأ المقصود:</strong> كتابة حل أو جملة تحتوي خطأً واحداً لتنشيط الانتباه والتحليل.</li>
+                            <li><strong>المعلم الصغير:</strong> إشراك تلميذ في شرح مثال على السبورة لتقوية الثقة والتعبير.</li>
+                            <li><strong>بطاقة الخروج:</strong> تلخيص أهم فكرة تعلمها التلميذ اليوم في سطر واحد قبل نهاية الحصة.</li>
+                        </ol>
+                    `
+                };
+            }
+
+            if (low.includes('طلب') || low.includes('محضر') || low.includes('إداري') || low.includes('رسالة')) {
+                return {
+                    title: 'نموذج طلب إداري رسمي (عبر السلم الإداري)',
+                    plainText:
+`نموذج طلب إداري رسمي
+------------------------
+التاريخ: ${new Date().toLocaleDateString('ar-MR')}
+الاسم الكامل: ...........................
+الرتبة / الدليل المالي: ...........................
+المؤسسة / المقاطعة: ...........................
+
+إلى السيد: [المدير الجهوي / المفتش المقاطعي / مدير الموارد البشرية]
+عن طريق السلم الإداري
+
+الموضوع: طلب [تحويل / رخصة إدارية / شهادة عمل / تسوية وضعية]
+
+السيد المسؤول المحترم،
+أتشرف بأن أرفع إلى سيادتكم هذا الطلب راجياً منكم التكرم بالموافقة على [توضيح الطلب بدقة]، وذلك نظراً لـ [ذكر الأسباب والمبررات الموضوعية بإيجاز].
+
+وستجدون رفقة هذا الطلب الوثائق الثبوتية الداعمة له.
+
+وفي انتظار ردكم الإيجابي، تقبلوا فائق التقدير والاحترام.
+توقيع المعني: ...........................
+تأشيرة المدير / السلم الإداري: ...........................`,
+                    html: `
+                        <div style="font-weight: 800; color: var(--primary-dark); margin-bottom: 6px;"><i class="fas fa-envelope-open-text" style="color: var(--gold);"></i> نموذج طلب إداري رسمي عبر السلم الإداري</div>
+                        <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 7px; padding: 9px 11px; font-size: 12.2px;">
+                            <strong>المرسل:</strong> [الاسم الكامل] — الدليل المالي: [........] — المؤسسة: [........]<br>
+                            <strong>إلى السيد:</strong> [الجهة المختصة] — <em>عن طريق السلم الإداري</em><br>
+                            <strong>الموضوع:</strong> طلب [تحويل / رخصة / شهادة عمل / تسوية وضعية]<br><br>
+                            أتشرف بأن أرفع إلى سيادتكم هذا الطلب راجياً التكرم بالموافقة على [تفصيل الطلب]، نظراً لـ [المبررات الموضوعية]، ومرفقاً طيّه الوثائق المؤيدة.<br>
+                            وتقبلوا فائق التقدير والاحترام. — <strong>التوقيع:</strong> .................
+                        </div>
+                    `
+                };
+            }
+
+            // استجابة تربوية وإدارية منظمة لأي سؤال حر يكتبه المدرس
+            const safeQ = escapePdHtml(q);
+            return {
+                title: `استشارة تربوية وإدارية حول: ${q}`,
+                plainText:
+`استشارة تربوية وإدارية منظمة — مساعد نور الذكي
+-----------------------------------------------
+موضوع الاستفسار: ${q}
+
+1. التشخيص المهني الأولي:
+يتطلب التعامل مع موضوع «${q}» توازناً بين الإطار البيداغوجي المعتمد في المنهاج الموريتاني والظروف الواقعية للقسم والمؤسسة.
+
+2. خطة العمل المقترحة في 3 خطوات عملية:
+- الخطوة الأولى (التحضير والتنظيم): تحديد الهدف الدقيق من الإجراء وتوثيق المعطيات الأساسية بوضوح قبل التنفيذ.
+- الخطوة الثانية (التنفيذ الميداني المتدرج): اعتماد أسلوب تفاعلي واضح يراعي مستوى التلاميذ وتوزيع الزمن المتاح بكفاءة.
+- الخطوة الثالثة (التقويم والمتابعة): قياس الأثر بعد التطبيق، رصد الصعوبات المتبقية، وتكييف الخطوة التالية أو الاستعانة بالإدارة/المفتشية عند الحاجة.
+
+3. أدوات مساندة متاحة لك الآن في المنصة:
+- لإعداد جذاذة أو تمرين محلول حول هذا الموضوع: افتح «مولّد الجذاذات والتمارين الذكي».
+- لتطوير مهاراتك العملية في هذا المجال: تصفح مسارات «أكاديمية نور للتطوير المهني».`,
+                html: `
+                    <div style="font-weight: 800; color: var(--primary-dark); margin-bottom: 6px;"><i class="fas fa-graduation-cap" style="color: var(--gold);"></i> إجابة تربوية منظمة حول: «${safeQ}»</div>
+                    <ol style="margin: 0; padding-right: 18px;">
+                        <li><strong>التحليل التربوي:</strong> يتطلب التعامل الفعال مع «${safeQ}» تحديد الهدف الأساسي بوضوح ومواءمته مع مستوى التلاميذ وزمن الحصة وإمكانات المؤسسة.</li>
+                        <li><strong>خطوات التنفيذ العملية:</strong>
+                            <br>• ابدأ بتشخيص سريع للوضعية الحالية وتحديد الأولوية الأهم.
+                            <br>• طبّق خطوات متدرجة ومبسطة مع إشراك التلاميذ وتوثيق الملاحظات.
+                            <br>• اختم بتقييم قصير للتأكد من تحقق النتيجة وتحديد خطوة الدعم القادمة.
+                        </li>
+                        <li><strong>توصية مهنية:</strong> يمكنك تحويل هذه الفكرة فوراً إلى وثيقة مطبوعة عبر <em>«مولّد الجذاذات والتمارين الذكي»</em> أو نسخ هذه الخطة وطباعتها مباشرة من الأزرار أسفله.</li>
+                    </ol>
+                `
+            };
+        }
+
+        function renderNourAssistantMessages() {
+            const stream = document.getElementById('na-chat-stream');
+            if (!stream) return;
+
+            if (nourAssistantMessages.length === 0) {
+                nourAssistantMessages = [{
+                    id: 'na_welcome',
+                    role: 'bot',
+                    title: 'مرحباً بك في مساعد نور الذكي',
+                    plainText: 'مرحباً بك أستاذنا الفاضل في مساعد نور الذكي! اختر أحد الاقتراحات السريعة بالأعلى أو اكتب سؤالك التربوي أو الإداري وسأجهز لك إجابة منظمة جاهزة للنسخ أو الطباعة A4.',
+                    html: `
+                        <div style="font-weight: 800; color: var(--primary-dark); margin-bottom: 4px;"><i class="fas fa-hand-sparkles" style="color: var(--gold);"></i> مرحباً بك أستاذنا الفاضل في «مساعد نور الذكي»</div>
+                        <div>اختر أحد الاقتراحات السريعة بالأعلى أو اكتب سؤالك التربوي أو الإداري في مربع الكتابة، وسأُعدّ لك إجابة منظمة وعملية قابلة للنسخ أو الطباعة الفورية (حتى بدون إنترنت).</div>
+                    `
+                }];
+            }
+
+            stream.innerHTML = nourAssistantMessages.map((m, idx) => {
+                if (m.role === 'user') {
+                    return `<div class="na-msg user"><i class="fas fa-user" style="margin-left: 5px; color: var(--gold);"></i>${escapePdHtml(m.text)}</div>`;
+                }
+                return `
+                    <div class="na-msg bot">
+                        ${m.html}
+                        ${idx > 0 ? `
+                            <div class="na-msg-actions">
+                                <button type="button" class="btn" id="na-copy-btn-${idx}" style="background: #116835; padding: 5px 10px; font-size: 11px;" onclick="copyNourAssistantReply(${idx})">
+                                    <i class="fas fa-copy"></i> نسخ الإجابة
+                                </button>
+                                <button type="button" class="btn" style="background: #0284c7; padding: 5px 10px; font-size: 11px;" onclick="printNourAssistantReply(${idx})">
+                                    <i class="fas fa-print"></i> طباعة فورية A4
+                                </button>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            }).join('');
+
+            stream.scrollTop = stream.scrollHeight;
+        }
+
+        function sendNourAssistantQuickPrompt(promptText) {
+            const input = document.getElementById('na-user-input');
+            if (input) input.value = promptText;
+            sendNourAssistantMessage();
+        }
+
+        function sendNourAssistantMessage() {
+            const input = document.getElementById('na-user-input');
+            if (!input) return;
+            const text = input.value.trim();
+            if (!text) return;
+
+            nourAssistantMessages.push({ id: 'u_' + Date.now(), role: 'user', text });
+            const reply = generateNourAssistantReply(text);
+            nourAssistantMessages.push({
+                id: 'b_' + Date.now(),
+                role: 'bot',
+                title: reply.title,
+                plainText: reply.plainText,
+                html: reply.html
+            });
+
+            input.value = '';
+            saveNourAssistantChat();
+            renderNourAssistantMessages();
+        }
+
+        function copyNourAssistantReply(msgIdx) {
+            const msg = nourAssistantMessages[msgIdx];
+            if (!msg) return;
+            const textToCopy = msg.plainText || '';
+            const btn = document.getElementById(`na-copy-btn-${msgIdx}`);
+            const markCopied = () => {
+                if (btn) {
+                    const prev = btn.innerHTML;
+                    btn.innerHTML = '<i class="fas fa-check"></i> تم النسخ ✓';
+                    setTimeout(() => { btn.innerHTML = prev; }, 1800);
+                }
+            };
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(textToCopy).then(markCopied).catch(() => {
+                    const ta = document.createElement('textarea');
+                    ta.value = textToCopy;
+                    document.body.appendChild(ta);
+                    ta.select();
+                    try { document.execCommand('copy'); markCopied(); } catch (e) {}
+                    document.body.removeChild(ta);
+                });
+            } else {
+                const ta = document.createElement('textarea');
+                ta.value = textToCopy;
+                document.body.appendChild(ta);
+                ta.select();
+                try { document.execCommand('copy'); markCopied(); } catch (e) {}
+                document.body.removeChild(ta);
+            }
+        }
+
+        function printNourAssistantReply(msgIdx) {
+            const msg = nourAssistantMessages[msgIdx];
+            if (!msg) return;
+            const docBody = `
+                ${buildOfficialPdPrintHeader('ابتدائية')}
+                <div style="text-align: center; background: #ecfdf5; border: 1.5px solid #116835; border-radius: 8px; padding: 8px 12px; margin-bottom: 12px;">
+                    <div style="font-size: 15px; font-weight: 900; color: #064e3b;">${escapePdHtml(msg.title || 'مذكرة من مساعد نور الذكي')}</div>
+                </div>
+                <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 14px; font-size: 13.5px; line-height: 1.9;">
+                    ${msg.html}
+                </div>
+            `;
+            openPrintableA4Window(msg.title || 'إجابة مساعد نور الذكي', docBody);
+        }
+
+        function resetNourAssistantChat() {
+            nourAssistantMessages = [];
+            try { localStorage.removeItem(NA_CHAT_HISTORY_KEY); } catch (e) {}
+            renderNourAssistantMessages();
+        }
+
+        function openNourAssistantModal() {
+            nourAssistantMessages = getStoredNourAssistantChat();
+            renderNourAssistantMessages();
+            document.getElementById('nour-assistant-modal').style.display = 'block';
+        }
 
         function updateConnectionStatusUI() {
             const bar = document.getElementById('connection-status-bar');
