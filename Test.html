@@ -2992,10 +2992,30 @@
                 <div id="pg-ref-guide-note" style="display: none; margin-top: 6px; font-size: 11px; color: #065f46; font-weight: 700;"></div>
             </div>
 
-            <!-- حقل اختياري لمقتطف أو محاور من الكتاب المدرسي -->
+            <!-- حقل اختياري لإرفاق أو تصوير صفحة الدرس من الكتاب المدرسي -->
             <div class="pg-field-group" style="margin-bottom: 12px;">
-                <label for="pg-book-excerpt"><i class="fas fa-highlighter"></i> مقتطف أو محاور من الكتاب المدرسي (اختياري):</label>
-                <textarea id="pg-book-excerpt" rows="2" placeholder="اتركه فارغاً للتوليد المعتاد، أو الصق هنا محاور الدرس أو فقرة من الكتاب المدرسي المعتمد..." style="width: 100%; padding: 9px 11px; border: 1.5px solid #cbd5e1; border-radius: 9px; font-size: 12.5px; font-weight: 600; background: #ffffff; color: var(--text-dark); outline: none; font-family: inherit; resize: vertical;"></textarea>
+                <label for="pg-lesson-image-input"><i class="fas fa-camera"></i> 📸 إرفاق أو تصوير صفحة الدرس من الكتاب المدرسي (اختياري):</label>
+                <div style="background: #f8fafc; border: 1.5px dashed #94a3b8; border-radius: 10px; padding: 10px 12px;">
+                    <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                        <label for="pg-lesson-image-input" class="btn" style="background: #ffffff; color: var(--primary-dark); border: 1.5px solid #116835; padding: 7px 12px; font-size: 12px; font-weight: 800; cursor: pointer; margin: 0; display: inline-flex; align-items: center; gap: 6px;">
+                            <i class="fas fa-camera-retro" style="color: var(--gold);"></i> تصوير / اختيار صورة الصفحة
+                        </label>
+                        <input type="file" id="pg-lesson-image-input" accept="image/*" onchange="handlePedagogicalLessonImageChange(this)" style="display: none;">
+                        <span id="pg-lesson-image-status" style="font-size: 11.5px; color: #64748b; font-weight: 600;">التقط صورة بالكاميرا أو اختر لقطة شاشة للدرس ليقرأها الذكاء التربوي حرفياً (تُضغط تلقائياً).</span>
+                    </div>
+                    <div id="pg-lesson-image-preview-wrap" style="display: none; margin-top: 10px; padding-top: 10px; border-top: 1px solid #e2e8f0; align-items: center; gap: 12px; flex-wrap: wrap;">
+                        <img id="pg-lesson-image-thumb" src="" alt="معاينة صفحة الدرس المرفقة" style="width: 74px; height: 92px; object-fit: cover; border-radius: 8px; border: 1.5px solid #116835; background: #ffffff; box-shadow: 0 2px 6px rgba(0,0,0,0.08);">
+                        <div style="flex: 1; min-width: 170px; text-align: right;">
+                            <div style="font-size: 12px; font-weight: 800; color: #065f46; margin-bottom: 3px;">
+                                <i class="fas fa-check-circle" style="color: #116835; margin-left: 4px;"></i>تم تجهيز صورة صفحة الدرس للإرسال
+                            </div>
+                            <div id="pg-lesson-image-meta" style="font-size: 11px; color: #475569; font-weight: 600; margin-bottom: 7px;"></div>
+                            <button type="button" id="btn-pg-remove-lesson-image" class="btn" onclick="clearPedagogicalLessonImage()" style="background: #fef2f2; color: #b91c1c; border: 1px solid #fca5a5; padding: 5px 10px; font-size: 11.5px; font-weight: 800;">
+                                <i class="fas fa-trash-alt" style="margin-left: 4px;"></i>حذف الصورة
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <button type="button" id="btn-pg-generate" class="btn btn-block" style="background: linear-gradient(135deg, #116835, #08331a); border: 1.5px solid var(--gold); padding: 12px;" onclick="generatePedagogicalDocument()">
@@ -8293,7 +8313,7 @@
             return '';
         }
 
-        async function callNourAiEdgeFunction({ mode, prompt, systemInstruction, metadata = {}, history = [], timeoutMs = 90000 }) {
+        async function callNourAiEdgeFunction({ mode, prompt, systemInstruction, metadata = {}, history = [], timeoutMs = 95000 }) {
             if (!isNourOnlineNow()) {
                 return { ok: false, reason: 'offline', error: 'لا يوجد اتصال بالإنترنت حالياً.' };
             }
@@ -8317,6 +8337,31 @@
                 payload.history = history;
             }
 
+            const extractServerErrorDetail = (parsedObj, rawText) => {
+                if (parsedObj && typeof parsedObj === 'object') {
+                    const parts = [];
+                    const primary = parsedObj.error;
+                    if (typeof primary === 'string' && primary.trim()) {
+                        parts.push(primary.trim());
+                    } else if (primary && typeof primary === 'object') {
+                        const nested = primary.message || primary.detail || primary.details || JSON.stringify(primary);
+                        if (nested) parts.push(String(nested).trim());
+                    }
+                    if (typeof parsedObj.message === 'string' && parsedObj.message.trim() && !parts.includes(parsedObj.message.trim())) {
+                        parts.push(parsedObj.message.trim());
+                    }
+                    const extra = parsedObj.details || parsedObj.detail || parsedObj.hint;
+                    if (typeof extra === 'string' && extra.trim() && !parts.includes(extra.trim())) {
+                        parts.push(extra.trim());
+                    }
+                    if (parts.length > 0) return parts.join(' — ');
+                }
+                if (typeof rawText === 'string' && rawText.trim()) {
+                    return rawText.trim().replace(/\s+/g, ' ').slice(0, 260);
+                }
+                return '';
+            };
+
             try {
                 const res = await fetch(endpoint, {
                     method: 'POST',
@@ -8338,23 +8383,33 @@
                 }
 
                 if (!res.ok) {
-                    const errMsg = (parsed && typeof parsed === 'object' && (parsed.error || parsed.message))
-                        ? String(parsed.error || parsed.message)
+                    const serverDetail = extractServerErrorDetail(parsed, rawBody);
+                    const errMsg = serverDetail
+                        ? `خطأ الخادم (${res.status}): ${serverDetail}`
                         : `خطأ من الخادم (${res.status})`;
-                    return { ok: false, reason: 'http_error', status: res.status, error: errMsg };
+                    return { ok: false, reason: 'http_error', status: res.status, error: errMsg, raw: parsed };
                 }
 
                 const extracted = extractNourAiTextFromResponse(parsed);
                 if (!extracted) {
-                    return { ok: false, reason: 'empty', error: 'لم يُرجع الخادم نصاً معرفياً.' };
+                    const serverDetail = extractServerErrorDetail(parsed, '');
+                    return {
+                        ok: false,
+                        reason: 'empty',
+                        error: serverDetail ? `استجابة الخادم: ${serverDetail}` : 'لم يُرجع الخادم نصاً معرفياً.',
+                        raw: parsed
+                    };
                 }
                 return { ok: true, text: extracted, raw: parsed };
             } catch (err) {
                 const isAbort = err && (err.name === 'AbortError' || /abort/i.test(String(err.message || '')));
+                const netDetail = err && err.message ? String(err.message).trim() : '';
                 return {
                     ok: false,
                     reason: isAbort ? 'timeout' : 'network_error',
-                    error: isAbort ? 'انتهت مهلة الاتصال بالخادم.' : 'تعذّر الوصول إلى خادم نور الذكي.'
+                    error: isAbort
+                        ? `انتهت مهلة الاتصال بالخادم (${Math.round(timeoutMs / 1000)} ثانية).`
+                        : (netDetail ? `تعذّر الوصول إلى خادم نور الذكي (${netDetail}).` : 'تعذّر الوصول إلى خادم نور الذكي.')
                 };
             } finally {
                 if (timer) clearTimeout(timer);
@@ -8931,6 +8986,8 @@
 
         function normalizeArForBookMatch(str) {
             return String(str || '')
+                .replace(/[٠-٩]/g, d => String(d.charCodeAt(0) - 0x0660))
+                .replace(/[۰-۹]/g, d => String(d.charCodeAt(0) - 0x06F0))
                 .replace(/[\u064B-\u065F\u0670\u0640]/g, '')
                 .replace(/[أإآٱ]/g, 'ا')
                 .replace(/ة/g, 'ه')
@@ -8939,6 +8996,32 @@
                 .toLowerCase()
                 .replace(/\s+/g, ' ')
                 .trim();
+        }
+
+        function extractBookTitleYearNumbers(normText) {
+            const years = new Set();
+            const text = String(normText || '');
+            if (!text) return years;
+
+            const digitRegex = /(?:^|[^\d])([1-7])(?:\s*(?:af|as|اساسي|ابتداءي|ابتدائي|اعدادي|ثانوي))?(?=$|[^\d])/gi;
+            let m;
+            while ((m = digitRegex.exec(text)) !== null) {
+                if (m[1]) years.add(m[1]);
+            }
+
+            const ordinalPatterns = [
+                { num: '1', re: /(?:^|[\s\-_/().,،])(?:السنه\s+|سنه\s+|الصف\s+|صف\s+)?(?:الاولي|اولي|الاول)(?=$|[\s\-_/().,،])/ },
+                { num: '2', re: /(?:^|[\s\-_/().,،])(?:السنه\s+|سنه\s+|الصف\s+|صف\s+)?(?:الثانيه|ثانيه|الثاني)(?=$|[\s\-_/().,،])/ },
+                { num: '3', re: /(?:^|[\s\-_/().,،])(?:السنه\s+|سنه\s+|الصف\s+|صف\s+)?(?:الثالثه|ثالثه|الثالث)(?=$|[\s\-_/().,،])/ },
+                { num: '4', re: /(?:^|[\s\-_/().,،])(?:السنه\s+|سنه\s+|الصف\s+|صف\s+)?(?:الرابعه|رابعه|الرابع|بريفه|bepc)(?=$|[\s\-_/().,،])/ },
+                { num: '5', re: /(?:^|[\s\-_/().,،])(?:السنه\s+|سنه\s+|الصف\s+|صف\s+)?(?:الخامسه|خامسه|الخامس)(?=$|[\s\-_/().,،])/ },
+                { num: '6', re: /(?:^|[\s\-_/().,،])(?:السنه\s+|سنه\s+|الصف\s+|صف\s+)?(?:السادسه|سادسه|السادس|كونكور)(?=$|[\s\-_/().,،])/ },
+                { num: '7', re: /(?:^|[\s\-_/().,،])(?:السنه\s+|سنه\s+|الصف\s+|صف\s+)?(?:السابعه|سابعه|السابع|بكالوريا|باك|bac)(?=$|[\s\-_/().,،])/ }
+            ];
+            for (const item of ordinalPatterns) {
+                if (item.re.test(text)) years.add(item.num);
+            }
+            return years;
         }
 
         function getPedagogicalLibraryBooksPool() {
@@ -8978,8 +9061,9 @@
 
         function extractLevelInfoForBooks(stage, level) {
             const n = normalizeArForBookMatch(level);
-            const numMatch = n.match(/([1-7])\s*(?:af|as)/i) || n.match(/\b([1-7])\b/);
-            let yearNum = numMatch ? numMatch[1] : '';
+            const extractedYears = extractBookTitleYearNumbers(n);
+            const numMatch = n.match(/([1-7])\s*(?:af|as)/i) || n.match(/(?:^|[^\d])([1-7])(?=$|[^\d])/);
+            let yearNum = numMatch ? numMatch[1] : (extractedYears.size > 0 ? Array.from(extractedYears)[0] : '');
             if (!yearNum) {
                 if (/اولي|الاولي|اول/.test(n)) yearNum = '1';
                 else if (/ثانيه|الثانيه/.test(n)) yearNum = '2';
@@ -8990,13 +9074,13 @@
                 else if (/سابعه|السابعه|بكالوريا|باك/.test(n)) yearNum = '7';
             }
             const yearMap = {
-                '1': ['الاولي', 'اولي', '1af', '1as', 'السنه الاولي', 'سنه اولي', 'الاول'],
-                '2': ['الثانيه', 'ثانيه', '2af', '2as', 'السنه الثانيه', 'سنه ثانيه'],
-                '3': ['الثالثه', 'ثالثه', '3af', '3as', 'السنه الثالثه', 'سنه ثالثه'],
-                '4': ['الرابعه', 'رابعه', '4af', '4as', 'السنه الرابعه', 'سنه رابعه', 'بريفه', 'bepc'],
-                '5': ['الخامسه', 'خامسه', '5af', '5as', 'السنه الخامسه', 'سنه خامسه'],
-                '6': ['السادسه', 'سادسه', '6af', '6as', 'السنه السادسه', 'سنه سادسه', 'كونكور'],
-                '7': ['السابعه', 'سابعه', '7as', 'السنه السابعه', 'بكالوريا', 'باك', 'bac']
+                '1': ['الاولي', 'اولي', '1af', '1as', 'السنه الاولي', 'سنه اولي', 'السنه 1', 'سنه 1', 'الاول'],
+                '2': ['الثانيه', 'ثانيه', '2af', '2as', 'السنه الثانيه', 'سنه ثانيه', 'السنه 2', 'سنه 2'],
+                '3': ['الثالثه', 'ثالثه', '3af', '3as', 'السنه الثالثه', 'سنه ثالثه', 'السنه 3', 'سنه 3'],
+                '4': ['الرابعه', 'رابعه', '4af', '4as', 'السنه الرابعه', 'سنه رابعه', 'السنه 4', 'سنه 4', 'بريفه', 'bepc'],
+                '5': ['الخامسه', 'خامسه', '5af', '5as', 'السنه الخامسه', 'سنه خامسه', 'السنه 5', 'سنه 5'],
+                '6': ['السادسه', 'سادسه', '6af', '6as', 'السنه السادسه', 'سنه سادسه', 'السنه 6', 'سنه 6', 'كونكور'],
+                '7': ['السابعه', 'سابعه', '7as', 'السنه السابعه', 'سنه سابعه', 'السنه 7', 'سنه 7', 'بكالوريا', 'باك', 'bac']
             };
             const stageCatMap = {
                 'ابتدائية': 'التعليم الأساسي',
@@ -9031,6 +9115,7 @@
                 let subjectMatched = false;
                 let levelMatched = false;
                 let wrongStage = false;
+                let wrongYear = false;
 
                 if (book.category === levelInfo.expectedCategory) {
                     score += 35;
@@ -9051,30 +9136,26 @@
                 }
 
                 if (levelInfo.yearNum) {
-                    if (levelInfo.yearTokens.some(tok => normTitle.includes(tok))) {
+                    const titleYearNums = extractBookTitleYearNumbers(normTitle);
+                    const hasExactYear = titleYearNums.has(levelInfo.yearNum) || levelInfo.yearTokens.some(tok => normTitle.includes(tok));
+                    if (hasExactYear) {
                         levelMatched = true;
-                        score += 35;
-                    } else {
-                        const otherYearNums = ['1', '2', '3', '4', '5', '6', '7'].filter(y => y !== levelInfo.yearNum);
-                        const otherWords = {
-                            '1': ['الاولي', 'اولي', '1af', '1as'],
-                            '2': ['الثانيه', 'ثانيه', '2af', '2as'],
-                            '3': ['الثالثه', 'ثالثه', '3af', '3as'],
-                            '4': ['الرابعه', 'رابعه', '4af', '4as'],
-                            '5': ['الخامسه', 'خامسه', '5af', '5as'],
-                            '6': ['السادسه', 'سادسه', '6af', '6as'],
-                            '7': ['السابعه', 'سابعه', '7as', 'بكالوريا']
-                        };
-                        const mentionsDifferentYear = otherYearNums.some(y => (otherWords[y] || []).some(w => normTitle.includes(w)));
-                        if (mentionsDifferentYear) score -= 22;
+                        score += 50;
+                    } else if (titleYearNums.size > 0) {
+                        wrongYear = true;
+                        score -= 70;
                     }
                 }
 
-                const isAutoMatch = !wrongStage && subjectMatched && score >= 55;
-                return { book, score, isGuide, subjectMatched, levelMatched, isAutoMatch };
+                const isAutoMatch = !wrongStage && !wrongYear && subjectMatched && score >= 55;
+                return { book, score, isGuide, subjectMatched, levelMatched, wrongYear, isAutoMatch };
             });
 
-            scored.sort((a, b) => b.score - a.score);
+            scored.sort((a, b) => {
+                if (a.isAutoMatch !== b.isAutoMatch) return a.isAutoMatch ? -1 : 1;
+                if (a.levelMatched !== b.levelMatched) return a.levelMatched ? -1 : 1;
+                return b.score - a.score;
+            });
             const matchedEntries = scored.filter(s => s.isAutoMatch);
             const primaryEntry = matchedEntries.find(s => !s.isGuide) || matchedEntries[0] || null;
             const guideEntry = matchedEntries.find(s => s.isGuide && (!primaryEntry || s.book._refKey !== primaryEntry.book._refKey)) || null;
@@ -9196,9 +9277,126 @@
             updatePedagogicalRefBookVisuals(selectedBook, companionGuide, isAuto);
         }
 
+        let pgAttachedLessonImage = null;
+
+        function compressLessonImageFileToJpeg(file, maxDimension = 1280, quality = 0.8) {
+            return new Promise((resolve, reject) => {
+                if (!file || (file.type && !file.type.startsWith('image/'))) {
+                    reject(new Error('يرجى اختيار ملف صورة صالح فقط (JPG / PNG / WEBP).'));
+                    return;
+                }
+                const reader = new FileReader();
+                reader.onerror = () => reject(new Error('تعذّرت قراءة ملف الصورة المختار.'));
+                reader.onload = () => {
+                    const img = new Image();
+                    img.onerror = () => reject(new Error('تعذّر تحميل الصورة للمعالجة والضغط.'));
+                    img.onload = () => {
+                        try {
+                            const origW = img.naturalWidth || img.width || 1;
+                            const origH = img.naturalHeight || img.height || 1;
+                            let targetW = origW;
+                            let targetH = origH;
+                            if (origW > maxDimension || origH > maxDimension) {
+                                const scale = Math.min(maxDimension / origW, maxDimension / origH);
+                                targetW = Math.max(1, Math.round(origW * scale));
+                                targetH = Math.max(1, Math.round(origH * scale));
+                            }
+                            const canvas = document.createElement('canvas');
+                            canvas.width = targetW;
+                            canvas.height = targetH;
+                            const ctx = canvas.getContext('2d');
+                            if (!ctx) {
+                                reject(new Error('المتصفح لا يدعم ضغط الصور عبر Canvas.'));
+                                return;
+                            }
+                            ctx.fillStyle = '#ffffff';
+                            ctx.fillRect(0, 0, targetW, targetH);
+                            ctx.drawImage(img, 0, 0, targetW, targetH);
+                            const dataUrl = canvas.toDataURL('image/jpeg', quality);
+                            const base64 = dataUrl.replace(/^data:image\/jpeg;base64,/, '');
+                            if (!base64) {
+                                reject(new Error('فشل تحويل الصورة إلى صيغة JPEG.'));
+                                return;
+                            }
+                            const sizeKB = Math.max(1, Math.round((base64.length * 3) / 4 / 1024));
+                            resolve({
+                                base64,
+                                mimeType: 'image/jpeg',
+                                dataUrl,
+                                width: targetW,
+                                height: targetH,
+                                sizeKB,
+                                name: file.name || 'lesson-page.jpg'
+                            });
+                        } catch (err) {
+                            reject(err);
+                        }
+                    };
+                    img.src = reader.result;
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        async function handlePedagogicalLessonImageChange(inputEl) {
+            const statusEl = document.getElementById('pg-lesson-image-status');
+            const previewWrap = document.getElementById('pg-lesson-image-preview-wrap');
+            const thumbEl = document.getElementById('pg-lesson-image-thumb');
+            const metaEl = document.getElementById('pg-lesson-image-meta');
+
+            const file = inputEl && inputEl.files && inputEl.files[0] ? inputEl.files[0] : null;
+            if (!file) {
+                return;
+            }
+
+            if (statusEl) {
+                statusEl.style.color = '#065f46';
+                statusEl.textContent = 'جارٍ ضغط وتصغير صورة صفحة الدرس تلقائياً...';
+            }
+
+            try {
+                const compressed = await compressLessonImageFileToJpeg(file, 1280, 0.8);
+                pgAttachedLessonImage = compressed;
+                if (thumbEl) thumbEl.src = compressed.dataUrl;
+                if (metaEl) {
+                    metaEl.textContent = `${compressed.width}×${compressed.height} بكسل • JPEG مضغوط (${compressed.sizeKB} كيلوبايت)`;
+                }
+                if (previewWrap) previewWrap.style.display = 'flex';
+                if (statusEl) {
+                    statusEl.style.color = '#065f46';
+                    statusEl.textContent = 'تم إرفاق وضغط صورة صفحة الدرس بنجاح.';
+                }
+            } catch (err) {
+                pgAttachedLessonImage = null;
+                if (inputEl) inputEl.value = '';
+                if (previewWrap) previewWrap.style.display = 'none';
+                if (thumbEl) thumbEl.src = '';
+                if (statusEl) {
+                    statusEl.style.color = '#b91c1c';
+                    statusEl.textContent = (err && err.message) ? err.message : 'تعذّر معالجة الصورة المختارة.';
+                }
+            }
+        }
+
+        function clearPedagogicalLessonImage() {
+            pgAttachedLessonImage = null;
+            const inputEl = document.getElementById('pg-lesson-image-input');
+            const statusEl = document.getElementById('pg-lesson-image-status');
+            const previewWrap = document.getElementById('pg-lesson-image-preview-wrap');
+            const thumbEl = document.getElementById('pg-lesson-image-thumb');
+            const metaEl = document.getElementById('pg-lesson-image-meta');
+            if (inputEl) inputEl.value = '';
+            if (thumbEl) thumbEl.src = '';
+            if (metaEl) metaEl.textContent = '';
+            if (previewWrap) previewWrap.style.display = 'none';
+            if (statusEl) {
+                statusEl.style.color = '#64748b';
+                statusEl.textContent = 'التقط صورة بالكاميرا أو اختر لقطة شاشة للدرس ليقرأها الذكاء التربوي حرفياً (تُضغط تلقائياً).';
+            }
+        }
+
         function getActivePedagogicalBookReference() {
             const selectEl = document.getElementById('pg-ref-book-select');
-            const excerptEl = document.getElementById('pg-book-excerpt');
             const selectedKey = selectEl ? selectEl.value : '';
             const primaryBook = selectedKey
                 ? pgMatchedBooksState.allBooks.find(b => b._refKey === selectedKey) || null
@@ -9224,7 +9422,7 @@
                 guideBook,
                 referenceLabel,
                 bookGuidance: guidanceParts.join('\n'),
-                excerpt: excerptEl ? excerptEl.value.trim() : ''
+                attachedImage: (pgAttachedLessonImage && pgAttachedLessonImage.base64) ? pgAttachedLessonImage : null
             };
         }
 
@@ -10291,16 +10489,22 @@
             const resultSec = document.getElementById('pg-result-section');
             const genBtn = document.getElementById('btn-pg-generate');
             const prevBtnHtml = genBtn ? genBtn.innerHTML : '';
+            const hasAttachedImage = Boolean(refContext.attachedImage && refContext.attachedImage.base64);
+            const imgTag = hasAttachedImage
+                ? `${refContext.attachedImage.base64.length}_${refContext.attachedImage.base64.slice(0, 20)}_${refContext.attachedImage.base64.slice(-16)}`
+                : '';
             const baseCacheKey = makePgAiCacheKey(stage, level, subject, docType, lessonTitle);
-            const cacheKey = (refContext.referenceLabel || refContext.excerpt)
-                ? `${baseCacheKey}||ref:${refContext.referenceLabel.slice(0, 60)}||ex:${refContext.excerpt.slice(0, 60)}`
+            const cacheKey = (refContext.referenceLabel || hasAttachedImage)
+                ? `${baseCacheKey}||ref:${refContext.referenceLabel.slice(0, 60)}||img:${imgTag}`
                 : baseCacheKey;
             const isOnline = isNourOnlineNow();
 
             if (isOnline) {
                 if (genBtn) {
                     genBtn.disabled = true;
-                    genBtn.innerHTML = '<i class="fas fa-spinner fa-spin" style="color: var(--gold);"></i> جارٍ التوليد الذكي للمحتوى العلمي عبر خادم نور...';
+                    genBtn.innerHTML = hasAttachedImage
+                        ? '<i class="fas fa-spinner fa-spin" style="color: var(--gold);"></i> جارٍ قراءة صورة صفحة الكتاب وتوليد الجذاذة عبر خادم نور...'
+                        : '<i class="fas fa-spinner fa-spin" style="color: var(--gold);"></i> جارٍ التوليد الذكي للمحتوى العلمي عبر خادم نور...';
                 }
                 if (preview && resultSec) {
                     resultSec.style.display = 'block';
@@ -10309,14 +10513,16 @@
                         <div style="text-align: center; padding: 28px 16px; background: #f0fdf4; border: 1.5px dashed #116835; border-radius: 10px; color: #064e3b;">
                             <div style="font-size: 26px; color: #116835; margin-bottom: 10px;"><i class="fas fa-spinner fa-spin"></i></div>
                             <div style="font-size: 14px; font-weight: 900; margin-bottom: 5px;">جارٍ إعداد «${escapePdHtml(docType)}» لدرس «${escapePdHtml(lessonTitle)}»...</div>
-                            <div style="font-size: 12px; color: #475569;">يتم الآن توليد مادة علمية ومعرفية وبيداغوجية حقيقية مطابقة تماماً لعنوان الدرس والمستوى (${escapePdHtml(level)} — ${escapePdHtml(subject)}).</div>
+                            <div style="font-size: 12px; color: #475569;">${hasAttachedImage ? 'يتم الآن تحليل صورة صفحة الكتاب المدرسي المرفقة واستخلاص نصها وأمثلتها وتمارينها حرفياً في إعداد الجذاذة والخلاصة.' : `يتم الآن توليد مادة علمية ومعرفية وبيداغوجية حقيقية مطابقة تماماً لعنوان الدرس والمستوى (${escapePdHtml(level)} — ${escapePdHtml(subject)}).`}</div>
                         </div>
                     `;
                     if (typeof resultSec.scrollIntoView === 'function') {
                         resultSec.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
                     }
                 }
-                setPgFeedback('success', 'جارٍ الاتصال بخادم نور الذكي لتوليد المحتوى العلمي والتربوي...');
+                setPgFeedback('success', hasAttachedImage
+                    ? 'جارٍ إرسال صورة صفحة الكتاب إلى خادم نور الذكي لقراءتها وإعداد النموذج التربوي...'
+                    : 'جارٍ الاتصال بخادم نور الذكي لتوليد المحتوى العلمي والتربوي...');
 
                 const { systemInstruction, prompt } = buildPedagogicalAiRequest(stage, level, subject, docType, lessonTitle, cfg);
                 let finalPrompt = prompt;
@@ -10326,8 +10532,23 @@
                         finalPrompt += `\nفهرس الدروس والتوجيهات المنهجية المرفقة مع الكتاب المرجعي:\n${refContext.bookGuidance}`;
                     }
                 }
-                if (refContext.excerpt) {
-                    finalPrompt += `\nمقتطف أو محاور من الكتاب المدرسي أرفقها المدرس:\n${refContext.excerpt}`;
+                if (hasAttachedImage) {
+                    finalPrompt += '\n\nملاحظة مرجعية إلزامية: أرفق المدرس صورة لصفحة الدرس من الكتاب المدرسي. اقرأ النص والأمثلة والتمارين الموجودة في صورة صفحة الكتاب المرفقة بدقة، والتزم بها حرفياً في إعداد الجذاذة والخلاصة الحقيقية للدرس.';
+                }
+
+                const requestMetadata = {
+                    stage,
+                    stageLabel: cfg.label,
+                    level,
+                    subject,
+                    lessonTitle,
+                    docType,
+                    duration: cfg.duration,
+                    maxScore: cfg.maxScore
+                };
+                if (hasAttachedImage) {
+                    requestMetadata.imageBase64 = refContext.attachedImage.base64;
+                    requestMetadata.imageMimeType = 'image/jpeg';
                 }
 
                 let aiRes = { ok: false, reason: 'network_error', error: 'تعذّر الاتصال بالخادم.' };
@@ -10336,17 +10557,8 @@
                         mode: 'pedagogical',
                         prompt: finalPrompt,
                         systemInstruction,
-                        metadata: {
-                            stage,
-                            stageLabel: cfg.label,
-                            level,
-                            subject,
-                            lessonTitle,
-                            docType,
-                            duration: cfg.duration,
-                            maxScore: cfg.maxScore
-                        },
-                        timeoutMs: 90000
+                        metadata: requestMetadata,
+                        timeoutMs: 95000
                     });
                 } finally {
                     if (genBtn) {
@@ -10360,19 +10572,24 @@
                 if (aiRes && aiRes.ok && aiRes.text) {
                     saveNourAiDocCacheEntry(cacheKey, aiRes.text);
                     bodyContent = buildAiPedagogicalDocumentHtml(stage, level, subject, docType, lessonTitle, cfg, aiRes.text, false, refContext);
-                    feedbackMsg = `تم توليد «${docType}» لدرس «${lessonTitle}» بنجاح عبر الذكاء التربوي (نور)! يمكنك التعديل المباشر أو الحفظ في حقيبتك أو الطباعة A4.`;
+                    feedbackMsg = hasAttachedImage
+                        ? `تمت قراءة صورة صفحة الكتاب وتوليد «${docType}» لدرس «${lessonTitle}» بنجاح عبر الذكاء التربوي (نور)! يمكنك التعديل المباشر أو الحفظ أو الطباعة A4.`
+                        : `تم توليد «${docType}» لدرس «${lessonTitle}» بنجاح عبر الذكاء التربوي (نور)! يمكنك التعديل المباشر أو الحفظ في حقيبتك أو الطباعة A4.`;
                 } else {
-                    const cachedEntry = getNourAiDocCache()[cacheKey] || getNourAiDocCache()[baseCacheKey];
+                    const exactErr = (aiRes && aiRes.error) ? String(aiRes.error) : 'خطأ غير معروف من الخادم.';
+                    const cachedEntry = hasAttachedImage
+                        ? getNourAiDocCache()[cacheKey]
+                        : (getNourAiDocCache()[cacheKey] || getNourAiDocCache()[baseCacheKey]);
                     if (cachedEntry && cachedEntry.text) {
                         bodyContent = buildAiPedagogicalDocumentHtml(stage, level, subject, docType, lessonTitle, cfg, cachedEntry.text, true, refContext);
-                        feedbackMsg = `تعذّر الوصول المؤقت لخادم التوليد الذكي (${aiRes.error || 'خطأ اتصال'})، فتم عرض النسخة الذكية المحفوظة سابقاً لنفس الدرس.`;
+                        feedbackMsg = `تعذّر التوليد عبر خادم نور — ${exactErr} — فتم عرض النسخة الذكية المحفوظة سابقاً لنفس الدرس.`;
                     } else {
                         bodyContent = buildCleanOfflinePedagogicalTemplate(stage, level, subject, docType, lessonTitle, cfg, {
                             isOffline: false,
-                            title: 'قالب تنظيمي نظيف — تعذّر الوصول مؤقتاً لخادم التوليد الذكي',
-                            body: `لم نتمكن مؤقتاً من جلب المحتوى الذكي من الخادم (${aiRes.error || 'يرجى المحاولة مجدداً'}). تم تجهيز قالب تنظيمي نظيف يحمل عنوان درس «${lessonTitle}» دون حشو أي قواعد أو أمثلة من دروس أخرى. يمكنك إعادة المحاولة أو الضغط على «تعديل النص» لإكمال التحضير والطباعة A4.`
+                            title: 'قالب تنظيمي نظيف — تعذّر التوليد عبر خادم نور',
+                            body: `تفاصيل خطأ الخادم: ${exactErr} — تم تجهيز قالب تنظيمي نظيف يحمل عنوان درس «${lessonTitle}» دون حشو أي قواعد أو أمثلة من دروس أخرى. يمكنك إعادة المحاولة أو الضغط على «تعديل النص» لإكمال التحضير والطباعة A4.`
                         }, refContext);
-                        feedbackMsg = `تم تجهيز القالب التنظيمي النظيف لدرس «${lessonTitle}» (تعذّر الوصول المؤقت لخادم التوليد الذكي).`;
+                        feedbackMsg = `تعذّر التوليد عبر خادم نور — ${exactErr}`;
                     }
                 }
 
@@ -12270,7 +12487,7 @@ ${info.indicator}`,
                         subject: ctx.subject || ''
                     },
                     history,
-                    timeoutMs: 90000
+                    timeoutMs: 95000
                 });
 
                 if (aiRes && aiRes.ok && aiRes.text) {
