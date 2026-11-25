@@ -1550,10 +1550,27 @@
         }
         .html2pdf__overlay,
         .html2pdf__container {
-            direction: ltr !important;
+            direction: rtl !important;
+            position: absolute !important;
+            top: 0 !important;
             left: 0 !important;
-            right: auto !important;
+            right: 0 !important;
+            width: 720px !important;
+            max-width: 720px !important;
+            margin: 0 !important;
+            padding: 0 !important;
             transform: none !important;
+        }
+        #pdf-export-root,
+        #pdf-export-root * {
+            letter-spacing: 0px !important;
+            word-spacing: normal !important;
+            font-variant-ligatures: normal !important;
+            text-rendering: auto !important;
+        }
+        #pdf-export-root,
+        #pdf-export-root *:not(.fa):not(.fas):not(.far):not(.fab):not([class*="fa-"]) {
+            font-family: 'Tajawal', 'Cairo', Tahoma, Arial, sans-serif !important;
         }
         #nour-inline-print-sheet {
             display: none;
@@ -11016,14 +11033,25 @@
         }
 
         function buildCleanOffscreenPdfContainer(sourceEl) {
-            // غلاف خارجي غير مُضاف للصفحة باتجاه LTR صريح لحل إزاحة html2canvas/html2pdf في الصفحات العربية
+            // غلاف خارجي غير مُضاف للصفحة باتجاه RTL كامل وعرض 720px مطابق لمنطقة الطباعة A4
             const wrapper = document.createElement('div');
             wrapper.id = 'nour-pdf-export-wrapper';
-            wrapper.setAttribute('dir', 'ltr');
-            wrapper.style.cssText = 'direction: ltr; width: 720px; margin: 0; padding: 0; background: #ffffff; box-sizing: border-box;';
+            wrapper.setAttribute('dir', 'rtl');
+            wrapper.style.cssText = 'direction: rtl; width: 720px; max-width: 720px; min-width: 720px; margin: 0; padding: 0; background: #ffffff; box-sizing: border-box;';
 
             const scopedCss = document.createElement('style');
             scopedCss.textContent = `
+                #pdf-export-root,
+                #pdf-export-root * {
+                    letter-spacing: 0px !important;
+                    word-spacing: normal !important;
+                    font-variant-ligatures: normal !important;
+                    text-rendering: auto !important;
+                }
+                #pdf-export-root,
+                #pdf-export-root *:not(.fa):not(.fas):not(.far):not(.fab):not([class*="fa-"]) {
+                    font-family: 'Tajawal', 'Cairo', Tahoma, Arial, sans-serif !important;
+                }
                 .nour-pdf-a4-root {
                     direction: rtl;
                     text-align: right;
@@ -11043,7 +11071,6 @@
                 .nour-pdf-a4-root * {
                     box-sizing: border-box;
                     max-width: 100%;
-                    font-family: 'Tajawal', 'Cairo', Tahoma, Arial, sans-serif;
                 }
                 .nour-pdf-a4-root .pd-official-header {
                     width: 100% !important;
@@ -11144,9 +11171,10 @@
             `;
 
             const a4Root = document.createElement('div');
+            a4Root.id = 'pdf-export-root';
             a4Root.className = 'nour-pdf-a4-root';
             a4Root.setAttribute('dir', 'rtl');
-            a4Root.style.cssText = 'direction: rtl; text-align: right; width: 720px; max-width: 720px; box-sizing: border-box; margin: 0; padding: 10px 14px; background: #ffffff;';
+            a4Root.style.cssText = 'direction: rtl; text-align: right; width: 720px; max-width: 720px; box-sizing: border-box; margin: 0; padding: 10px 14px; background: #ffffff; letter-spacing: 0px; word-spacing: normal; font-variant-ligatures: normal; text-rendering: auto;';
             a4Root.innerHTML = sourceEl.innerHTML;
 
             sanitizeCloneForCleanA4Output(a4Root);
@@ -11216,13 +11244,23 @@
                         scrollX: 0,
                         scrollY: 0,
                         onclone: (clonedDoc) => {
+                            const rtl720Style = 'direction: rtl !important; width: 720px !important; max-width: 720px !important; min-width: 720px !important; margin: 0 !important; padding: 0 !important; overflow-x: hidden !important;';
                             if (clonedDoc && clonedDoc.documentElement) {
-                                clonedDoc.documentElement.setAttribute('dir', 'ltr');
+                                clonedDoc.documentElement.setAttribute('dir', 'rtl');
+                                clonedDoc.documentElement.style.cssText = rtl720Style;
                             }
                             if (clonedDoc && clonedDoc.body) {
-                                clonedDoc.body.style.direction = 'ltr';
-                                clonedDoc.body.style.margin = '0';
-                                clonedDoc.body.style.padding = '0';
+                                clonedDoc.body.setAttribute('dir', 'rtl');
+                                clonedDoc.body.style.cssText = rtl720Style;
+                            }
+                            if (clonedDoc && typeof clonedDoc.querySelectorAll === 'function') {
+                                clonedDoc.querySelectorAll('.html2pdf__overlay, .html2pdf__container').forEach(el => {
+                                    el.setAttribute('dir', 'rtl');
+                                    el.style.cssText = 'direction: rtl !important; position: absolute !important; top: 0 !important; left: 0 !important; right: 0 !important; width: 720px !important; max-width: 720px !important; margin: 0 !important; padding: 0 !important; transform: none !important;';
+                                });
+                            }
+                            if (clonedDoc && clonedDoc.defaultView && typeof clonedDoc.defaultView.scrollTo === 'function') {
+                                clonedDoc.defaultView.scrollTo(0, 0);
                             }
                         }
                     },
