@@ -19,6 +19,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- مكتبة Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- مكتبة توليد ملفات PDF الحقيقية (html2pdf.js) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <style>
         :root {
             --primary: #116835;
@@ -1537,10 +1539,97 @@
             margin-top: 12px;
         }
         .pg-toolbar .btn {
-            flex: 1;
-            min-width: 135px;
-            font-size: 12.5px;
+            flex: 1 1 calc(50% - 8px);
+            min-width: 145px;
+            font-size: 12.2px;
             padding: 10px 10px;
+        }
+        .pg-toolbar .btn:disabled {
+            opacity: 0.72;
+            cursor: wait;
+        }
+        #nour-inline-print-sheet {
+            display: none;
+        }
+        @media print {
+            @page {
+                size: A4 portrait;
+                margin: 9mm;
+            }
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+            body.nour-printing-inline {
+                background: #ffffff !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+            body.nour-printing-inline > *:not(#nour-inline-print-sheet) {
+                display: none !important;
+            }
+            body.nour-printing-inline > #nour-inline-print-sheet {
+                display: block !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                background: #ffffff !important;
+                color: #111827 !important;
+                direction: rtl !important;
+                text-align: right !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                font-family: 'Tajawal', 'Cairo', Tahoma, Arial, sans-serif !important;
+                font-size: 12.5px !important;
+                line-height: 1.7 !important;
+            }
+            #nour-inline-print-sheet table,
+            .pg-doc-paper table {
+                width: 100% !important;
+                border-collapse: collapse !important;
+                margin: 10px 0 !important;
+                font-size: 12px !important;
+            }
+            #nour-inline-print-sheet th,
+            #nour-inline-print-sheet td,
+            .pg-doc-paper th,
+            .pg-doc-paper td {
+                border: 1px solid #64748b !important;
+                padding: 7px 8px !important;
+                text-align: right !important;
+                vertical-align: top !important;
+            }
+            #nour-inline-print-sheet th,
+            .pg-doc-paper th {
+                background: #ecfdf5 !important;
+                color: #064e3b !important;
+                font-weight: 800 !important;
+            }
+            #nour-inline-print-sheet tr,
+            #nour-inline-print-sheet thead,
+            #nour-inline-print-sheet blockquote,
+            #nour-inline-print-sheet .pd-official-header,
+            #nour-inline-print-sheet .nour-ai-summary-box,
+            #nour-inline-print-sheet .nour-ai-correction-box,
+            #nour-inline-print-sheet .pg-avoid-break,
+            .pg-doc-paper tr,
+            .pg-doc-paper .nour-ai-summary-box,
+            .pg-doc-paper .nour-ai-correction-box,
+            .pg-doc-paper .pg-avoid-break {
+                break-inside: avoid !important;
+                page-break-inside: avoid !important;
+            }
+            .no-print,
+            .no-pdf-export,
+            .pg-toolbar,
+            .pg-drive-action-wrap,
+            .pg-ai-status-badge,
+            .pg-notice-banner,
+            #pg-edit-hint,
+            #pg-feedback-msg,
+            a[href*="drive.google.com"],
+            a[href*="docs.google.com"] {
+                display: none !important;
+            }
         }
 
         /* أكاديمية نور */
@@ -3033,8 +3122,11 @@
                     <button type="button" class="btn" style="background: #116835;" onclick="savePedagogicalDocLocally()">
                         <i class="fas fa-save"></i> حفظ في حقيبتي (محلياً)
                     </button>
-                    <button type="button" class="btn" style="background: #0284c7;" onclick="printPedagogicalDocument()">
-                        <i class="fas fa-print"></i> طباعة ملونة PDF / A4
+                    <button type="button" id="btn-pg-download-pdf" class="btn" style="background: #0284c7; border: 1px solid rgba(255,255,255,0.22);" onclick="downloadPedagogicalPdf()">
+                        <i class="fas fa-file-pdf"></i> تحميل PDF ملون (A4)
+                    </button>
+                    <button type="button" id="btn-pg-share-whatsapp-pdf" class="btn" style="background: #16a34a; border: 1px solid var(--gold);" onclick="sharePedagogicalPdfViaWhatsApp()">
+                        <i class="fab fa-whatsapp"></i> مشاركة PDF عبر واتساب
                     </button>
                 </div>
 
@@ -3864,7 +3956,7 @@
             const sealUrl = getMauritaniaSealUrl();
             return `
                 <div class="rim-seal-frame" style="width: ${sizePx}px; height: ${sizePx}px; border-radius: 50%; border: 2px solid #d4af37; background: #ffffff; padding: 2px; box-shadow: 0 1px 4px rgba(0,0,0,0.16); display: inline-flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;">
-                    <img src="${sealUrl}" onerror="this.onerror=null;this.src='mauritania-seal.png.jpg';" alt="الختم الرسمي للجمهورية الإسلامية الموريتانية" loading="eager" decoding="sync" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: block; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;" />
+                    <img src="${sealUrl}" crossorigin="anonymous" onerror="this.onerror=null;this.src='mauritania-seal.png.jpg';" alt="الختم الرسمي للجمهورية الإسلامية الموريتانية" loading="eager" decoding="sync" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: block; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;" />
                 </div>
             `;
         }
@@ -8764,108 +8856,52 @@
         }
 
         function openPrintableA4Window(docTitle, bodyHtml, extraCss = '') {
-            const w = window.open('', '_blank');
-            if (!w) return false;
-            const printBaseHref = getPrintBaseHref();
-            w.document.open();
-            w.document.write(`
-                <!DOCTYPE html>
-                <html lang="ar" dir="rtl">
-                <head>
-                    <meta charset="UTF-8">
-                    ${printBaseHref ? `<base href="${printBaseHref}">` : ''}
-                    <title>${escapePdHtml(docTitle)}</title>
-                    <style>
-                        @page { size: A4 portrait; margin: 12mm; }
-                        * { box-sizing: border-box; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-                        body {
-                            font-family: 'Cairo', 'Tajawal', 'Segoe UI', Tahoma, Arial, sans-serif;
-                            direction: rtl;
-                            background: #e2e8f0;
-                            color: #111827;
-                            margin: 0;
-                            padding: 16px;
-                            line-height: 1.7;
-                        }
-                        .no-print-bar {
-                            max-width: 210mm;
-                            margin: 0 auto 12px;
-                            background: linear-gradient(135deg, #0b4f27, #116835);
-                            color: #ffffff;
-                            border: 1.5px solid #d4af37;
-                            border-radius: 10px;
-                            padding: 10px 14px;
-                            display: flex;
-                            justify-content: space-between;
-                            align-items: center;
-                            gap: 10px;
-                            flex-wrap: wrap;
-                        }
-                        .no-print-bar button {
-                            background: #d4af37;
-                            color: #064e3b;
-                            border: none;
-                            border-radius: 7px;
-                            padding: 8px 14px;
-                            font-weight: 800;
-                            font-size: 13px;
-                            cursor: pointer;
-                            font-family: inherit;
-                        }
-                        .a4-sheet {
-                            max-width: 210mm;
-                            min-height: 272mm;
-                            margin: 0 auto;
-                            background: #ffffff;
-                            border-radius: 8px;
-                            padding: 14mm 13mm;
-                            box-shadow: 0 8px 24px rgba(15, 23, 42, 0.14);
-                        }
-                        table { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 12px; }
-                        th, td { border: 1px solid #64748b; padding: 7px 8px; text-align: right; vertical-align: top; }
-                        th { background: #ecfdf5; color: #064e3b; font-weight: 800; }
-                        .nour-ai-rich { font-size: 12.6px; line-height: 1.8; color: #1e293b; text-align: right; }
-                        .nour-ai-rich h2, .nour-ai-rich h3, .nour-ai-rich h4 { color: #064e3b; font-weight: 900; margin: 11px 0 6px; padding-bottom: 4px; border-bottom: 1.5px solid #d4af37; font-size: 13.5px; }
-                        .nour-ai-rich p { margin: 0 0 7px; }
-                        .nour-ai-rich ul, .nour-ai-rich ol { margin: 4px 0 9px; padding-right: 20px; }
-                        .nour-ai-rich li { margin-bottom: 4px; }
-                        .nour-ai-rich blockquote { margin: 8px 0; padding: 8px 11px; background: #fffbeb; border: 1px solid #fde68a; border-right: 4px solid #d4af37; border-radius: 6px; }
-                        .nour-ai-rich .nour-ai-summary-box, .nour-ai-rich .nour-ai-correction-box { margin: 10px 0; padding: 10px 12px; background: #f0fdf4; border: 1.5px solid #116835; border-right: 5px solid #d4af37; border-radius: 7px; }
-                        .page-break-before { page-break-before: auto; margin-top: 14px; }
-                        .pd-footer {
-                            margin-top: 18px;
-                            padding-top: 8px;
-                            border-top: 1px solid #cbd5e1;
-                            display: flex;
-                            justify-content: space-between;
-                            font-size: 11px;
-                            color: #475569;
-                            font-weight: 700;
-                        }
-                        @media print {
-                            body { background: #ffffff; padding: 0; }
-                            .no-print-bar { display: none !important; }
-                            .a4-sheet { box-shadow: none; padding: 0; margin: 0; max-width: 100%; min-height: auto; border-radius: 0; }
-                        }
-                        ${extraCss}
-                    </style>
-                </head>
-                <body>
-                    <div class="no-print-bar">
-                        <div style="font-size: 13px; font-weight: 700;">📄 ${escapePdHtml(docTitle)} — جاهز للطباعة الملونة A4 أو الحفظ كـ PDF</div>
-                        <button type="button" onclick="window.print()">🖨️ طباعة ملونة / حفظ PDF</button>
+            if (typeof document === 'undefined' || !document.body) return false;
+            let printSheet = document.getElementById('nour-inline-print-sheet');
+            if (!printSheet) {
+                printSheet = document.createElement('div');
+                printSheet.id = 'nour-inline-print-sheet';
+                document.body.appendChild(printSheet);
+            }
+
+            const prevTitle = document.title;
+            const safeDocTitle = String(docTitle || 'وثيقة تربوية — نقابة نور');
+            printSheet.innerHTML = `
+                ${extraCss ? `<style>${extraCss}</style>` : ''}
+                <div class="nour-inline-a4-content">
+                    ${bodyHtml}
+                    <div class="pd-footer" style="margin-top: 16px; padding-top: 8px; border-top: 1px solid #cbd5e1; display: flex; justify-content: space-between; font-size: 11px; color: #475569; font-weight: 700; break-inside: avoid; page-break-inside: avoid;">
+                        <span>النقابة الوطنية للمدرسين (نور) — التطوير المهني والذكاء التربوي</span>
+                        <span>وحدة – نضال – حوار</span>
                     </div>
-                    <div class="a4-sheet">
-                        ${bodyHtml}
-                        <div class="pd-footer">
-                            <span>النقابة الوطنية للمدرسين (نور) — التطوير المهني والذكاء التربوي</span>
-                            <span>وحدة – نضال – حوار</span>
-                        </div>
-                    </div>
-                </body>
-                </html>
-            `);
-            w.document.close();
+                </div>
+            `;
+            if (typeof sanitizeCloneForCleanA4Output === 'function') {
+                sanitizeCloneForCleanA4Output(printSheet);
+            }
+
+            document.title = safeDocTitle;
+            document.body.classList.add('nour-printing-inline');
+
+            let cleaned = false;
+            const cleanup = () => {
+                if (cleaned) return;
+                cleaned = true;
+                document.body.classList.remove('nour-printing-inline');
+                document.title = prevTitle;
+                if (printSheet) printSheet.innerHTML = '';
+                if (typeof window !== 'undefined' && typeof window.removeEventListener === 'function') {
+                    window.removeEventListener('afterprint', cleanup);
+                }
+            };
+
+            if (typeof window !== 'undefined' && typeof window.addEventListener === 'function') {
+                window.addEventListener('afterprint', cleanup);
+            }
+            if (typeof window !== 'undefined' && typeof window.print === 'function') {
+                window.print();
+            }
+            setTimeout(cleanup, 1500);
             return true;
         }
 
@@ -9435,14 +9471,14 @@
             const safeGuideUrl = (guide && typeof normalizeAndValidateBookUrl === 'function') ? normalizeAndValidateBookUrl(guide.url) : '';
 
             return `
-                <div style="margin: 0 0 10px; padding: 8px 11px; background: #f0fdf4; border: 1.5px solid #86efac; border-right: 4px solid #d4af37; border-radius: 7px; display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 12px;">
+                <div class="pg-ref-book-doc-row pg-avoid-break" style="margin: 0 0 10px; padding: 8px 11px; background: #f0fdf4; border: 1.5px solid #86efac; border-right: 4px solid #d4af37; border-radius: 7px; display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 12px;">
                     <div style="flex: 1; min-width: 180px; text-align: right; color: #064e3b;">
                         <strong>الكتاب المدرسي المرجعي:</strong> ${safeBookTitle}
                         ${guide ? `<div style="font-size: 11px; color: #116835; margin-top: 2px;"><strong>دليل المعلم المرافق:</strong> ${escapePdHtml(guide.title || '')}</div>` : ''}
                     </div>
-                    <div style="display: flex; gap: 6px; flex-wrap: wrap; align-items: center;">
-                        ${safeBookUrl ? `<a href="${escapePdHtml(safeBookUrl)}" target="_blank" rel="noopener noreferrer" contenteditable="false" style="display: inline-flex; align-items: center; gap: 4px; background: #116835; color: #ffffff; border: 1px solid #d4af37; border-radius: 6px; padding: 5px 10px; font-size: 11px; font-weight: 800; text-decoration: none; white-space: nowrap;">📖 فتح الكتاب المرجعي (Drive)</a>` : ''}
-                        ${safeGuideUrl ? `<a href="${escapePdHtml(safeGuideUrl)}" target="_blank" rel="noopener noreferrer" contenteditable="false" style="display: inline-flex; align-items: center; gap: 4px; background: #0f766e; color: #ffffff; border: 1px solid #d4af37; border-radius: 6px; padding: 5px 9px; font-size: 11px; font-weight: 800; text-decoration: none; white-space: nowrap;">📘 دليل المعلم</a>` : ''}
+                    <div class="no-pdf-export no-print pg-drive-action-wrap" style="display: flex; gap: 6px; flex-wrap: wrap; align-items: center;">
+                        ${safeBookUrl ? `<a href="${escapePdHtml(safeBookUrl)}" target="_blank" rel="noopener noreferrer" contenteditable="false" class="no-pdf-export no-print" style="display: inline-flex; align-items: center; gap: 4px; background: #116835; color: #ffffff; border: 1px solid #d4af37; border-radius: 6px; padding: 5px 10px; font-size: 11px; font-weight: 800; text-decoration: none; white-space: nowrap;">📖 فتح الكتاب المرجعي (Drive)</a>` : ''}
+                        ${safeGuideUrl ? `<a href="${escapePdHtml(safeGuideUrl)}" target="_blank" rel="noopener noreferrer" contenteditable="false" class="no-pdf-export no-print" style="display: inline-flex; align-items: center; gap: 4px; background: #0f766e; color: #ffffff; border: 1px solid #d4af37; border-radius: 6px; padding: 5px 9px; font-size: 11px; font-weight: 800; text-decoration: none; white-space: nowrap;">📘 دليل المعلم</a>` : ''}
                     </div>
                 </div>
             `;
@@ -10233,7 +10269,7 @@
             const refBookBarHtml = buildReferenceBookDocRowHtml(refContext);
 
             const noticeBanner = `
-                <div style="margin: 0 0 11px; padding: 10px 12px; background: #fffbeb; border: 1.5px solid #f59e0b; border-right: 5px solid #d4af37; border-radius: 8px; font-size: 12px; line-height: 1.7; color: #78350f;">
+                <div class="no-pdf-export no-print pg-notice-banner" style="margin: 0 0 11px; padding: 10px 12px; background: #fffbeb; border: 1.5px solid #f59e0b; border-right: 5px solid #d4af37; border-radius: 8px; font-size: 12px; line-height: 1.7; color: #78350f;">
                     <div style="font-weight: 900; color: #92400e; margin-bottom: 3px;">
                         <i class="fas ${noticeInfo.isOffline ? 'fa-wifi' : 'fa-info-circle'}" style="margin-left: 5px;"></i>${escapePdHtml(noticeInfo.title)}
                     </div>
@@ -10324,7 +10360,7 @@
                         </tbody>
                     </table>
 
-                    <div style="margin: 10px 0; padding: 10px 12px; background: #f0fdf4; border: 1.5px solid #116835; border-right: 5px solid #d4af37; border-radius: 7px; font-size: 12.2px; line-height: 1.8;">
+                    <div class="nour-ai-summary-box pg-avoid-break" style="margin: 10px 0; padding: 10px 12px; background: #f0fdf4; border: 1.5px solid #116835; border-right: 5px solid #d4af37; border-radius: 7px; font-size: 12.2px; line-height: 1.8; break-inside: avoid; page-break-inside: avoid;">
                         <div style="font-weight: 900; color: #064e3b; margin-bottom: 5px; font-size: 13px;">ثالثاً: الخلاصة الحقيقية للدرس (ملخص السبورة والدفتر) — «${safeLesson}»</div>
                         <div>• <strong>القاعدة / المفهوم الأساسي:</strong> ..........................................................................................................</div>
                         <div>• <strong>الأمثلة النموذجية للتدوين في الدفتر:</strong> ..........................................................................................</div>
@@ -10451,7 +10487,7 @@
                     <div style="font-size: 11.5px; color: #116835; font-weight: 700;">${escapePdHtml(cfg.label)} | ${safeLevel} | ${safeSubject}</div>
                 </div>
 
-                <div style="display: inline-flex; align-items: center; gap: 6px; padding: 3px 9px; margin-bottom: 9px; border-radius: 99px; background: ${fromCache ? '#fffbeb' : '#ecfdf5'}; border: 1px solid ${fromCache ? '#fcd34d' : '#6ee7b7'}; color: ${fromCache ? '#92400e' : '#065f46'}; font-size: 11px; font-weight: 800;">
+                <div class="no-pdf-export no-print pg-ai-status-badge" style="display: inline-flex; align-items: center; gap: 6px; padding: 3px 9px; margin-bottom: 9px; border-radius: 99px; background: ${fromCache ? '#fffbeb' : '#ecfdf5'}; border: 1px solid ${fromCache ? '#fcd34d' : '#6ee7b7'}; color: ${fromCache ? '#92400e' : '#065f46'}; font-size: 11px; font-weight: 800;">
                     <i class="fas ${fromCache ? 'fa-bookmark' : 'fa-wand-magic-sparkles'}"></i> ${badgeText}
                 </div>
 
@@ -10742,6 +10778,522 @@
             renderSavedPedagogicalDocs();
         }
 
+        function buildSafePedagogicalPdfFilename(meta) {
+            const lessonInputEl = document.getElementById('pg-lesson-title');
+            const typeInputEl = document.getElementById('pg-doc-type');
+            const rawDocType = (meta && meta.docType) || (typeInputEl ? typeInputEl.value : '') || 'جذاذة';
+            const rawLesson = (meta && meta.lessonTitle) || (lessonInputEl ? lessonInputEl.value : '') || 'وثيقة_تربوية';
+
+            let prefix = 'وثيقة';
+            if (rawDocType.includes('جذاذة')) prefix = 'جذاذة';
+            else if (rawDocType.includes('تمرين')) prefix = 'تمرين';
+            else if (rawDocType.includes('فرض') || rawDocType.includes('اختبار')) prefix = 'اختبار';
+
+            const cleanLesson = String(rawLesson)
+                .trim()
+                .replace(/[<>:"/\\|?*\x00-\x1F\u200E\u200F«»()[\]{}.,،؛:!؟'`~@#$%^&+=]+/g, ' ')
+                .replace(/[\s\-]+/g, '_')
+                .replace(/_+/g, '_')
+                .replace(/^_+|_+$/g, '')
+                .slice(0, 60);
+
+            const stem = cleanLesson
+                ? (cleanLesson.startsWith(prefix + '_') || cleanLesson === prefix ? cleanLesson : `${prefix}_${cleanLesson}`)
+                : `${prefix}_نقابة_نور`;
+            return `${stem}.pdf`;
+        }
+
+        function sanitizeCloneForCleanA4Output(rootEl) {
+            if (!rootEl || typeof rootEl.querySelectorAll !== 'function') return;
+
+            // إزالة العناصر التفاعلية والتنبيهات والأزرار غير المخصصة للورق
+            const removeSelectors = [
+                '.no-pdf-export',
+                '.no-print',
+                '.pg-drive-action-wrap',
+                '.pg-ai-status-badge',
+                '.pg-notice-banner',
+                'button',
+                'input',
+                'select',
+                'textarea',
+                'script',
+                'iframe'
+            ];
+            rootEl.querySelectorAll(removeSelectors.join(',')).forEach(el => {
+                if (el && el.parentNode) el.parentNode.removeChild(el);
+            });
+
+            // إزالة أي روابط Drive أو أزرار فتح الكتاب (حتى للنماذج المحفوظة مسبقاً قبل التحديث)
+            rootEl.querySelectorAll('a').forEach(a => {
+                const href = String(a.getAttribute('href') || '').toLowerCase();
+                const txt = String(a.textContent || '');
+                if (
+                    href.includes('drive.google.com') ||
+                    href.includes('docs.google.com') ||
+                    /فتح الكتاب|drive|دليل المعلم/i.test(txt)
+                ) {
+                    const parent = a.parentNode;
+                    if (parent) {
+                        parent.removeChild(a);
+                        if (parent !== rootEl && !String(parent.textContent || '').trim() && parent.children.length === 0 && parent.parentNode) {
+                            parent.parentNode.removeChild(parent);
+                        }
+                    }
+                }
+            });
+
+            // إزالة شارات الحالة أو التنبيهات القديمة غير الموسومة بـ class في النماذج المحفوظة مسبقاً
+            rootEl.querySelectorAll('div').forEach(div => {
+                const txt = String(div.textContent || '').trim();
+                const styleAttr = String(div.getAttribute('style') || '');
+                const isStatusPill = styleAttr.includes('border-radius: 99px') && /محتوى علمي|محفوظ محلياً|مولّد ذكياً/.test(txt);
+                const isLegacyNotice = /وضع العمل بدون إنترنت|قالب تنظيمي نظيف — تعذّر/.test(txt) && txt.length < 480 && div.children.length <= 3;
+                if ((isStatusPill || isLegacyNotice) && div.parentNode) {
+                    div.parentNode.removeChild(div);
+                }
+            });
+
+            // تعطيل سمات التحرير داخل النسخة المستنسخة
+            rootEl.querySelectorAll('[contenteditable]').forEach(el => {
+                el.removeAttribute('contenteditable');
+            });
+
+            // منع قصّ الصفوف والصناديق بين صفحات A4
+            rootEl.querySelectorAll('tr, thead, blockquote, .pd-official-header, .nour-ai-summary-box, .nour-ai-correction-box, .pg-avoid-break, .nour-pdf-footer').forEach(el => {
+                el.style.breakInside = 'avoid';
+                el.style.pageBreakInside = 'avoid';
+            });
+        }
+
+        async function prepareCloneImagesForPdf(rootEl) {
+            if (!rootEl || typeof rootEl.querySelectorAll !== 'function') return;
+
+            let cachedSeal = typeof getCachedMauritaniaSealDataUrl === 'function' ? getCachedMauritaniaSealDataUrl() : '';
+            if (!cachedSeal && typeof preloadAndCacheMauritaniaSeal === 'function') {
+                try {
+                    cachedSeal = await Promise.race([
+                        preloadAndCacheMauritaniaSeal(),
+                        new Promise(resolve => setTimeout(() => resolve(''), 1500))
+                    ]);
+                } catch (e) {
+                    cachedSeal = '';
+                }
+            }
+
+            const imgs = Array.from(rootEl.querySelectorAll('img'));
+            await Promise.all(imgs.map(async (img) => {
+                try {
+                    const src = String(img.getAttribute('src') || '').trim();
+                    if (!src) {
+                        img.setAttribute('data-html2canvas-ignore', 'true');
+                        if (img.parentNode) img.parentNode.removeChild(img);
+                        return;
+                    }
+                    if (src.startsWith('data:image/')) {
+                        return;
+                    }
+                    if (cachedSeal && /mauritania-seal/i.test(src)) {
+                        img.setAttribute('src', cachedSeal);
+                        img.removeAttribute('onerror');
+                        return;
+                    }
+
+                    img.setAttribute('crossorigin', 'anonymous');
+                    // محاولة تحويل الصورة عبر CORS إلى Data URL لتجنب أي تعطّل في html2canvas
+                    let converted = '';
+                    if (typeof fetch === 'function' && typeof FileReader !== 'undefined') {
+                        try {
+                            const ctrl = typeof AbortController !== 'undefined' ? new AbortController() : null;
+                            const t = ctrl ? setTimeout(() => ctrl.abort(), 2200) : null;
+                            try {
+                                const res = await fetch(src, { mode: 'cors', ...(ctrl ? { signal: ctrl.signal } : {}) });
+                                if (res && res.ok) {
+                                    const blob = await res.blob();
+                                    if (blob && blob.size > 0 && (!blob.type || blob.type.startsWith('image/'))) {
+                                        converted = await new Promise((resolve) => {
+                                            const r = new FileReader();
+                                            r.onloadend = () => resolve(typeof r.result === 'string' ? r.result : '');
+                                            r.onerror = () => resolve('');
+                                            r.readAsDataURL(blob);
+                                        });
+                                    }
+                                }
+                            } finally {
+                                if (t) clearTimeout(t);
+                            }
+                        } catch (fetchErr) {
+                            converted = '';
+                        }
+                    }
+
+                    if (converted && converted.startsWith('data:image/')) {
+                        img.setAttribute('src', converted);
+                        img.removeAttribute('onerror');
+                        return;
+                    }
+
+                    // التحقق الآمن من إمكانية قراءة الصورة دون حظر CORS؛ وإن مُنعت نُهملها بدل تعطيل توليد الـ PDF
+                    const corsSafe = await new Promise((resolve) => {
+                        if (typeof Image === 'undefined') {
+                            resolve(false);
+                            return;
+                        }
+                        const probe = new Image();
+                        let done = false;
+                        const finish = (ok) => {
+                            if (done) return;
+                            done = true;
+                            resolve(ok);
+                        };
+                        const timer = setTimeout(() => finish(false), 1800);
+                        probe.crossOrigin = 'anonymous';
+                        probe.onload = () => {
+                            clearTimeout(timer);
+                            try {
+                                const c = document.createElement('canvas');
+                                c.width = 2;
+                                c.height = 2;
+                                const ctx = c.getContext('2d');
+                                if (ctx) {
+                                    ctx.drawImage(probe, 0, 0, 2, 2);
+                                    c.toDataURL('image/png');
+                                }
+                                finish(true);
+                            } catch (taintErr) {
+                                finish(false);
+                            }
+                        };
+                        probe.onerror = () => {
+                            clearTimeout(timer);
+                            finish(false);
+                        };
+                        probe.src = src;
+                    });
+
+                    if (!corsSafe) {
+                        img.setAttribute('data-html2canvas-ignore', 'true');
+                        if (img.parentNode) img.parentNode.removeChild(img);
+                    }
+                } catch (e) {
+                    img.setAttribute('data-html2canvas-ignore', 'true');
+                    if (img.parentNode) img.parentNode.removeChild(img);
+                }
+            }));
+        }
+
+        function buildCleanOffscreenPdfContainer(sourceEl) {
+            const host = document.createElement('div');
+            host.id = 'nour-pdf-offscreen-host';
+            host.setAttribute('aria-hidden', 'true');
+            host.style.cssText = [
+                'position: fixed',
+                'top: 0',
+                'right: -10000px',
+                'width: 794px',
+                'min-width: 794px',
+                'max-width: 794px',
+                'background: #ffffff',
+                'z-index: -1',
+                'pointer-events: none',
+                'direction: rtl',
+                'overflow: visible'
+            ].join('; ');
+
+            const scopedCss = document.createElement('style');
+            scopedCss.textContent = `
+                .nour-pdf-a4-root {
+                    width: 794px;
+                    max-width: 794px;
+                    box-sizing: border-box;
+                    background: #ffffff;
+                    color: #111827;
+                    direction: rtl;
+                    text-align: right;
+                    font-family: 'Tajawal', 'Cairo', Tahoma, Arial, sans-serif;
+                    font-size: 13px;
+                    line-height: 1.75;
+                    padding: 12px 18px 16px;
+                }
+                .nour-pdf-a4-root * {
+                    box-sizing: border-box;
+                    font-family: 'Tajawal', 'Cairo', Tahoma, Arial, sans-serif;
+                }
+                .nour-pdf-a4-root .pd-official-header {
+                    padding-top: 8px !important;
+                    break-inside: avoid !important;
+                    page-break-inside: avoid !important;
+                }
+                .nour-pdf-a4-root table {
+                    width: 100% !important;
+                    border-collapse: collapse !important;
+                    margin: 10px 0 !important;
+                    font-size: 12px !important;
+                }
+                .nour-pdf-a4-root th,
+                .nour-pdf-a4-root td {
+                    border: 1px solid #64748b !important;
+                    padding: 7px 8px !important;
+                    text-align: right !important;
+                    vertical-align: top !important;
+                    word-break: break-word !important;
+                }
+                .nour-pdf-a4-root th {
+                    background: #ecfdf5 !important;
+                    color: #064e3b !important;
+                    font-weight: 800 !important;
+                }
+                .nour-pdf-a4-root tr,
+                .nour-pdf-a4-root thead,
+                .nour-pdf-a4-root blockquote,
+                .nour-pdf-a4-root .nour-ai-summary-box,
+                .nour-pdf-a4-root .nour-ai-correction-box,
+                .nour-pdf-a4-root .pg-avoid-break,
+                .nour-pdf-a4-root .nour-pdf-footer {
+                    break-inside: avoid !important;
+                    page-break-inside: avoid !important;
+                }
+                .nour-pdf-a4-root .nour-ai-rich {
+                    font-size: 12.6px;
+                    line-height: 1.8;
+                    color: #1e293b;
+                    text-align: right;
+                }
+                .nour-pdf-a4-root .nour-ai-rich h2,
+                .nour-pdf-a4-root .nour-ai-rich h3,
+                .nour-pdf-a4-root .nour-ai-rich h4 {
+                    color: #064e3b;
+                    font-weight: 900;
+                    margin: 11px 0 6px;
+                    padding-bottom: 4px;
+                    border-bottom: 1.5px solid #d4af37;
+                    font-size: 13.5px;
+                    break-after: avoid;
+                    page-break-after: avoid;
+                }
+                .nour-pdf-a4-root .nour-ai-rich p { margin: 0 0 7px; }
+                .nour-pdf-a4-root .nour-ai-rich ul,
+                .nour-pdf-a4-root .nour-ai-rich ol { margin: 4px 0 9px; padding-right: 20px; }
+                .nour-pdf-a4-root .nour-ai-rich li { margin-bottom: 4px; }
+                .nour-pdf-a4-root .nour-ai-rich blockquote {
+                    margin: 8px 0;
+                    padding: 8px 11px;
+                    background: #fffbeb;
+                    border: 1px solid #fde68a;
+                    border-right: 4px solid #d4af37;
+                    border-radius: 6px;
+                }
+                .nour-pdf-a4-root .nour-ai-rich .nour-ai-summary-box,
+                .nour-pdf-a4-root .nour-ai-rich .nour-ai-correction-box {
+                    margin: 10px 0;
+                    padding: 10px 12px;
+                    background: #f0fdf4;
+                    border: 1.5px solid #116835;
+                    border-right: 5px solid #d4af37;
+                    border-radius: 7px;
+                }
+                .nour-pdf-a4-root .no-pdf-export,
+                .nour-pdf-a4-root .no-print,
+                .nour-pdf-a4-root .pg-drive-action-wrap {
+                    display: none !important;
+                }
+            `;
+
+            const a4Root = document.createElement('div');
+            a4Root.className = 'nour-pdf-a4-root';
+            a4Root.setAttribute('dir', 'rtl');
+            a4Root.innerHTML = sourceEl.innerHTML;
+
+            sanitizeCloneForCleanA4Output(a4Root);
+
+            const footer = document.createElement('div');
+            footer.className = 'nour-pdf-footer pg-avoid-break';
+            footer.style.cssText = 'margin-top: 16px; padding-top: 8px; border-top: 1.5px solid #cbd5e1; display: flex; justify-content: space-between; font-size: 11px; color: #475569; font-weight: 700; break-inside: avoid; page-break-inside: avoid;';
+            footer.innerHTML = '<span>النقابة الوطنية للمدرسين (نور) — التطوير المهني والذكاء التربوي</span><span>وحدة – نضال – حوار</span>';
+            a4Root.appendChild(footer);
+
+            host.appendChild(scopedCss);
+            host.appendChild(a4Root);
+            document.body.appendChild(host);
+            return { host, a4Root };
+        }
+
+        function triggerPdfBlobDownload(pdfBlob, filename) {
+            const url = URL.createObjectURL(pdfBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = filename;
+            link.style.display = 'none';
+            document.body.appendChild(link);
+            link.click();
+            setTimeout(() => {
+                if (link.parentNode) link.parentNode.removeChild(link);
+                try { URL.revokeObjectURL(url); } catch (e) {}
+            }, 1200);
+        }
+
+        async function generatePedagogicalPdfFile() {
+            const preview = document.getElementById('pg-doc-preview');
+            if (!preview || !preview.innerHTML.trim()) {
+                throw new Error('يرجى توليد نموذج تربوي أولاً قبل التصدير إلى PDF.');
+            }
+            if (typeof window.html2pdf !== 'function') {
+                throw new Error('مكتبة توليد ملفات PDF لم تتحمّل بعد؛ تأكد من الاتصال بالإنترنت ثم أعد المحاولة.');
+            }
+
+            const filename = buildSafePedagogicalPdfFilename(currentPgDocMeta);
+            const docTitle = currentPgDocMeta
+                ? `${currentPgDocMeta.docType} — ${currentPgDocMeta.lessonTitle}`
+                : filename.replace(/\.pdf$/i, '');
+
+            const { host, a4Root } = buildCleanOffscreenPdfContainer(preview);
+            try {
+                if (document.fonts && document.fonts.ready) {
+                    await Promise.race([
+                        document.fonts.ready,
+                        new Promise(resolve => setTimeout(resolve, 2000))
+                    ]);
+                }
+                await prepareCloneImagesForPdf(a4Root);
+
+                const pdfOptions = {
+                    margin: [9, 9, 9, 9],
+                    filename,
+                    image: { type: 'jpeg', quality: 0.95 },
+                    html2canvas: {
+                        scale: 2,
+                        useCORS: true,
+                        logging: false,
+                        backgroundColor: '#ffffff',
+                        width: 794,
+                        windowWidth: 794,
+                        scrollX: 0,
+                        scrollY: 0
+                    },
+                    jsPDF: {
+                        unit: 'mm',
+                        format: 'a4',
+                        orientation: 'portrait',
+                        compress: true
+                    },
+                    pagebreak: {
+                        mode: ['avoid-all', 'css', 'legacy'],
+                        avoid: [
+                            'tr',
+                            'thead',
+                            'blockquote',
+                            '.pd-official-header',
+                            '.nour-ai-summary-box',
+                            '.nour-ai-correction-box',
+                            '.pg-avoid-break',
+                            '.nour-pdf-footer'
+                        ]
+                    }
+                };
+
+                const rawBlob = await window.html2pdf().set(pdfOptions).from(a4Root).outputPdf('blob');
+                const pdfBlob = (rawBlob && rawBlob.type === 'application/pdf')
+                    ? rawBlob
+                    : new Blob([rawBlob], { type: 'application/pdf' });
+                const pdfFile = (typeof File === 'function')
+                    ? new File([pdfBlob], filename, { type: 'application/pdf', lastModified: Date.now() })
+                    : null;
+
+                return { blob: pdfBlob, file: pdfFile, filename, docTitle };
+            } finally {
+                if (host && host.parentNode) {
+                    host.parentNode.removeChild(host);
+                }
+            }
+        }
+
+        function setPgPdfButtonsBusy(activeBtnId, isBusy) {
+            const dlBtn = document.getElementById('btn-pg-download-pdf');
+            const shBtn = document.getElementById('btn-pg-share-whatsapp-pdf');
+            [dlBtn, shBtn].forEach(btn => {
+                if (!btn) return;
+                if (isBusy) {
+                    if (!btn.dataset.origHtml) btn.dataset.origHtml = btn.innerHTML;
+                    btn.disabled = true;
+                    if (btn.id === activeBtnId) {
+                        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري تجهيز ملف PDF...';
+                    }
+                } else {
+                    btn.disabled = false;
+                    if (btn.dataset.origHtml) {
+                        btn.innerHTML = btn.dataset.origHtml;
+                        delete btn.dataset.origHtml;
+                    }
+                }
+            });
+        }
+
+        async function downloadPedagogicalPdf() {
+            const preview = document.getElementById('pg-doc-preview');
+            if (!preview || !preview.innerHTML.trim()) {
+                setPgFeedback('error', 'يرجى توليد نموذج أولاً قبل تحميل ملف PDF.');
+                return;
+            }
+            setPgPdfButtonsBusy('btn-pg-download-pdf', true);
+            setPgFeedback('info', 'جاري تجهيز ملف PDF ملون (A4)...');
+            try {
+                const { blob, filename } = await generatePedagogicalPdfFile();
+                triggerPdfBlobDownload(blob, filename);
+                setPgFeedback('success', `تم تجهيز وتنزيل ملف «${filename}» بنجاح (مقاس A4 ملون).`);
+            } catch (err) {
+                setPgFeedback('error', (err && err.message) ? err.message : 'تعذّر توليد ملف PDF حالياً، يرجى إعادة المحاولة.');
+            } finally {
+                setPgPdfButtonsBusy('btn-pg-download-pdf', false);
+            }
+        }
+
+        async function sharePedagogicalPdfViaWhatsApp() {
+            const preview = document.getElementById('pg-doc-preview');
+            if (!preview || !preview.innerHTML.trim()) {
+                setPgFeedback('error', 'يرجى توليد نموذج أولاً قبل المشاركة عبر واتساب.');
+                return;
+            }
+            setPgPdfButtonsBusy('btn-pg-share-whatsapp-pdf', true);
+            setPgFeedback('info', 'جاري تجهيز ملف PDF للمشاركة المباشرة عبر واتساب...');
+            try {
+                const { blob, file, filename, docTitle } = await generatePedagogicalPdfFile();
+                const shareData = file ? {
+                    files: [file],
+                    title: docTitle,
+                    text: `${docTitle} — وثيقة تربوية ملونة (PDF) من منصة النقابة الوطنية للمدرسين (نور)`
+                } : null;
+
+                const canShareFiles = Boolean(
+                    shareData &&
+                    typeof navigator !== 'undefined' &&
+                    typeof navigator.share === 'function' &&
+                    typeof navigator.canShare === 'function' &&
+                    navigator.canShare({ files: [file] })
+                );
+
+                if (canShareFiles) {
+                    try {
+                        await navigator.share(shareData);
+                        setPgFeedback('success', `تمت مشاركة ملف «${filename}» بنجاح!`);
+                        return;
+                    } catch (shareErr) {
+                        if (shareErr && shareErr.name === 'AbortError') {
+                            setPgFeedback('info', 'تم إلغاء المشاركة. يمكنك إعادة الضغط للمشاركة أو تحميل ملف PDF مباشرة.');
+                            return;
+                        }
+                        // في حال رفض المتصفح المدمج المشاركة، نُنزّل الملف تلقائياً كبديل مضمون
+                    }
+                }
+
+                triggerPdfBlobDownload(blob, filename);
+                setPgFeedback('info', `تم تنزيل ملف «${filename}» تلقائياً على جهازك لأن هذا المتصفح لا يدعم مشاركة ملفات PDF مباشرة — يمكنك الآن إرفاقه في واتساب من مجلد «عمليات التنزيل».`);
+            } catch (err) {
+                setPgFeedback('error', (err && err.message) ? err.message : 'تعذّر تجهيز ملف PDF للمشاركة حالياً.');
+            } finally {
+                setPgPdfButtonsBusy('btn-pg-share-whatsapp-pdf', false);
+            }
+        }
+
         function printPedagogicalDocument() {
             const preview = document.getElementById('pg-doc-preview');
             if (!preview || !preview.innerHTML.trim()) {
@@ -10751,10 +11303,7 @@
             const title = currentPgDocMeta
                 ? `${currentPgDocMeta.docType} — ${currentPgDocMeta.lessonTitle}`
                 : 'وثيقة تربوية — نقابة نور';
-            const opened = openPrintableA4Window(title, preview.innerHTML);
-            if (!opened) {
-                setPgFeedback('error', 'يرجى السماح بفتح النوافذ المنبثقة لإتمام الطباعة الملونة PDF / A4.');
-            }
+            openPrintableA4Window(title, preview.innerHTML);
         }
 
         function openPedagogicalGenModal() {
